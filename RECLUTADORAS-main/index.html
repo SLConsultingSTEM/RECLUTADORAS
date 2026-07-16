@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro y Seguimiento</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="proyectosConfig.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <link rel="shortcut icon" href="img/logoIzq.png" type="image/x-icon">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="/">
+                <img src="./img/logoIzq.png" alt="Logo de la empresa">
+            </a>
+        </div>
+        <nav>
+            <a href="#formulario">Formulario</a>
+            <a href="#seguimiento">Seguimiento</a>
+            <a href="admin.html">Panel Admin</a>
+            <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+                <span id="theme-toggle-icon">🌙</span>
+            </button>
+            <a href="#" onclick="logout()">O</a>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="formulario">
+        <div class="filters">
+            <div>
+                <label for="proyectos">Filtrar por proyectos</label>
+                <select id="proyectos" name="proyectos"></select>
+            </div>
+        <div class="container mt-5">
+
+            <div class="accordion" id="accordionExample">
+
+                <!-- Acordeones de Informacion -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            INFORMACIÓN DEL PROYECTO
+                        </button>
+                    </h2>
+
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" >
+                        <div class="accordion-body">
+
+                            <div id="info-proyecto-dinamico" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Primer elemento del acordeón -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            FORMULARIO
+                        </button>
+                    </h2>
+
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
+                        <div class="accordion-body">
+
+                            <div id="formulario-proyecto-dinamico"></div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acordeon de seguimientos -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            SEGUIMIENTO
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
+                        <div class="accordion-body">
+                            <section id="seguimiento">
+                                <h2>SEGUIMIENTO DE PARTICIPANTES</h2>
+                                <div class="filters">
+                                    <div>
+                                        <label for="estado">Estado</label>
+                                        <select id="estado" name="estado">
+                                            <option value="">TODOS</option>
+                                            <option value="P_PACIENTE_FALLECIDO">P_PACIENTE_FALLECIDO</option>
+                                            <option value="NO_CONTESTA">NO_CONTESTA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Teléfono</th>
+                                            <th>Email</th>
+                                            <th>Estado</th>
+                                            <th>Fecha de Registro</th>
+                                            <th>Proyecto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>David Pabón</td>
+                                            <td>3105557890</td>
+                                            <td>pabonear@gmail.com</td>
+                                            <td>P_PACIENTE_FALLECIDO</td>
+                                            <td>12/11/2024</td>
+                                            <td>DOLOR COL AM (40)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Juan Bacca</td>
+                                            <td>3125545891</td>
+                                            <td>juan12z@gmail.com</td>
+                                            <td>NO_CONTESTA</td>
+                                            <td>05/04/2025</td>
+                                            <td>T4E0 (46)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    </section>
+        
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+
+    // Ya tienes esto:
+    const loggedIn = sessionStorage.getItem("loggedIn");
+
+    if (!loggedIn) {
+        window.location.href = "login.html";
+    }
+
+    // Esto es lo nuevo:
+    function logout() {
+        sessionStorage.clear(); // Elimina toda la sesión
+        window.location.href = "login.html"; // Redirige al login
+    }
+
+    const themeToggleButton = document.getElementById("theme-toggle");
+    const themeToggleIcon = document.getElementById("theme-toggle-icon");
+
+    function applyTheme(theme) {
+        const isDark = theme === "dark";
+        document.body.classList.toggle("dark-mode", isDark);
+
+        if (themeToggleButton) {
+            themeToggleButton.setAttribute("aria-pressed", String(isDark));
+            themeToggleIcon.textContent = isDark ? "☀️" : "🌙";
+        }
+    }
+
+    const savedTheme = localStorage.getItem("theme");
+    applyTheme(savedTheme || "light");
+
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener("click", function () {
+            const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+            applyTheme(nextTheme);
+            localStorage.setItem("theme", nextTheme);
+        });
+    }
+
+    const STORAGE_KEY = "adminProyectosData";
+    const ALL_CITIES = ["Bogota", "Cali", "Medellin", "Barranquilla", "Bucaramanga", "Cartagena"];
+    const DEMOGRAPHIC_FIELDS = [
+        { name: "fecha_envio", label: "Fecha de envío", type: "date", required: true },
+        { name: "pais", label: "País", type: "select", options: ["Colombia", "México", "Guatemala", "Ecuador"], required: true },
+        { name: "ciudad", label: "Ciudad", type: "select", options: [], required: true },
+        { name: "nombre", label: "Nombre completo", type: "text", required: true },
+        { name: "tipo_doc", label: "Tipo de documento", type: "select", options: ["Cédula de Ciudadanía", "Cédula de Extranjería", "Pasaporte"], required: true },
+        { name: "documento", label: "Número de documento", type: "number", required: true },
+        { name: "edad", label: "Edad", type: "number", required: true },
+        { name: "genero", label: "Género", type: "select", options: ["MASCULINO", "FEMENINO"], required: true },
+        { name: "direccion", label: "Dirección", type: "text", required: true },
+        { name: "barrio", label: "Barrio", type: "text", required: true },
+        { name: "nse", label: "NSE (1-6)", type: "number", required: true },
+        { name: "telefono1", label: "Teléfono 1", type: "tel", required: true },
+        { name: "telefono2", label: "Teléfono 2", type: "tel", required: false },
+    ];
+
+    function getStoredProjects() {
+        const storedString = localStorage.getItem(STORAGE_KEY);
+        try {
+            const stored = JSON.parse(storedString || "null");
+            return Array.isArray(stored) ? stored : [];
+        } catch (error) {
+            console.warn('No se pudo leer adminProyectosData de localStorage:', error, storedString);
+            return [];
+        }
+    }
+
+    function loadProyectos() {
+        // En lugar de sumar las listas manualmente, usamos la función mergeProjects
+        // que ya tiene la lógica para evitar duplicados por ID.
+        const total = mergeProjects();
+
+        console.log('Datos detectados para el selector:', total);
+
+        const selector = document.getElementById('proyectos');
+        
+        // Limpiamos el selector antes de llenarlo
+        selector.innerHTML = '<option value="">-- Selecciona un proyecto --</option>';
+
+        total.forEach((p) => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = p.nombre;
+            selector.appendChild(opt);
+        });
+
+        console.log('Selector poblado con', total.length, 'proyectos sin duplicados');
+        return total;
+    }
+
+    function mergeProjects() {
+        const baseProjects = Array.isArray(window.PROYECTOS_DATA) ? window.PROYECTOS_DATA : [];
+        const storedProjects = getStoredProjects();
+        
+        // Usamos un Map para asegurar que cada ID sea único
+        const map = new Map();
+        
+        // Primero metemos los de base
+        baseProjects.forEach(p => map.set(p.id, p));
+        
+        // Luego los del admin (si el ID coincide, el del admin "gana" o sobreescribe)
+        storedProjects.forEach(p => map.set(p.id, p));
+        
+        return Array.from(map.values());
+    }
+
+// Función para limpiar textos y convertirlos en IDs válidos
+    function slugify(text) {
+        return text.toString().toLowerCase()
+            .trim()
+            .replace(/\s+/g, '-')     
+            .replace(/[^\w\-]+/g, '') 
+            .replace(/\-\-+/g, '-');  
+    }
+
+    // Función que se ejecuta al cargar la página
+    window.addEventListener('load', function() {
+        console.log("Página cargada. Iniciando sistema...");
+        
+        // 1. Poblamos la lista de proyectos
+        loadProyectos();
+
+        // 2. Escuchamos cuando el usuario cambia de proyecto
+        const selectProyectos = document.getElementById("proyectos");
+        if (selectProyectos) {
+            selectProyectos.addEventListener("change", function () {
+                renderizarProyecto(this.value);
+            });
+        }
+    });
+
+    // Función que dibuja la info y el formulario dinámicamente
+    function renderizarProyecto(id) {
+        const infoDiv = document.getElementById('info-proyecto-dinamico');
+        const formDiv = document.getElementById('formulario-proyecto-dinamico');
+
+        if (!id) {
+            infoDiv.style.display = 'none';
+            formDiv.innerHTML = '<p class="text-center">Seleccione un proyecto para ver el formulario.</p>';
+            return;
+        }
+
+        const todosLosProyectos = mergeProjects();
+        const p = todosLosProyectos.find(item => item.id === id);
+
+        if (p) {
+            // A. INFORMACIÓN DEL PROYECTO
+            infoDiv.style.display = 'block';
+            let contenidoHtml = `<h2 class="mb-4" style="color: var(--primary-color); font-weight: 700;">${p.nombre}</h2>`;
+            
+            if (p.imagenUrl && !p.descripcion.includes(p.imagenUrl)) {
+                contenidoHtml += `<div class="text-center mb-4"><img src="${p.imagenUrl}" style="max-width:100%; border-radius:15px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);"></div>`;
+            }
+            
+            contenidoHtml += `<div class="metodologia-content">${p.descripcion}</div>`;
+            infoDiv.innerHTML = contenidoHtml;
+
+            // B. FORMULARIO DE REGISTRO
+            let htmlForm = '<form id="form-registro-participante" class="form-container"><div class="row">';
+            htmlForm += '<div class="col-12 mb-3"><h4>Datos Demográficos Generales</h4><hr></div>';
+
+            // 1. Renderizar Campos Base
+            DEMOGRAPHIC_FIELDS.forEach(field => {
+                htmlForm += `<div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label fw-bold">${field.label}</label>`;
+                
+                if (field.name === 'ciudad') {
+                    let ciudades = (p.ciudadesPermitidas && p.ciudadesPermitidas.length > 0) ? p.ciudadesPermitidas : ALL_CITIES;
+                    htmlForm += `<select name="ciudad" class="form-select" required>
+                        <option value="">Seleccione ciudad...</option>
+                        ${ciudades.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>`;
+                } else if (field.type === 'select') {
+                    htmlForm += `<select name="${field.name}" class="form-select" required>
+                        <option value="">Seleccione...</option>
+                        ${field.options.map(o => `<option value="${o}">${o}</option>`).join('')}
+                    </select>`;
+                } else {
+                    htmlForm += `<input type="${field.type}" name="${field.name}" class="form-control" placeholder="${field.label}..." ${field.required ? 'required' : ''}>`;
+                }
+                htmlForm += `</div>`;
+            });
+
+            // 2. Renderizar Campos Específicos
+            if (p.camposEspecificos && p.camposEspecificos.length > 0) {
+                htmlForm += '<div class="col-12 mt-4 mb-3"><h4>Información Específica del Estudio</h4><hr></div>';
+                p.camposEspecificos.forEach(field => {
+                    htmlForm += `<div class="col-md-6 col-lg-4 mb-3">
+                        <label class="form-label fw-bold">${field.etiqueta}</label>`;
+                    
+                    if (field.tipo === 'select' && field.opciones) {
+                        htmlForm += `<select name="${field.nombre_campo}" class="form-select">
+                            <option value="">Seleccione...</option>
+                            ${field.options.map(o => `<option value="${o}">${o}</option>`).join('')}
+                        </select>`;
+                    } else {
+                        htmlForm += `<input type="${field.tipo}" name="${field.nombre_campo}" class="form-control" placeholder="${field.etiqueta}...">`;
+                    }
+                    htmlForm += `</div>`;
+                });
+            }
+
+            htmlForm += `</div>
+                <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">Registrar Participante</button>
+                </div>
+            </form>`;
+            
+            formDiv.innerHTML = htmlForm;
+
+            // Escuchar el envío del formulario
+            document.getElementById('form-registro-participante').addEventListener('submit', manejarEnvioFormulario);
+        }
+    }
+
+    // Función para manejar el envío (Añádela para que no de error)
+    function manejarEnvioFormulario(e) {
+        e.preventDefault();
+        alert("¡Participante registrado con éxito!");
+        e.target.reset();
+    }
+   
+    </script>
+</body>
+</html>

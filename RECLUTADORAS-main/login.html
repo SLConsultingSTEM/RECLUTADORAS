@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro y Seguimiento</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="login.css">
+  <link rel="shortcut icon" href="img/logoIzq.png" type="image/x-icon">
+</head>
+<body>
+
+<div class="login-container container mt-5 text-center">
+  <img src="./img/logoOptimaNegro.png" alt="SL Group Logo" class="logo mb-4">
+
+  <h2>Iniciar Sesión</h2>
+
+  <form class="login-form mt-3" onsubmit="handleLogin(event)">
+    <div class="mb-3 text-start">
+      <label for="username" class="form-label">Usuario</label>
+      <input type="text" id="username" name="usuario" class="form-control" placeholder="Nombre de usuario" required />
+    </div>
+
+    <div class="mb-3 text-start">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" id="password" name="contra" class="form-control" placeholder="Contraseña" required />
+    </div>
+
+    <p id="error-msg" class="text-danger"></p>
+
+    <button type="submit" id="login-button" class="btn btn-primary w-100">
+      <span id="button-text">Ingresar</span>
+    </button>
+  </form>
+</div>
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  let isSubmitting = false;
+
+  function handleLogin(event) {
+    event.preventDefault();
+    if (isSubmitting) return;
+
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+    const errorMsg = document.getElementById("error-msg");
+    const buttonText = document.getElementById("button-text");
+    const button = document.getElementById("login-button");
+
+    isSubmitting = true;
+    buttonText.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Iniciando sesión...`;
+    button.disabled = true;
+    errorMsg.textContent = "";
+
+    setTimeout(() => {
+      if (user === "admin" && pass === "1234") {
+        sessionStorage.setItem("loggedIn", "true");
+        Swal.fire({
+          icon: 'success',
+          title: '¡Bienvenido!',
+          text: `Bienvenido ${user}!`,
+          timer: 2000,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = "index.html";
+        });
+      } else {
+        errorMsg.textContent = "Usuario o contraseña incorrectos";
+        buttonText.textContent = "Ingresar";
+        button.disabled = false;
+        isSubmitting = false;
+      }
+    }, 1500);
+  }
+
+  function handleRecoverClick() {
+    Swal.fire({
+      icon: 'info',
+      title: 'Recuperación',
+      text: 'Funcionalidad de recuperación en construcción.',
+      timer: 2000,
+      showConfirmButton: false
+    });
+  }
+</script>
+
+</body>
+</html>

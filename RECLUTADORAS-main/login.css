@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 25%;
+  text-align: center;
+}
+
+  .login-container h2 {
+      margin-bottom: 1.5rem;
+      color: #333;
+  }
+
+.login-form .input-group {
+  margin-right: 2rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+  .login-form .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #555;
+  }
+
+  .login-form .input-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+  }
+
+.login-form button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #68298c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+  .login-form button:hover {
+      background-color: #4c145e;
+  }
+
+.register-link {
+  margin-top: 1rem;
+  color: #555;
+}
+
+  .register-link a {
+      color: #007bff;
+      text-decoration: none;
+  }
+
+      .register-link a:hover {
+          text-decoration: underline;
+      }
+
+.logo {
+  display: block;
+  margin: 0 auto;
+  max-width: 200px;
+}
+
+
+/* Estilos para animación de carga */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  from {
+      transform: rotate(0deg);
+  }
+
+  to {
+      transform: rotate(360deg);
+  }
+}
