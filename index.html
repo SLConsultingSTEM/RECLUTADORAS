@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro y Seguimiento</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap">
+    <link rel="shortcut icon" href="img/logoIzq.png" type="image/x-icon">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="/">
+                <img src="./img/logoIzq.png" alt="Logo de la empresa">
+            </a>
+        </div>
+        <nav>
+            <a href="#formulario">Formulario</a>
+            <a href="#seguimiento">Seguimiento</a>
+            <a href="#" onclick="logout()">O</a>
+        </nav>
+    </header>
+    
+    <main>
+        <section id="formulario">
+        <div class="filters">
+            <div>
+                <label for="proyectos">Filtrar por proyectos</label>
+                <select id="proyectos" name="proyectos">
+                    <option value="">NINGUNO</option>
+                    <option value="form1">DERMA PROTECT AD (32)</option>
+                    <option value="form2">DOLOR COL AM (40)</option>
+                    <option value="form3">BEBIDA NOCHE NP (3)</option>
+                    <option value="form4">RN (3)</option>
+                    <option value="form5">T4E0 (46)</option>
+                </select>
+            </div>
+        <div class="container mt-5">
+
+            <div class="accordion" id="accordionExample">
+
+                <!-- Acordeones de Informacion -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            INFORMACIÓN DEL PROYECTO
+                        </button>
+                    </h2>
+
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" >
+                        <div class="accordion-body">
+
+                            <!-- Información proyecto DERMA 32 -->
+                            <div id="info1" class="info-proyecto">
+                                <h3>Información de DERMA PROTECT AD (32)</h3>
+                                <div class="piezareclu" style="text-align: center;" >
+                                    <img src="./img/RCL.png" alt="" >
+                                </div>
+                                <a href="./img/RCL.png" download="RCL.png" class="buttona">
+                                    Descargar imagen
+                                </a>
+                                <label>Por favor infórmele al participante las siguientes condiciones y la metodología del estudio: </label>
+                                <ol style="font-weight: bold;"> 
+                                    <li><span style="font-weight: normal;">El estudio es de manera presencial. Por ende, los participantes deben contar con disponibilidad de tiempo.</span>
+                                    <li><span style="font-weight: normal;">Deberá proporcionar una foto del producto que usa (crema antipañalitis).</span>
+                                    <li><span style="font-weight: normal;">Deberá proporcionar una foto legible donde se evidencie la dirección de residencia con el NSE, y este no debe superar los 2 meses de facturación.</span>
+                                    <li><span style="font-weight: normal;">Se realizará un filtro por parte de la gestora que dura aproximadamente 15 minutos si es efectivo, en caso contrario, durará menos.</span>
+                                    <li><span style="font-weight: normal;">La profesional realizará el encuadre que durará aproximadamente 20 minutos.</span>
+                                    <li><span style="font-weight: normal;">Cuando el producto llegue al participante, la profesional realizará el estatus de recibo que durará aproximadamente 7 minutos.</span>
+                                    <li><span style="font-weight: normal;">Se inicia el uso de las muestras por 7 días, para un total de 14 días de uso. Se realiza 2 evaluaciones monadica una por cada muestra, tiempo aproximado de evaluación 10 minutos.</span>
+                                    <li><span style="font-weight: normal;">Se agenda entrevista final con previo acuerdo entre participante y profesional, entrevista de manera presencial aproximado 1hora y media.</span>
+                                </ol>
+                                <label>Tener en cuenta que:</label>
+                                <ol style="font-weight: bold;">
+                                    <li><span style="font-weight: normal;">En ninguna de sus publicaciones debe incluir nada relacionado con la marca, como el nombre mismo, logos, dibujos o eslogan.</span>
+                                    <li><span style="font-weight: normal;">Es su responsabilidad que todos quienes la apoyen en esta labor no utilicen ninguna referencia a la marca.</span>
+                                    <li><span style="font-weight: normal;">A los participantes se les dará un <b>INCENTIVO</b>,no lo podrá publicar.</span>
+                                    <li><span style="font-weight: normal;">No podrán decir que recibirán el producto como regalo. Un regalo no requiere devolución de información. En este tipo de metodología, por el contrario, es indispensable que nos den información y mantener una comunicación constante.</span>
+                                    <li><span style="font-weight: normal;">Todas las personas deben ser filtradas y/o contactadas por usted. Solo debe hacernos llegar las personas que cumplan con el 100% del perfil solicitado en el archivo adjunto enviado por la gestora. Para esto, por favor solicite la cédula con el fin de validar si tienen la edad requerida para el estudio.</span>
+                                    <li><span style="font-weight: normal;">Todos los datos deben ser registrados con la información completa en el archivo adjunto (Excel enviado por la gestora). En respuesta, usted recibirá dentro las 48 horas siguientes la efectividad de los datos por nuestra parte. </span>
+                                    <li><span style="font-weight: normal;">Al interior de La Pipol Opina haremos un filtro más profundo lo que nos permite reservarnos el derecho de inclusión a nuestros estudios y no siempre se podrán dar las razones de negación. </span>
+                                    <li><span style="font-weight: normal;">Si <b>SL RESEARCH COLOMBIA SAS</b> recibe del <b>RECLUTADOR</b> un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span>
+                                </ol>
+                            </div>
+
+                            <!-- Información proyecto DOLOR 40 -->
+                            <div id="info2" class="info-proyecto">
+                                <h3>Información de DOLOR COL AM (40)</h3>
+                                <div class="piezareclu" style="text-align: center;" >
+                                    <img src="./img/piezareclu.jpg" alt="" >
+                                </div>
+                                <a href="./img/piezareclu.jpg" download="piezareclu.jpg" class="buttona">
+                                    Descargar imagen
+                                </a>
+                                <label>Por favor infórmele al participante las siguientes condiciones y la metodología del estudio: </label>
+                                <ol style="font-weight: bold;"> 
+                                    <li><span style="font-weight: normal;">El estudio es de manera presencial.</span>
+                                    <li><span style="font-weight: normal;">Deberá proporcionar una foto del producto que usa.</span>
+                                    <li><span style="font-weight: normal;">Deberá proporcionar una foto legible donde se evidencie la dirección de residencia con el NSE, y este no debe superar los 2 meses de facturación.</span>
+                                    <li><span style="font-weight: normal;">Deberá proporcionar la fecha de expedición del documento de identidad.</span>
+                                    <li><span style="font-weight: normal;">Se realizará un filtro por parte de la gestora que durará aproximadamente 15 minutos si es efectivo, en caso contrario, durará menos.</span>
+                                    <li><span style="font-weight: normal;">La profesional realizará el encuadre que durará aproximadamente 20 minutos.</span>
+                                    <li><span style="font-weight: normal;">La medico agendará visita para valoración inicial y entrega de las muestras que durará aproximadamente 20 minutos.</span>
+                                    <li><span style="font-weight: normal;">La profesional realizará el estatus de recibo que durará aproximadamente 7 minutos.</span>
+                                    <li><span style="font-weight: normal;">Se realizarán 2 evaluaciones, una por cada muestra, con un tiempo aproximado de evaluación de 10 minutos. Debe presentar dos episodios por cada rotulo. </span>
+                                    <li><span style="font-weight: normal;">Se agendará una entrevista final con previo acuerdo entre la/el participante y la profesional. La entrevista presencial tiene un tiempo aproximado de hora y cuarenta minutos.</span>
+                                </ol>
+                                <label>Tener en cuenta que:</label>
+                                <ol style="font-weight: bold;">
+                                    <li><span style="font-weight: normal;">En ninguna de sus publicaciones debe incluir nada relacionado con la marca, como el nombre mismo, logos, dibujos o eslogan.</span>
+                                    <li><span style="font-weight: normal;">Es su responsabilidad que todos quienes la apoyen en esta labor no utilicen ninguna referencia a la marca.</span>
+                                    <li><span style="font-weight: normal;">A los participantes se les dará un <b>INCENTIVO</b>,no lo podrá publicar.</span>
+                                    <li><span style="font-weight: normal;">No podrán decir que recibirán el producto como regalo. Un regalo no requiere devolución de información. En este tipo de metodología, por el contrario, es indispensable que nos den información y mantener una comunicación constante.</span>
+                                    <li><span style="font-weight: normal;">Todas las personas deben ser filtradas y/o contactadas por usted. Solo debe hacernos llegar las personas que cumplan con el 100% del perfil solicitado en el archivo adjunto enviado por la gestora. Para esto, por favor solicite la cédula con el fin de validar si tienen la edad requerida para el estudio.</span>
+                                    <li><span style="font-weight: normal;">Todos los datos deben ser registrados con la información completa en el archivo adjunto (Excel enviado por la gestora). En respuesta, usted recibirá dentro las 48 horas siguientes la efectividad de los datos por nuestra parte. </span>
+                                    <li><span style="font-weight: normal;">Al interior de La Pipol Opina haremos un filtro más profundo lo que nos permite reservarnos el derecho de inclusión a nuestros estudios y no siempre se podrán dar las razones de negación. </span>
+                                    <li><span style="font-weight: normal;">Si <b>SL RESEARCH COLOMBIA SAS</b> recibe del <b>RECLUTADOR</b> un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span>
+                                </ol>
+                            </div>
+
+                            <!-- Información proyecto BEBIDA NOCHE NP (3) -->
+                            <div id="info3" class="info-proyecto">
+                                <h3>Información de BEBIDA NOCHE NP (3)</h3>
+                                <div class="bebidanoche" style="text-align: center;" >
+                                    <img src="./img/bebidanoche.png" alt="" >
+                                </div>
+                                <a href="./img/bebidanoche.png" download="bebidanoche.png" class="buttona">
+                                    Descargar imagen
+                                </a>
+                                <label>Infórmele al participante las condiciones y la metodología del estudio: </label>
+                                <ol style="font-weight: bold;"> 
+                                    <li><span style="font-weight: normal;">El estudio es de manera <b>presencial.</b></span>
+                                    <li><span style="font-weight: normal;">Se le solicitará una foto legible donde se evidencie la dirección de residencia con el NSE y este no deberá superar los 2 meses de facturación.</span>
+                                    <li><span style="font-weight: normal;">Se realiza un filtro por parte de la gestora que dura aproximadamente 15 minutos si es efectivo, en caso contrario durara menos. </span>
+                                    <li><span style="font-weight: normal;">La profesional realiza el encuadre que dura aproximadamente 20 minutos. </span>
+                                    <li><span style="font-weight: normal;">Cuando el producto le llega al participante la profesional realiza estatus de recibo que dura aproximadamente 7 minutos. </span>
+                                    <li><span style="font-weight: normal;">Se realiza seguimiento a la aparición del síntoma cada 7 días vía WhatsApp (los días jueves) </span>
+                                    <li><span style="font-weight: normal;">Inicia uso de la primera muestra, realizan evaluación monadica que dura 10 minutos, se programa para entrevista inicial presencial y entrega de segunda muestra. tiempo aproximado de 1 hora y 30 minutos. </span>
+                                    <li><span style="font-weight: normal;">Se realiza seguimiento a la aparición del síntoma cada 7 días vía WhatsApp (los días jueves) </span>
+                                    <li><span style="font-weight: normal;">Inicia uso de la segunda muestra, realizan evaluación monadica que dura 10 minutos, y se agenda acuerdo entre participante y profesional, entrevista final presencial tiempo aproximado 1 hora y 45 minutos. </span>
+                                </ol>
+                                <label>Tener en cuenta que:</label>
+                                <ol style="font-weight: bold;">
+                                    <li><span style="font-weight: normal;">En ninguna de sus publicaciones se deberá incluir nada relacionado con la marca, como lo son el nombre mismo, logos, dibujos, eslogan.</span>
+                                    <li><span style="font-weight: normal;">Es su responsabilidad que todos quienes la apoyen esta labor no utilicen ninguna referencia a la marca.</span>
+                                    <li><span style="font-weight: normal;">A los participantes se les dará un <b>INCENTIVO</b>,no lo podrá publicar.</span>
+                                    <li><span style="font-weight: normal;">No se debe hablar de que recibirá producto como regalo … un regalo no requiere devolución de información, en este tipo de metodología por el contrario es indispensable que nos den información y estar en constante comunicación. </span>
+                                    <li><span style="font-weight: normal;">Todas las personas deberán ser filtradas y/o contactadas por usted, solo deberá hacernos llegar las personas que cumplan con el 100% del perfil solicitado en el archivo adjunto enviado por la gestora. Para esto por favor solicitar la cedula con el fin de que validen si tiene la edad requerida para el estudio.</span>
+                                    <li><span style="font-weight: normal;">Todos los datos deberán ser registrados con la información completa en el archivo adjunto (Excel enviado por la gestora), en este mismo documento usted exigirá la efectividad de los datos por nuestra parte.</span>
+                                    <li><span style="font-weight: normal;">Al interior de La Pipol Opina haremos un filtro más profundo lo que nos permite reservarnos el derecho de inclusión a nuestros estudios y no siempre se podrán dar las razones de negación.</span>
+                                    <li><span style="font-weight: normal;">Si <b>SL RESEARCH COLOMBIA SAS</b> recibe del <b>RECLUTADOR</b> un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span>
+                                </ol>
+                            </div>
+
+                            <!-- Información proyecto RN (3) -->
+                            <div id="info4" class="info-proyecto">
+                                <h3>Información de RN (3)</h3>
+                                <div class="piezareclu" style="text-align: center;" >
+                                    <img src="./img/Reclutadoras RN (3).png" alt="" >
+                                </div>
+                                <a href="./img/Reclutadoras RN (3).png" download="piezareclu.jpg" class="buttona">
+                                    Descargar imagen
+                                </a>
+                                    <br>
+                                    <br>
+                            <h3 style="font-weight: bold;">Condiciones y requisitos del participante</h3>
+                                <ol style="font-weight: bold;"> 
+                                    <li><span style="font-weight: normal;">
+                                        <strong>Modalidad del estudio</strong>, 
+                                        De manera presencial y virtual. Se requiere disponibilidad de tiempo y 
+                                        acceso a internet, manejo de Teams, Zoom, Skype y/o WhatsApp.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        <strong>Foto del producto</strong>, 
+                                        Proporcionar una foto del producto que usa.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        <strong>Foto del comprobante de residencia</strong>, 
+                                        Proporcionar una foto legible que evidencie la dirección de residencia
+                                        con el NSE, no mayor a 2 meses de facturación.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        <strong>Foto del registro civil y/o certificado de nacido vivo</strong>,
+                                        Proporcionar una foto del registro civil y/o certificado de nacido vivo.
+                                    </span>
+                                </ol>
+
+                            <h3 style="font-weight: bold;">Metodología y tiempos del proyecto</h3>
+                                <ol style="font-weight: bold;">
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Filtro inicial por parte de la gestora</strong>, 
+                                            Aproximadamente 15 minutos (menos si no es efectivo).
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Encuadre profesional</strong>, 
+                                            15 minutos.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Entrevista inicial</strong>, 
+                                            Es de manera virtual, aproximadamente 1 hora.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Estatus de recibo del producto</strong>, 
+                                            7 minutos.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Uso de muestra y evaluación</strong>, 
+                                            Uso de muestra por 5 días. Una evaluación telefónica de
+                                            15 minutos y reconfirman agenda de entrevista final.
+                                        </span>
+                                    </li>   
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Entrevista final</strong>, 
+                                            Es de manera presencial con acuerdo previo, aproximadamente 1 hora.
+                                        </span>
+                                    </li>
+                                </ol>
+                            <label>Reclutadora Tener en cuenta:</label>
+                                <ol style="font-weight: bold;">
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Marca en publicaciones</strong>, No incluir nada relacionado con la marca (nombre, logos, dibujos, eslóganes).
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Responsabilidad del apoyo</strong>, Asegurarse de que quienes la apoyen no utilicen referencias a la marca.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Incentivo</strong>, No publicar el incentivo, según lo indica la pieza gráfica adjunta.
+                                        </span>
+                                    </li>    
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Producto como regalo</strong>, No decir que el producto es un regalo; es necesario recibir información
+                                            y mantener comunicación constante.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;"><
+                                            strong>Filtrado y contacto de personas</>, Solo enviar personas que cumplan con el 100% del perfil.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Registro de datos</strong>, Registrar los datos completos en el archivo adjunto (Excel enviado por la gestora).</strong>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Filtro interno</strong>, La Pipol Opina realizara un filtro más profundo; nos reservamos el derecho de inclusión sin 
+                                            necesidad de justificar negaciones.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            <strong>Re-contacto y pago</strong>, SL RESEARCH COLOMBIA SAS recibe del RECLUTADOR un dato gestionando de un perfil que ya se encuentra en la base de datos de
+                                            la empresa, este se considerá como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento
+                                            siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio.
+                                            En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.
+                                        </span>
+                                    </li>
+                                </ol>
+                            </div>
+
+                            <!-- Información proyecto T4E0 (46) -->
+                            <div id="info5" class="info-proyecto">
+                                <h3>Información de T4E0 (46)</h3>
+                                <div class="piezareclu" style="text-align: center;" >
+                                    <img src="./img/reclutadoras etapa cero.png" alt="" >
+                                </div>
+                                <a href="./img/reclutadoras etapa cero.png" download="piezareclu.jpg" class="buttona">
+                                    Descargar imagen
+                                </a>
+                                    <br>
+                                    <br>
+
+                                <label>Por favor infórmele al participante las siguientes condiciones y la metodología del estudio:</label>
+                                <ol style="font-weight: bold;"> 
+                                    <li><span style="font-weight: normal;">
+                                        El estudio es de manera presencial. Por ende, los participantes deben contar con disponibilidad de tiempo 
+                                        y/o tenerr acceso a internet .
+                                    </span>
+                                    <li><span style="font-weight: normal;"> 
+                                        Deberá proporcionar una foto del producto que usa o va a usar.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        Deberá proporcionar una foto legible donde se evidencie la dirección de residencia con el NSE, 
+                                        y este no debe superar los 2 meses de facturación. 
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        Deberá proporcionar una foto del carnet prenatal y/o certificado de nacido vivo.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        Se realizará un filtro por parte de la gestora que dura aproximadamente 15 minutos si es efectivo, en caso contrario, durará menos. 
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        La profesional realizará el encuadre que durará aproximadamente 20 minutos.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        La profesional agendará una entrevista inicial que durará aproximadamente 1 hora o 1 hora y media.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        Cuando el producto llegue al participante, la profesional realizará el estatus de recibo que durará 
+                                        aproximadamente 7 minutos.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        Se inicia el uso de las muestras por 3 días, para un total de 6 días de uso. Se realizarán 2 evaluaciones, 
+                                        una por cada muestra, con un tiempo aproximado de evaluación de 10 minutos.
+                                    </span>
+                                    <li><span style="font-weight: normal;">
+                                        Se agendará una entrevista final con previo acuerdo entre participante y la profesional. 
+                                        La entrevista presencial tiempo aproximado 1 hora, hora y media o 2 horas. 
+                                    </span>
+   
+                                </ol>
+
+                            <label>Tener en cuenta que:</label>
+                                <ol style="font-weight: bold;">
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            En ninguna de sus publicaciones debe incluir nada relacionado con la marca, como el nombre mismo, logos, dibujos o eslogan.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            Es su responsabilidad que todos quienes la apoyen en esta labor no utilicen ninguna referencia a la marca.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            A los participantes se les dará un INCENTIVO, no lo podrá publicar o como lo indica la pieza gráfica adjunta.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            No podrán decir que recibirán el producto como regalo. Un regalo no requiere devolución de información. En este tipo de metodología, 
+                                            por el contrario, es indispensable que nos den información y mantener una comunicación constante.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            Todas las personas deben ser filtradas y/o contactadas por usted. Solo debe hacernos llegar las personas que cumplan con el 100% 
+                                            del perfil solicitado en el archivo adjunto enviado por la gestora. Para esto, por favor solicite la cédula con el fin de validar si 
+                                            tienen la edad requerida para el estudio.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            Todos los datos deben ser registrados con la información completa en el archivo adjunto (Excel enviado por la gestora). En respuesta, 
+                                            usted recibirá dentro las 48 horas siguientes la efectividad de los datos por nuestra parte.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            Al interior de La Pipol Opina haremos un filtro más profundo lo que nos permite reservarnos el derecho de inclusión a nuestros estudios 
+                                            y no siempre se podrán dar las razones de negación.
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span style="font-weight: normal;">
+                                            SL RESEARCH COLOMBIA SAS recibe del RECLUTADOR un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, 
+                                            este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50%
+                                            del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, 
+                                            no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.
+                                        </span>
+                                    </li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Primer elemento del acordeón -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            FORMULARIO
+                        </button>
+                    </h2>
+
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
+                        <div class="accordion-body">
+
+                            <!-- Formulario de DERMA PROTECT AD (32)  -->
+                            <section id="form1" class="formulario-proyecto">
+                                <h2>FORMULARIO DE REGISTRO DERMA PROTECT AD (32)</h2>
+                                <form class="form-container">
+                                    <div class="form-container">
+                                        <div class="form-column">
+                                            <label for="fecha_envio">Fecha de envío</label>
+                                            <input type="date" id="fecha_envio" name="fecha_envio">
+                                    
+                                            <label for="nombre">Nombre completo</label>
+                                            <input type="text" id="nombre" name="nombre" placeholder="Nombre completo...">
+                                    
+                                            <label for="tipo">Tipo de documento</label>
+                                            <select id="tipo" name="tipo">
+                                                <option disabled value="" selected>Seleccione un tipo de documento</option>
+                                                <option value="CEDULA DE CIUDADANIA">Cédula de ciudadanía</option>
+                                                <option value="CEDULA DE EXTRANJERIA">Cédula de extranjería</option>
+                                                <option value="PASAPORTE">Pasaporte</option>
+                                            </select>
+                                    
+                                            <label for="inputDoc">Número de documento</label>
+                                            <input type="number" id="inputDoc" name="documento" placeholder="Número documento...">
+                                    
+                                            <label for="inputAge">Edad</label>
+                                            <input type="text" id="inputAge" name="edad" placeholder="Edad...">
+                                    
+                                            <label for="genero">Género</label>
+                                            <select id="genero" name="genero">
+                                                <option disabled value="" selected>Seleccione un género</option>
+                                                <option value="MASCULINO">Masculino</option>
+                                                <option value="FEMENINO">Femenino</option>
+                                            </select>
+                                    
+                                            <label for="direccion">Dirección</label>
+                                            <input type="text" id="direccion" name="direccion" placeholder="Dirección...">
+                                    
+                                            <label for="barrio">Barrio</label>
+                                            <input type="text" id="barrio" name="barrio" placeholder="Barrio...">
+                                        </div>
+                                    
+                                        <div class="form-column">
+                                            <label for="nse">NSE</label>
+                                            <input type="number" id="nse" name="nse" placeholder="NSE...">
+                                    
+                                            <label for="telefono">Teléfono</label>
+                                            <div class="form-row">
+                                                <input type="number" id="telefono1" name="telefono1" placeholder="Teléfono 1">
+                                                <input type="number" id="telefono2" name="telefono2" placeholder="Teléfono 2">
+                                            </div>
+                                    
+                                            <label for="Nombrebebe">Nombre del Bebé</label>
+                                            <input type="text" id="Nombrebebe" name="Nombrebebe" placeholder="Nombre del Bebé...">
+                                    
+                                            <label for="generobebe">Género del Bebé</label>
+                                            <select id="generobebe" name="generobebe">
+                                                <option disabled value="" selected>Seleccione un género</option>
+                                                <option value="MASCULINO">Masculino</option>
+                                                <option value="FEMENINO">Femenino</option>
+                                            </select>
+                                    
+                                            <label for="Usucremaati">Usuaria Crema Antipañalitis</label>
+                                            <input type="text" id="Usucremaati" name="Usucremaati" placeholder="Usuaria">
+                                    
+                                        </div>
+                                    </div>
+                                    
+                                  
+                                </form>
+                                <button type="submit">Registrar Participante</button>
+                            </section>
+
+                        <!-- Formulario de DOLOR COL AM (40)  -->
+                            <section id="form2" class="formulario-proyecto">
+                                <h2>FORMULARIO DE REGISTRO DOLOR COL AM (40)</h2>
+                                <form class="form-container">
+                                    <div class="form-column">
+                                        <h3>Datos Demográficos</h3>
+                                        <label for="nombre">Nombre completo</label>
+                                        <input type="text" id="nombre" name="nombre" placeholder="Nombre completo... " required>
+                                        <label for="documento">Número de documento</label>
+                                        <input type="number" id="documento" name="documento" placeholder="Número documento..." required>
+                                        <label for="edad">Edad</label>
+                                        <input type="number" id="edad" name="edad" placeholder="Edad..." required>
+                                        <label for="genero">Género</label>
+                                        <input type="genero" id="genero" name="genero" placeholder="Género..." required>
+                                        <label for="direccion">Dirección</label>
+                                        <input type="direccion" id="direccion" name="direccion" placeholder="Dirección..." required>
+                                        <label for="barrio">Barrio</label>
+                                        <input type="barrio" id="barrio" name="barrio" placeholder="Barrio..." required>
+                                        <label for="nse">NSE</label>
+                                        <input type="number" id="nse" name="nse" placeholder="NSE..." required>
+                                        <label for="telefono">Teléfono</label>
+                                        <input type="number" id="telefono1" name="telefono1" placeholder="Teléfono..." required>
+                                        <input type="number" id="telefono2" name="telefono2" placeholder="Teléfono..." required>
+                                        <label for="partedol">Parte del cuerpo que presenta dolor</label>
+                                        <input type="partedol" id="partedol" name="partedol" placeholder="Parte..." required>
+                                        <label for="marcaus">Marca usuaria</label>
+                                        <input type="marcaus" id="marcaus" name="marcaus" placeholder="Marca usuaria..." required>
+                                        <label for="presentacion">Presentación</label>
+                                        <input type="presentacion" id="presentacion" name="presentacion" placeholder="Presentación..." required>
+                                        <label for="frecuenciaepi">Frecuencia de espisodios presentados en la semana</label>
+                                        <input type="frecuenciaepi" id="frecuenciaepi" name="frecuenciaepi" placeholder="Frecuencia..." required>
+                                    </div>
+                                </form>
+                                <button type="submit">Registrar Participante</button>
+                            </section>
+
+                        <!-- Formulario de BEBIDA NOCHE NP (3)  -->
+                        <section id="form3" class="formulario-proyecto">
+                            <h2>FORMULARIO DE REGISTRO BEBIDA NOCHE NP (3)</h2>
+                            <form class="form-container">
+                                <div class="form-column">
+                                    <h3>Datos Demográficos</h3>
+                                    <label for="nombre">Fecha de envío</label>
+                                    <input type="date" id="fechaenvio" name="fechaenvio" placeholder="Fecha de envío... " required>
+                                    <label for="nombre">Nombre completo</label>
+                                    <input type="text" id="nombre" name="nombre" placeholder="Nombre completo... " required>
+                                    <label for="documento">Número de documento</label>
+                                    <input type="number" id="documento" name="documento" placeholder="Número documento..." required>
+                                    <label for="edad">Edad</label>
+                                    <input type="number" id="edad" name="edad" placeholder="Edad..." required>
+                                    <label for="genero">Género</label>
+                                    <input type="genero" id="genero" name="genero" placeholder="Género..." required>
+                                    <label for="direccion">Dirección</label>
+                                    <input type="direccion" id="direccion" name="direccion" placeholder="Dirección..." required>
+                                    <label for="barrio">Barrio</label>
+                                    <input type="barrio" id="barrio" name="barrio" placeholder="Barrio..." required>
+                                    <label for="nse">NSE</label>
+                                    <input type="number" id="nse" name="nse" placeholder="NSE..." required>
+                                    <label for="telefono">Teléfono</label>
+                                    <input type="number" id="telefono1" name="telefono1" placeholder="Teléfono..." required>
+                                    <input type="number" id="telefono2" name="telefono2" placeholder="Teléfono..." required>
+                                    <label for="marcaus">Marca usuaria</label>
+                                    <input type="marcaus" id="marcaus" name="marcaus" placeholder="Marca usuaria..." required>
+                                </div>
+                            </form>
+                            <button type="submit">Registrar Participante</button>
+                        </section>
+
+                        <!-- Formulario de RN (3)  -->
+                            <section id="form4" class="formulario-proyecto">
+                                <h2>FORMULARIO DE REGISTRO RN (3)</h2>
+                                <form class="form-container">
+                                    <div class="form-column">
+                                        <h3>Datos Demográficos</h3>
+                                        <label for="nombre">Nombre completo</label>
+                                        <input type="text" id="nombre" name="nombre" placeholder="Nombre completo... ">
+
+
+                                        <label for="tipo">Tipo de documento</label>
+                                        <select id="tipo" name="tipo">
+                                            <option disabled value="" selected>Seleccione un tipo de documento</option>
+                                            <option value="CEDULA DE CIUDADANIA">Cédula de ciudadanía</option>
+                                            <option value="CEDULA DE EXTRANJERIA">Cédula de extranjería</option>
+                                            <option value="PASAPORTE">Pasporte</option>
+                                        </select>
+
+                                        <label for="inputDocRn">Número de documento</label>
+                                        <input type="number" id="inputDocRn" max="5" name="documento" placeholder="Número documento...">
+
+                                        <label for="inputAgeRn">Edad</label>
+                                        <input type="number" id="inputAgeRn" name="edad" placeholder="Edad...">
+
+                                        <label for="genero">Género</label>
+                                        <select id="genero" name="genero">
+                                            <option disabled value="" selected>Seleccione un género</option>
+                                            <option value="MASCULINO">Masculino</option>
+                                            <option value="FEMENINO">Femenino</option>
+                                        </select>
+
+                                        <label for="direccion">Dirección</label>
+                                        <input type="text" id="direccion" name="direccion" placeholder="Dirección...">
+                                
+                                        <label for="barrio">Barrio</label>
+                                        <input type="text" id="barrio" name="barrio" placeholder="Barrio...">
+
+                                        <label for="nse">NSE</label>
+                                        <input type="number" id="nse" name="nse" placeholder="NSE...">
+
+                                        <label for="telefono">Teléfono</label>
+                                        <input type="number" id="telefono1" name="telefono1" placeholder="Teléfono...1">
+                                        <input type="number" id="telefono2" name="telefono2" placeholder="Teléfono...2">
+
+                                        <label for="fechaN">Fecha de nacimiento del bebé</label>
+                                        <input type="date" id="fechaN" name="fechaN">
+
+                                        <label for="inputAgeB">Edad del bebé</label>
+                                        <input type="number" id="inputAgeB" name="edadB" placeholder="Edad bebé...">
+
+                                        <label for="marcaRn">Marca de toallitas humedas</label>
+                                        <input type="text" id="marcaRn" name="marcaRn" placeholder="Marca...">
+
+                                    </div>
+                                  
+                                </form>
+                                <button type="submit">Registrar Participante</button>
+                            </section>
+
+                        <!-- Formulario de T4E0 (46)  -->
+                            <section id="form5" class="formulario-proyecto">
+                                <h2>FORMULARIO DE REGISTRO T4E0 (46)</h2>
+                                <form class="form-container">
+                                    <div class="form-column">
+                                        <h3>Datos Demográficos</h3>
+                                        <label for="nombre">Nombre completo</label>
+                                        <input type="text" id="nombre" name="nombre" placeholder="Nombre completo... ">
+
+                                        <label for="tipo">Tipo de documento</label>
+                                        <select id="tipo" name="tipo">
+                                            <option disabled value="" selected>Seleccione un tipo de documento</option>
+                                            <option value="CEDULA DE CIUDADANIA">Cédula de ciudadanía</option>
+                                            <option value="CEDULA DE EXTRANJERIA">Cédula de extranjería</option>
+                                            <option value="PASAPORTE">Pasporte</option>
+                                        </select>
+
+                                        <label for="inputDocT4">Número de documento</label>
+                                        <input type="number" id="inputDocT4" max="5" name="documento" placeholder="Número documento...">
+
+                                        <label for="inputAgeT4">Edad</label>
+                                        <input type="number" id="inputAgeT4" name="edad" placeholder="Edad...">
+
+                                        <label for="genero">Género</label>
+                                        <select id="genero" name="genero">
+                                            <option disabled value="" selected>Seleccione un género</option>
+                                            <option value="MASCULINO">Masculino</option>
+                                            <option value="FEMENINO">Femenino</option>
+                                        </select>
+
+                                        <label for="direccion">Dirección</label>
+                                        <input type="text" id="direccion" name="direccion" placeholder="Dirección...">
+                                
+                                        <label for="barrio">Barrio</label>
+                                        <input type="text" id="barrio" name="barrio" placeholder="Barrio...">
+
+                                        <label for="nse">NSE</label>
+                                        <input type="number" id="nse" name="nse" placeholder="NSE...">
+
+                                        <label for="telefono">Teléfono</label>
+                                        <input type="number" id="telefono1" name="telefono1" placeholder="Teléfono...1">
+                                        <input type="number" id="telefono2" name="telefono2" placeholder="Teléfono...2">
+
+                                        <label for="gestacion">Semanas de gestación</label>
+                                        <input type="number" id="gestacion" name="gestacion" placeholder="Semanas de gestacion..">
+
+                                        <label for="fechaP">Fecha posible parto</label>
+                                        <input type="date" id="fechaP" name="fechaP">
+                                        
+                                        <label for="marca">Usuario (Marca de pañal)</label>
+                                        <input type="text" id="marca" name="marca" placeholder="Marca de pañal..">
+
+                                        <label for="marca">Presentación</label>
+                                        <input type="text" id="marca" name="marca" placeholder="Presentación..">
+
+                                        <label for="generoB">Género del bebé</label>
+                                        <select id="generoB" name="generoB">
+                                            <option disabled value="" selected>Seleccione género del bebé</option>
+                                            <option value="MASCULINO">Masculino</option>
+                                            <option value="FEMENINO">Femenino</option>
+                                        </select>
+
+                                        <label for="peso">Peso del bebé</label>
+                                        <input type="text" id="peso" name="peso" placeholder="Peso de bebé..">
+
+                                        <label for="ciudad">Ciudad</label>
+                                        <input type="text" id="ciudad" name="ciudad" placeholder="Ciudad...">
+                                    </div>
+                                  
+                                </form>
+                                <button type="submit">Registrar Participante</button>
+                            </section>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acordeon de seguimientos -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            SEGUIMIENTO
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
+                        <div class="accordion-body">
+                            <section id="seguimiento">
+                                <h2>SEGUIMIENTO DE PARTICIPANTES</h2>
+                                <div class="filters">
+                                    <div>
+                                        <label for="estado">Estado</label>
+                                        <select id="estado" name="estado">
+                                            <option value="">TODOS</option>
+                                            <option value="P_PACIENTE_FALLECIDO">P_PACIENTE_FALLECIDO</option>
+                                            <option value="NO_CONTESTA">NO_CONTESTA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Teléfono</th>
+                                            <th>Email</th>
+                                            <th>Estado</th>
+                                            <th>Fecha de Registro</th>
+                                            <th>Proyecto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>David Pabón</td>
+                                            <td>3105557890</td>
+                                            <td>pabonear@gmail.com</td>
+                                            <td>P_PACIENTE_FALLECIDO</td>
+                                            <td>12/11/2024</td>
+                                            <td>DOLOR COL AM (40)</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Juan Bacca</td>
+                                            <td>3125545891</td>
+                                            <td>juan12z@gmail.com</td>
+                                            <td>NO_CONTESTA</td>
+                                            <td>05/04/2025</td>
+                                            <td>T4E0 (46)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    </section>
+        
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+
+    // Ya tienes esto:
+    const loggedIn = sessionStorage.getItem("loggedIn");
+
+    if (!loggedIn) {
+        window.location.href = "login.html";
+    }
+
+    // Esto es lo nuevo:
+    function logout() {
+        sessionStorage.clear(); // Elimina toda la sesión
+        window.location.href = "login.html"; // Redirige al login
+    }
+
+
+    // Espera a que el contenido del DOM esté completamente cargado antes de ejecutar el script
+    document.addEventListener("DOMContentLoaded", function () {
+        
+        // Selecciona el elemento <select> con id="proyectos"
+        const selectProyectos = document.getElementById("proyectos");
+
+        // Selecciona todos los botones del acordeón (para expandir/cerrar secciones)
+        const accordionButtons = document.querySelectorAll(".accordion-button");
+
+        // Selecciona todos los elementos del acordeón que contienen el contenido
+        const accordionItems = document.querySelectorAll(".accordion-collapse");
+
+        // Selecciona todos los formularios de proyectos
+        const formularios = document.querySelectorAll(".formulario-proyecto");
+
+        // Selecciona todos los elementos que muestran información adicional de los proyectos
+        const infoProyectos = document.querySelectorAll(".info-proyecto");
+
+        /**
+         * Habilita o deshabilita los botones del acordeón
+         * @param {boolean} enable - Si es true, habilita los botones; si es false, los deshabilita.
+         */
+        function toggleAccordionButtons(enable) {
+            accordionButtons.forEach(button => {
+                button.disabled = !enable; // Habilita o deshabilita el botón
+                button.classList.toggle("disabled", !enable); // Agrega o quita la clase "disabled"
+            });
+        }
+
+        /**
+         * Cierra todos los acordeones eliminando la clase "show" de sus elementos
+         */
+        function closeAccordions() {
+            accordionItems.forEach(item => {
+                item.classList.remove("show"); // Oculta el contenido del acordeón
+            });
+        }
+
+        // Al cargar la página, deshabilita los botones del acordeón
+        toggleAccordionButtons(false);
+
+        // Agrega un evento que se activa cuando cambia la selección en el <select>
+        selectProyectos.addEventListener("change", function () {
+            const proyectoSeleccionado = this.value; // Obtiene el valor seleccionado en el <select>
+
+            if (proyectoSeleccionado) {
+                toggleAccordionButtons(true); // Habilita los botones si hay un proyecto seleccionado
+            } else {
+                toggleAccordionButtons(false); // Deshabilita los botones si no hay selección
+                closeAccordions(); // Cierra los acordeones
+            }
+
+            // Oculta todos los formularios y la información de proyectos
+            formularios.forEach(form => form.style.display = "none");
+            infoProyectos.forEach(info => info.style.display = "none");
+
+            // Si hay un proyecto seleccionado, muestra su formulario y su información
+            if (proyectoSeleccionado) {
+                document.getElementById(proyectoSeleccionado).style.display = "block"; // Muestra el formulario del proyecto seleccionado
+                document.getElementById("info" + proyectoSeleccionado.slice(-1)).style.display = "block"; // Muestra la información del proyecto
+            }
+        });
+
+        // Cierra los acordeones al cargar la página
+        closeAccordions();
+    });
+
+    // Funcion para controlar el maximo del numero de documento
+    document.getElementById("inputDoc").addEventListener("input", function () {
+        if (this.value.length > 12) {
+            this.value = this.value.slice(0, 12); // Limita a 12 caracteres
+        }
+    });
+
+    document.getElementById("inputAge").addEventListener("input", function () {
+        let valor = this.value.replace(/\D/g, ""); // Elimina caracteres no numéricos
+        
+        if (valor.length > 3) valor = valor.slice(0, 3); // Limita a 3 caracteres
+
+        let edadMaxima = 122; // Edad máxima permitida en Colombia
+
+        // Permite que el usuario borre el input sin bloquearlo
+        if (valor !== "" && parseInt(valor) > edadMaxima) {
+            valor = edadMaxima;
+        }
+
+        this.value = valor;
+    });
+
+    document.getElementById("nse").addEventListener("input", function () {
+        let valor = parseInt(this.value, 10);
+
+        // Si el número está fuera del rango, lo corrige automáticamente
+        if (valor < 1) this.value = 1;
+        if (valor > 6) this.value = 6;
+    });
+
+    // Funcion para controlar el maximo del numero telefonico 1
+    document.getElementById("telefono1").addEventListener("input", function () {
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10); // Limita a 3 caracteres
+        }
+    });
+    // Funcion para controlar el maximo del numero telefonico 2
+    document.getElementById("telefono2").addEventListener("input", function () {
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10); // Limita a 3 caracteres
+        }
+    });
+
+    // Para prohibir nuemeros en la zona del dolor
+    document.getElementById("partedol").addEventListener("input", function (event) {
+        // Elimina cualquier número ingresado
+        this.value = this.value.replace(/\d/g, '');
+    });
+
+    // Funcion para filtros de estado - seguimiento
+    document.addEventListener("DOMContentLoaded", function () {
+        const filtroEstado = document.getElementById("estado");
+        const filas = document.querySelectorAll("tbody tr");
+
+        filtroEstado.addEventListener("change", function () {
+            const estadoSeleccionado = filtroEstado.value.toLowerCase();
+
+            filas.forEach(fila => {
+                const estado = fila.children[3].textContent.trim().toLowerCase();
+                
+                // Mostrar todas las filas si no hay filtro seleccionado
+                if (estadoSeleccionado === "" || estado.includes(estadoSeleccionado)) {
+                    fila.style.display = "";
+                } else {
+                    fila.style.display = "none";
+                }
+            });
+        });
+    });
+
+// *------------**************-------------------*
+    // Funciónes para RN (3)
+    document.getElementById("inputAgeRn").addEventListener("input", function () {
+        let valor = this.value.replace(/\D/g, ""); // Elimina caracteres no numéricos
+        
+        if (valor.length > 3) valor = valor.slice(0, 3); // Limita a 3 caracteres
+
+        let edadMaxima = 122; // Edad máxima permitida en Colombia
+
+        // Permite que el usuario borre el input sin bloquearlo
+        if (valor !== "" && parseInt(valor) > edadMaxima) {
+            valor = edadMaxima;
+        }
+
+        this.value = valor;
+    });
+    document.getElementById("inputAgeB").addEventListener("input", function () {
+        let valor = this.value.replace(/\D/g, ""); // Elimina caracteres no numéricos
+        
+        if (valor.length > 1) valor = valor.slice(0, 1); // Limita a 3 caracteres
+
+        let edadMaxima = 3; // Edad máxima permitida en Colombia
+
+        // Permite que el usuario borre el input sin bloquearlo
+        if (valor !== "" && parseInt(valor) > edadMaxima) {
+            valor = edadMaxima;
+        }
+
+        this.value = valor;
+    });
+    document.getElementById("inputDocRn").addEventListener("input", function () {
+        if (this.value.length > 12) {
+            this.value = this.value.slice(0, 12); // Limita a 12 caracteres
+        }
+    });
+
+    // *------------**************-------------------*
+    // Funciónes para T4E0 (46)
+    document.getElementById("inputAgeT4").addEventListener("input", function () {
+        let valor = this.value.replace(/\D/g, ""); // Elimina caracteres no numéricos
+        
+        if (valor.length > 3) valor = valor.slice(0, 3); // Limita a 3 caracteres
+
+        let edadMaxima = 122; // Edad máxima permitida en Colombia
+
+        // Permite que el usuario borre el input sin bloquearlo
+        if (valor !== "" && parseInt(valor) > edadMaxima) {
+            valor = edadMaxima;
+        }
+
+        this.value = valor;
+    });
+    document.getElementById("inputDocT4").addEventListener("input", function () {
+        if (this.value.length > 12) {
+            this.value = this.value.slice(0, 12); // Limita a 12 caracteres
+        }
+    });
+    
+    // Validación del peso del bebé
+    document.getElementById("peso").addEventListener("input", function () {
+        let valor = this.value.replace(/\D/g, ""); // Elimina caracteres no numéricos
+        
+        if (valor !== "") {
+            let peso = parseInt(valor);
+
+            if (peso < 2) peso = 2;  // Mínimo permitido
+            if (peso > 20) peso = 20; // Máximo permitido
+
+            this.value = peso;
+        }
+    });
+    </script>
+</body>
+</html>
