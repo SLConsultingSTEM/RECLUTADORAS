@@ -2,7 +2,7 @@
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   min-height: 100dvh;
   overflow: hidden;
   background: #fff;
@@ -35,7 +35,7 @@
   align-content: center;
   justify-items: center;
   overflow: visible;
-  padding: clamp(1.75rem, 5vh, 3rem) clamp(1.5rem, 4vw, 3.25rem);
+  padding: clamp(1.75rem, 5vh, 3rem) clamp(1.35rem, 3.2vw, 2.5rem);
   color: rgba(248, 242, 255, 0.94);
   background: transparent;
   --floating-label-bg: #3a1760;
@@ -47,7 +47,7 @@
 .panelInner {
   position: relative;
   z-index: 2;
-  width: min(100%, 24rem);
+  width: min(100%, 21rem);
   display: grid;
   justify-items: stretch;
   gap: clamp(1.35rem, 2.8vh, 1.85rem);
@@ -499,7 +499,7 @@
   }
 
   .panelInner {
-    width: min(100%, 24rem);
+    width: min(100%, 21rem);
   }
 }
 

@@ -26,6 +26,7 @@
   justify-items: stretch;
   gap: clamp(1.25rem, 3vh, 2rem);
   width: min(100%, 28rem);
+  translate: clamp(-3.25rem, -4.5vw, -1.75rem) 0;
   opacity: 0;
 }
 
@@ -41,7 +42,6 @@
   position: relative;
   width: 100%;
   height: min(58vh, 520px);
-  filter: drop-shadow(0 16px 36px rgba(103, 41, 140, 0.1));
 }
 
 .visualLite .stage {
@@ -57,26 +57,25 @@
   object-fit: contain;
   object-position: left center;
   opacity: 0;
-  transform: translateY(10px) scale(0.985);
+  z-index: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 16px 36px rgba(103, 41, 140, 0.1));
   transition:
-    opacity 900ms var(--ease-out),
-    transform 900ms var(--ease-out);
-  contain: paint;
-  content-visibility: auto;
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+  transform: translateY(6px);
 }
 
 .artActive {
   opacity: 1;
-  transform: translateY(0) scale(1);
   z-index: 1;
-  will-change: opacity, transform;
+  transform: translateY(0);
 }
 
 .visualLite .art,
 .visualLite .artActive {
   transition: none;
   transform: none;
-  will-change: auto;
 }
 
 .copyBlock {
@@ -206,6 +205,7 @@
   .content {
     gap: 0.85rem;
     width: min(100%, 22rem);
+    translate: none;
   }
 
   .stage {

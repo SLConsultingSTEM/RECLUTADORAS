@@ -2,11 +2,11 @@ import { useId } from 'react'
 import styles from './LoginDivider.module.css'
 
 /**
- * Borde en S suave (viewBox 0 0 100 100).
+ * Borde en S moderada (viewBox 0 0 100 100).
  * Más puntos de control = silueta más limpia al escalar.
  */
 const PATH =
-  'M9.5 0 C8.2 8 6.8 16 7.2 24 C7.6 32 9.8 40 9.2 48 C8.6 56 6.6 64 7.4 72 C8.2 80 10.2 88 9.5 100 L100 100 L100 0 Z'
+  'M10.5 0 C8.8 8 5.2 16 5.8 24 C6.4 32 11.2 40 10.8 48 C10.4 56 5.2 64 6.2 72 C7.2 80 12 88 10.5 100 L100 100 L100 0 Z'
 
 /**
  * Fondo del panel derecho con borde orgánico fijo.

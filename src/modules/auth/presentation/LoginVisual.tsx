@@ -86,27 +86,23 @@ export function LoginVisual() {
   const current = slides[active] ?? slides[0]
   if (!current) return null
 
-  const previousIndex = (active - 1 + slides.length) % slides.length
-  const visibleIndexes = lite || slides.length < 2 ? [active] : [...new Set([previousIndex, active])]
-
   return (
     <aside className={`${styles.visual} ${ready ? styles.visualReady : ''} ${lite ? styles.visualLite : ''}`}>
       <div className={`${styles.content} ${ready ? styles.contentReady : ''}`}>
         <div className={styles.stage} aria-hidden="true">
-          {visibleIndexes.map((index) => {
-            const slide = slides[index]
-            if (!slide) return null
+          {slides.map((slide, index) => {
+            const isActive = ready && index === active
             return (
               <img
                 key={slide.src}
                 src={slide.src}
                 alt=""
-                className={`${styles.art} ${ready && index === active ? styles.artActive : ''}`}
+                className={`${styles.art} ${isActive ? styles.artActive : ''}`}
                 width={640}
                 height={640}
                 decoding="async"
-                fetchPriority={index === active ? 'high' : 'low'}
-                loading={index === active ? 'eager' : 'lazy'}
+                fetchPriority={isActive ? 'high' : 'low'}
+                loading="eager"
               />
             )
           })}
