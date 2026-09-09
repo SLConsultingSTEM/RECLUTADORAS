@@ -1,0 +1,559 @@
+.page {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #fff;
+}
+
+.pageExiting {
+  pointer-events: none;
+  animation: pageExit 720ms var(--ease-out) forwards;
+}
+
+@keyframes pageExit {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.97) translateY(-10px);
+    filter: blur(6px);
+  }
+}
+
+.panel {
+  position: relative;
+  z-index: 2;
+  grid-column: 2;
+  min-height: 100dvh;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  overflow: visible;
+  padding: clamp(1.75rem, 5vh, 3rem) clamp(1.5rem, 4vw, 3.25rem);
+  color: rgba(248, 242, 255, 0.94);
+  background: transparent;
+  --floating-label-bg: #3a1760;
+  opacity: 0;
+  animation: panelEnter 640ms var(--ease-out) 60ms both;
+}
+
+/* Columna de contenido: sin tarjeta glass, paralela al panel blanco */
+.panelInner {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 24rem);
+  display: grid;
+  justify-items: stretch;
+  gap: clamp(1.35rem, 2.8vh, 1.85rem);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.rise {
+  animation: formRise 580ms var(--ease-out) both;
+}
+
+.d1 {
+  animation-delay: 140ms;
+}
+.d2 {
+  animation-delay: 220ms;
+}
+.d3 {
+  animation-delay: 300ms;
+}
+.d4 {
+  animation-delay: 380ms;
+}
+.d5 {
+  animation-delay: 460ms;
+}
+.d6 {
+  animation-delay: 540ms;
+}
+
+@keyframes panelEnter {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes formRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  display: grid;
+  justify-items: center;
+  gap: 1.15rem;
+  text-align: center;
+}
+
+.logo {
+  width: min(280px, 92%);
+  height: auto;
+  max-height: 72px;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.96;
+}
+
+.headerText {
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: center;
+}
+
+.headerText h1 {
+  margin: 0;
+  font-size: clamp(1.55rem, 2.5vw, 1.85rem);
+  letter-spacing: -0.025em;
+  color: #fff;
+  line-height: 1.15;
+  font-weight: 750;
+}
+
+.headerText p {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: rgba(248, 242, 255, 0.72);
+}
+
+.form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form input {
+  min-height: 52px;
+  border-radius: 12px;
+  background: rgba(12, 4, 28, 0.28);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  box-shadow: none;
+  transition:
+    border-color 220ms var(--ease-out),
+    background-color 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out);
+}
+
+.form input::placeholder {
+  color: transparent;
+}
+
+.form input:hover:not(:focus) {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(12, 4, 28, 0.34);
+}
+
+.form input:focus {
+  border-color: rgba(232, 210, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(212, 179, 240, 0.22);
+  background: rgba(12, 4, 28, 0.4);
+}
+
+.form input:-webkit-autofill,
+.form input:-webkit-autofill:hover,
+.form input:-webkit-autofill:focus,
+.form input:-webkit-autofill:active {
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+  box-shadow: 0 0 0 1000px #2a1148 inset;
+  transition: background-color 99999s ease-out;
+  border-color: rgba(212, 179, 240, 0.45);
+}
+
+/* Floating: placeholder suave; activo = encima del borde */
+.form :global([class*='floatingLabel']) {
+  color: rgba(248, 242, 255, 0.55);
+}
+
+.form :global([class*='floatingLabel'] [class*='required']) {
+  color: inherit;
+  opacity: 0.75;
+}
+
+.form :global(input:focus ~ [class*='floatingLabel']),
+.form :global(input:not(:placeholder-shown) ~ [class*='floatingLabel']),
+.form :global(input:-webkit-autofill ~ [class*='floatingLabel']),
+.form :global([class*='isFloated'] ~ [class*='floatingLabel']),
+.form :global([class*='floatingActive'] [class*='floatingLabel']) {
+  color: #e8d6ff;
+  background: radial-gradient(
+    closest-side,
+    var(--floating-label-bg) 0%,
+    var(--floating-label-bg) 62%,
+    transparent 100%
+  );
+}
+
+.form :global(input:focus ~ [class*='floatingLabel'] [class*='required']),
+.form :global(input:not(:placeholder-shown) ~ [class*='floatingLabel'] [class*='required']),
+.form :global(input:-webkit-autofill ~ [class*='floatingLabel'] [class*='required']),
+.form :global([class*='isFloated'] ~ [class*='floatingLabel'] [class*='required']),
+.form :global([class*='floatingActive'] [class*='floatingLabel'] [class*='required']) {
+  color: inherit;
+  opacity: 0.85;
+}
+
+/* Estado incorrecto / correcto — contraste alto sobre el panel morado */
+.form :global([class*='hasError'] [class*='floatingLabel']),
+.form :global([class*='floatingActive'][class*='hasError'] [class*='floatingLabel']),
+.form :global([class*='hasError'] input:focus ~ [class*='floatingLabel']),
+.form :global([class*='hasError'] input:not(:placeholder-shown) ~ [class*='floatingLabel']),
+.form :global([class*='hasError'] input:-webkit-autofill ~ [class*='floatingLabel']),
+.form :global([class*='hasError'] [class*='isFloated'] ~ [class*='floatingLabel']),
+.form :global([class*='hasError'][class*='floatingActive'] [class*='floatingLabel']) {
+  color: #ff6b81 !important;
+}
+
+.form :global([class*='hasValid'] [class*='floatingLabel']),
+.form :global([class*='floatingActive'][class*='hasValid'] [class*='floatingLabel']),
+.form :global([class*='hasValid'] input:focus ~ [class*='floatingLabel']),
+.form :global([class*='hasValid'] input:not(:placeholder-shown) ~ [class*='floatingLabel']),
+.form :global([class*='hasValid'] input:-webkit-autofill ~ [class*='floatingLabel']),
+.form :global([class*='hasValid'] [class*='isFloated'] ~ [class*='floatingLabel']),
+.form :global([class*='hasValid'][class*='floatingActive'] [class*='floatingLabel']) {
+  color: #5dffb0 !important;
+}
+
+.form :global(input[class*='invalid']),
+.form :global(input[class*='invalid']:hover),
+.form :global(input[class*='invalid']:focus),
+.form :global(input[class*='invalid']:-webkit-autofill),
+.form :global(input[class*='invalid']:-webkit-autofill:focus) {
+  border-color: #ff6b81 !important;
+  box-shadow: 0 0 0 3px rgba(255, 107, 129, 0.28) !important;
+}
+
+.form :global(input[class*='valid']),
+.form :global(input[class*='valid']:hover),
+.form :global(input[class*='valid']:focus),
+.form :global(input[class*='valid']:-webkit-autofill),
+.form :global(input[class*='valid']:-webkit-autofill:focus) {
+  border-color: #5dffb0 !important;
+  box-shadow: 0 0 0 3px rgba(93, 255, 176, 0.22) !important;
+}
+
+.form label > div > span:first-child {
+  color: rgba(212, 179, 240, 0.72);
+}
+
+.form label > div:focus-within:not(:has(input:-webkit-autofill)) > span:first-child {
+  color: #fff;
+}
+
+/* Autofill: iconos siempre visibles por encima del input */
+.form :global([class*='controlWrap']:has(input:-webkit-autofill) [class*='adornment']),
+.form :global([class*='controlWrap']:has(input:-webkit-autofill) [class*='endAdornment']),
+.form :global([class*='floatingActive'] [class*='adornment']),
+.form :global([class*='floatingActive'] [class*='endAdornment']) {
+  z-index: 5;
+  opacity: 1;
+  visibility: visible;
+  color: #d4b3f0;
+}
+
+.form :global([class*='controlWrap']:has(input:-webkit-autofill) [class*='endAdornment'] button) {
+  color: #d4b3f0;
+}
+
+/* Iconos de error/éxito después de las reglas generales para que sí se vean */
+.form :global([class*='hasError'] [class*='adornment']),
+.form :global([class*='floatingActive'][class*='hasError'] [class*='adornment']),
+.form :global([class*='hasError'][class*='floatingActive'] [class*='adornment']) {
+  color: #ff6b81 !important;
+}
+
+.form :global([class*='hasValid'] [class*='adornment']),
+.form :global([class*='floatingActive'][class*='hasValid'] [class*='adornment']),
+.form :global([class*='hasValid'][class*='floatingActive'] [class*='adornment']) {
+  color: #5dffb0 !important;
+}
+
+.reveal {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(212, 179, 240, 0.8);
+  cursor: pointer;
+  transition:
+    color var(--motion-fast) var(--ease-out),
+    background-color var(--motion-fast) var(--ease-out);
+}
+
+.reveal:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.actions {
+  padding-top: 0.45rem;
+}
+
+/* Spinner del botón de login más visible sobre glass */
+.actions button :global([class*='spinner']) {
+  width: 17px;
+  height: 17px;
+  border-width: 2.5px;
+  opacity: 1;
+  animation: loginButtonSpin 0.65s linear infinite;
+}
+
+@keyframes loginButtonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.actions button {
+  min-height: 50px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.1) 42%,
+    rgba(155, 81, 224, 0.22) 100%
+  );
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 -1px 0 rgba(103, 41, 140, 0.15) inset,
+    0 12px 28px rgba(12, 4, 28, 0.28);
+  transition:
+    background 220ms var(--ease-out),
+    border-color 220ms var(--ease-out),
+    box-shadow 220ms var(--ease-out),
+    backdrop-filter 220ms var(--ease-out);
+}
+
+.actions button:not(:disabled):hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.14) 45%,
+    rgba(181, 122, 232, 0.28) 100%
+  );
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 -1px 0 rgba(103, 41, 140, 0.12) inset,
+    0 16px 32px rgba(12, 4, 28, 0.34);
+  transform: none;
+  filter: none;
+}
+
+.actions button:not(:disabled):active {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(155, 81, 224, 0.2) 100%
+  );
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 8px 18px rgba(12, 4, 28, 0.26);
+  transform: none;
+  filter: none;
+}
+
+.actions button:disabled {
+  opacity: 0.72;
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 8px 18px rgba(12, 4, 28, 0.2);
+  filter: none;
+  cursor: wait;
+}
+
+.buttonMessage {
+  display: inline-block;
+  animation: buttonMessageIn 480ms var(--ease-out) both;
+}
+
+@keyframes buttonMessageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.buttonSuccess {
+  border-color: rgba(180, 255, 220, 0.45) !important;
+  background: linear-gradient(
+    155deg,
+    rgba(180, 255, 220, 0.28) 0%,
+    rgba(255, 255, 255, 0.12) 45%,
+    rgba(80, 200, 150, 0.24) 100%
+  ) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 12px 28px rgba(12, 4, 28, 0.28) !important;
+  color: #fff !important;
+  opacity: 1 !important;
+  cursor: default !important;
+  animation: successGlow 1.4s ease-in-out both;
+}
+
+.buttonLeaving {
+  animation: leavingPulse 620ms var(--ease-out) both !important;
+}
+
+@keyframes successGlow {
+  0% {
+    transform: scale(0.98);
+    filter: brightness(0.95);
+  }
+  40% {
+    transform: scale(1.02);
+    filter: brightness(1.08);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes leavingPulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+}
+
+.footer {
+  margin: 0;
+  text-align: center;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: rgba(248, 242, 255, 0.48);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+    overflow: auto;
+    align-content: start;
+  }
+
+  .panel {
+    grid-column: 1;
+    min-height: auto;
+    justify-items: center;
+    padding: 1.25rem 1.25rem 2.5rem;
+    background:
+      radial-gradient(ellipse 70% 55% at 22% 12%, rgba(155, 81, 224, 0.35), transparent 58%),
+      radial-gradient(ellipse 55% 50% at 92% 78%, rgba(103, 41, 140, 0.4), transparent 52%),
+      linear-gradient(155deg, #1c0b2e 0%, #3a1760 42%, #67298c 100%);
+  }
+
+  .panelInner {
+    width: min(100%, 24rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 1rem 1rem 2rem;
+  }
+
+  .panelInner {
+    gap: 1.25rem;
+  }
+
+  .logo {
+    width: min(240px, 88%);
+    max-height: 64px;
+  }
+
+  .headerText h1 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .rise,
+  .pageExiting,
+  .buttonMessage,
+  .buttonSuccess,
+  .buttonLeaving {
+    opacity: 1;
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+
+  .actions button :global([class*='spinner']) {
+    animation: loginButtonSpin 0.65s linear infinite;
+  }
+
+  .actions button {
+    transition: none;
+  }
+
+  .actions button:not(:disabled):hover {
+    transform: none;
+  }
+}
+
+@supports not (min-height: 100dvh) {
+  .page {
+    min-height: 100vh;
+  }
+
+  .panel {
+    min-height: 100vh;
+  }
+}

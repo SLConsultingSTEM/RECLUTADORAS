@@ -1,0 +1,334 @@
+:root {
+  /* Marca OPTIMASL */
+  --color-primary: #67298c;
+  --color-primary-hover: #531f73;
+  --color-primary-soft: #f3eaf8;
+  --color-primary-ring: rgba(103, 41, 140, 0.18);
+  --color-brand: var(--color-primary);
+  --color-brand-hover: var(--color-primary-hover);
+
+  /* Superficies */
+  --color-white: #ffffff;
+  --color-bg: #f4f4f4;
+  --color-bg-elevated: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f0f0f0;
+  --color-surface-low: #ebebeb;
+  --color-surface-strong: #e2e2e2;
+  --color-border: #e6e6e6;
+  --color-border-strong: #d4d4d4;
+  --color-border-accent: color-mix(in srgb, var(--color-primary) 26%, var(--color-border));
+
+  /* Texto */
+  --color-ink: #1a1224;
+  --color-text: #1a1224;
+  --color-muted: #6b6574;
+  --color-muted-soft: #9a94a3;
+  --color-muted-deep: #3d3648;
+  --color-slate: #6b6574;
+  --color-slate-deep: #1a1224;
+
+  /* Estados */
+  --color-success: #0f9f6e;
+  --color-success-soft: #eafaf3;
+  --color-success-text: #08624a;
+
+  --color-info: #5b6fd6;
+  --color-info-soft: #eef0fb;
+  --color-info-text: #3d4aa8;
+
+  --color-accent: #9b51e0;
+  --color-accent-hover: #8239c9;
+  --color-accent-soft: #f4e9fc;
+  --color-accent-text: #6b2fa8;
+
+  --color-warning: #d98404;
+  --color-warning-soft: #fdf6e7;
+  --color-warning-text: #93610a;
+
+  --color-danger: #d6455a;
+  --color-danger-soft: #fdeef0;
+  --color-danger-text: #9b2033;
+
+  /* Alias de compatibilidad */
+  --color-amber: var(--color-warning);
+  --color-amber-soft: var(--color-warning-soft);
+  --color-teal: var(--color-success);
+  --color-teal-soft: var(--color-success-soft);
+  --color-coral: var(--color-danger);
+  --color-coral-soft: var(--color-danger-soft);
+  --color-highlight: var(--color-accent);
+
+  --color-sidebar: #ffffff;
+  --color-sidebar-elevated: #ffffff;
+  --color-sidebar-text: #3d3648;
+  --color-sidebar-muted: #9a94a3;
+  --color-sidebar-border: #e6e6e6;
+  --color-sidebar-active: var(--color-primary-soft);
+  --color-sidebar-active-text: var(--color-primary);
+
+  /* Formas */
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Elevación */
+  --shadow-xs: 0 1px 2px rgba(16, 23, 40, 0.04);
+  --shadow-sm: 0 1px 3px rgba(16, 23, 40, 0.06), 0 1px 2px rgba(16, 23, 40, 0.03);
+  --shadow-md: 0 8px 24px rgba(16, 23, 40, 0.07);
+  --shadow-lg: 0 18px 40px rgba(16, 23, 40, 0.1);
+  --shadow-ring: 0 0 0 4px var(--color-primary-ring);
+
+  /* Tipografía */
+  --font-sans: 'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.86rem;
+  --text-base: 0.95rem;
+  --text-lg: 1.08rem;
+  --text-xl: 1.3rem;
+  --text-2xl: 1.6rem;
+
+  /* Espaciado */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 2.75rem;
+  --space-8: 3.5rem;
+
+  /* Layout */
+  --sidebar-width: 258px;
+  --sidebar-collapsed: 78px;
+  --topbar-height: 72px;
+  --content-width: 1280px;
+  --grid-gap: clamp(0.85rem, 1.4vw, 1.25rem);
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --motion-fast: 160ms;
+  --motion: 240ms;
+  --motion-slow: 380ms;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 var(--space-2);
+  line-height: 1.28;
+  color: var(--color-ink);
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: var(--text-2xl);
+}
+
+h2 {
+  font-size: var(--text-xl);
+}
+
+h3 {
+  font-size: var(--text-lg);
+}
+
+h4 {
+  font-size: var(--text-base);
+}
+
+p {
+  margin: 0 0 var(--space-3);
+  color: var(--color-muted);
+}
+
+ul,
+ol {
+  margin: 0 0 var(--space-3);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+  border-radius: var(--radius-xs);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-primary) 15%, white);
+  color: var(--color-ink);
+}
+
+::placeholder {
+  color: var(--color-muted-soft);
+}
+
+/* Scrollbar discreta */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-soft);
+  background-clip: content-box;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Animaciones compartidas */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

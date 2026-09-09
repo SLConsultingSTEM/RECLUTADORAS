@@ -1,0 +1,284 @@
+.field {
+  display: grid;
+  gap: 0.35rem;
+  width: 100%;
+  text-align: left;
+  min-width: 0;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-sm);
+  color: var(--color-muted-deep);
+  font-weight: 650;
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.floatingLabel .required {
+  margin-left: 0.2rem;
+  color: inherit;
+  opacity: 0.7;
+  font-size: 0.95em;
+  font-weight: 700;
+}
+
+.controlWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+}
+
+.adornment {
+  position: absolute;
+  left: 0.75rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-muted-soft);
+  pointer-events: none;
+  transition: color var(--motion-fast) var(--ease-out);
+}
+
+.control {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out),
+    background-color var(--motion-fast) var(--ease-out);
+}
+
+.withAdornment {
+  padding-left: 2.4rem;
+}
+
+.withEndAdornment {
+  padding-right: 2.6rem;
+}
+
+.control:hover:not(:focus) {
+  border-color: var(--color-muted-soft);
+}
+
+.control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-ring);
+}
+
+.controlWrap:focus-within .adornment {
+  color: var(--color-primary);
+}
+
+.endAdornment {
+  position: absolute;
+  right: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  z-index: 3;
+}
+
+/* Floating label */
+.fieldFloating {
+  gap: 0;
+  padding-top: 0.65rem;
+}
+
+.floatingWrap {
+  position: relative;
+  min-height: 52px;
+}
+
+.floatingControl {
+  min-height: 52px;
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+}
+
+.floatingLabel {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  max-width: calc(100% - 3.5rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.92rem;
+  font-weight: 550;
+  line-height: 1;
+  color: var(--color-muted-soft);
+  pointer-events: none;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  transition:
+    top 220ms var(--ease-out),
+    left 220ms var(--ease-out),
+    transform 220ms var(--ease-out),
+    font-size 220ms var(--ease-out),
+    color 220ms var(--ease-out),
+    background-color 220ms var(--ease-out),
+    padding 220ms var(--ease-out);
+}
+
+.floatingLabelWithIcon {
+  left: 2.4rem;
+  max-width: calc(100% - 5rem);
+}
+
+/* Chrome dispara esta animación al autofill */
+@keyframes onAutoFillStart {
+  from {
+    opacity: 0.99;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.floatingControl:-webkit-autofill {
+  animation-name: onAutoFillStart;
+  animation-duration: 0.001s;
+}
+
+/* Sale del input y queda arriba — por focus, valor o autofill */
+.floatingControl:focus ~ .floatingLabel,
+.floatingControl:not(:placeholder-shown) ~ .floatingLabel,
+.floatingControl:-webkit-autofill ~ .floatingLabel,
+.isFloated ~ .floatingLabel,
+.floatingActive .floatingLabel {
+  top: 0;
+  left: 0.5rem;
+  max-width: calc(100% - 1.5rem);
+  padding: 0.12rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--color-primary);
+  /* Halo suave sin esquinas visibles */
+  background: radial-gradient(
+    closest-side,
+    var(--floating-label-bg, var(--color-surface)) 0%,
+    var(--floating-label-bg, var(--color-surface)) 62%,
+    transparent 100%
+  );
+  transform: translateY(-50%);
+}
+
+.floatingWrap:focus-within .adornment,
+.controlWrap:has(.floatingControl:-webkit-autofill) .adornment,
+.controlWrap:has(.isFloated) .adornment {
+  color: var(--color-primary);
+}
+
+/* Autofill no debe tapar iconos (Chrome pinta encima del padding) */
+.controlWrap:has(input:-webkit-autofill) .adornment,
+.controlWrap:has(input:-webkit-autofill) .endAdornment {
+  z-index: 4;
+  opacity: 1;
+  visibility: visible;
+}
+
+.select {
+  appearance: none;
+  padding-right: 2.4rem;
+  cursor: pointer;
+}
+
+.selectArrow {
+  position: absolute;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-muted-soft);
+  pointer-events: none;
+  transition: transform var(--motion-fast) var(--ease-out);
+}
+
+.controlWrap:focus-within .selectArrow {
+  color: var(--color-primary);
+  transform: translateY(1px);
+}
+
+.invalid {
+  border-color: color-mix(in srgb, var(--color-danger) 55%, var(--color-border-strong));
+}
+
+.invalid:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-danger) 14%, transparent);
+}
+
+.valid {
+  border-color: color-mix(in srgb, var(--color-success) 55%, var(--color-border-strong));
+}
+
+.valid:focus {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-success) 14%, transparent);
+}
+
+.hasError .floatingLabel,
+.floatingActive.hasError .floatingLabel,
+.hasError .floatingControl:focus ~ .floatingLabel,
+.hasError .isFloated ~ .floatingLabel,
+.fieldError .label {
+  color: var(--color-danger-text);
+}
+
+.hasValid .floatingLabel,
+.floatingActive.hasValid .floatingLabel,
+.hasValid .floatingControl:focus ~ .floatingLabel,
+.hasValid .isFloated ~ .floatingLabel,
+.fieldValid .label {
+  color: var(--color-success-text);
+}
+
+.hasError .adornment {
+  color: var(--color-danger);
+}
+
+.hasValid .adornment {
+  color: var(--color-success);
+}
+
+.hint,
+.error {
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+.hint {
+  color: var(--color-muted-soft);
+}
+
+.error {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.35rem;
+  color: var(--color-danger-text);
+  font-weight: 600;
+  animation: fadeIn var(--motion-fast) var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floatingLabel {
+    transition: none;
+  }
+}
