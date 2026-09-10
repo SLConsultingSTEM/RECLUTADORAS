@@ -23,6 +23,16 @@ function BaseIcon({ size = 20, children, ...rest }: IconProps & { children: Reac
 
 /* Navegación principal */
 
+export function IconHome(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="m4 11 8-7.2L20 11" />
+      <path d="M6.2 9.8v9.4h11.6V9.8" />
+      <path d="M10 19.2v-5.2h4v5.2" />
+    </BaseIcon>
+  )
+}
+
 export function IconGauge(props: IconProps) {
   return (
     <BaseIcon {...props}>
@@ -77,6 +87,16 @@ export function IconMenu(props: IconProps) {
       <path d="M4 7h16" />
       <path d="M4 12h11" />
       <path d="M4 17h16" />
+    </BaseIcon>
+  )
+}
+
+export function IconPanelLeft(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <rect x="3.5" y="4" width="17" height="16" rx="2.2" />
+      <path d="M9.5 4v16" />
+      <rect x="3.5" y="4" width="6" height="16" rx="2.2" fill="currentColor" stroke="none" />
     </BaseIcon>
   )
 }
@@ -374,5 +394,4 @@ export function IconSparkles(props: IconProps) {
 
 export const IconPanel = IconGauge
 export const IconSettings = IconSliders
-export const IconHome = IconGauge
 export const IconFilter = IconListChecks

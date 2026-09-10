@@ -59,13 +59,14 @@
   --color-coral-soft: var(--color-danger-soft);
   --color-highlight: var(--color-accent);
 
-  --color-sidebar: #ffffff;
-  --color-sidebar-elevated: #ffffff;
-  --color-sidebar-text: #3d3648;
-  --color-sidebar-muted: #9a94a3;
-  --color-sidebar-border: #e6e6e6;
-  --color-sidebar-active: var(--color-primary-soft);
-  --color-sidebar-active-text: var(--color-primary);
+  /* Sidebar — mismo púrpura del panel de login (#3a1760) */
+  --color-sidebar: #3a1760;
+  --color-sidebar-elevated: color-mix(in srgb, var(--color-sidebar) 82%, black);
+  --color-sidebar-text: rgba(248, 242, 255, 0.72);
+  --color-sidebar-muted: rgba(248, 242, 255, 0.48);
+  --color-sidebar-border: rgba(255, 255, 255, 0.12);
+  --color-sidebar-active: #f0f0f2;
+  --color-sidebar-active-text: var(--color-ink);
 
   /* Formas */
   --radius-xs: 8px;
@@ -102,7 +103,7 @@
   --space-8: 3.5rem;
 
   /* Layout */
-  --sidebar-width: 258px;
+  --sidebar-width: 78px;
   --sidebar-collapsed: 78px;
   --topbar-height: 72px;
   --content-width: 1280px;
