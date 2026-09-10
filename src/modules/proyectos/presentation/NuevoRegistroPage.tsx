@@ -1,36 +1,69 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useProyectos } from '@modules/proyectos/presentation/useProyectos'
 import { ProyectoInfo } from '@modules/proyectos/presentation/ProyectoInfo'
 import { ProyectoForm } from '@modules/proyectos/presentation/ProyectoForm'
 import { Alert } from '@shared/ui/Alert'
-import { Card, CardHeader } from '@shared/ui/Card'
+import { Card } from '@shared/ui/Card'
 import { EmptyState } from '@shared/ui/EmptyState'
 import { Select } from '@shared/ui/Select'
-import { LoadingRow, SkeletonBlock } from '@shared/ui/Skeleton'
-import {
-  IconFileText,
-  IconFolder,
-  IconInbox,
-  IconUserPlus,
-} from '@shared/ui/icons'
+import { SkeletonBlock } from '@shared/ui/Skeleton'
+import { SoftSwap } from '@shared/ui/SoftSwap'
+import { Tabs } from '@shared/ui/Tabs'
+import { IconFolder, IconImage, IconInbox, IconUserPlus } from '@shared/ui/icons'
 import styles from './HomePage.module.css'
 
+type ReclutarView = 'info' | 'registrar'
+
+function parseView(value: string | null): ReclutarView {
+  return value === 'registrar' ? 'registrar' : 'info'
+}
+
 export function NuevoRegistroPage() {
-  const { proyectos, selected, selectedId, setSelectedId, loading, error } = useProyectos()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const view = parseView(searchParams.get('vista'))
+  const preferredProyectoId = searchParams.get('proyecto') ?? undefined
+  const { proyectos, selected, selectedId, setSelectedId, loading, error } =
+    useProyectos(preferredProyectoId)
+
+  function syncParams(patch: { vista?: ReclutarView; proyecto?: string }) {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        const before = next.toString()
+        if (patch.proyecto) next.set('proyecto', patch.proyecto)
+        if (patch.vista === 'registrar') next.set('vista', 'registrar')
+        if (patch.vista === 'info') next.delete('vista')
+        if (next.toString() === before) return prev
+        return next
+      },
+      { replace: true },
+    )
+  }
+
+  useEffect(() => {
+    if (!selectedId) return
+    if (searchParams.get('proyecto') === selectedId) return
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (next.get('proyecto') === selectedId) return prev
+        next.set('proyecto', selectedId)
+        return next
+      },
+      { replace: true },
+    )
+  }, [selectedId, searchParams, setSearchParams])
+
+  const showEmpty = !loading && proyectos.length === 0 && !error
+  const showShell = loading || proyectos.length > 0
+  const contentReady = !loading && Boolean(selected)
 
   return (
     <div className={styles.page}>
       {error ? <Alert tone="error" title="No se pudo cargar">{error}</Alert> : null}
 
-      {loading ? (
-        <div className={styles.workspaceStack}>
-          <SkeletonBlock height={88} />
-          <SkeletonBlock height={320} />
-          <LoadingRow label="Cargando proyectos…" />
-        </div>
-      ) : null}
-
-      {!loading && proyectos.length === 0 && !error ? (
+      {showEmpty ? (
         <EmptyState
           icon={<IconInbox size={22} />}
           title="Sin proyectos activos"
@@ -43,63 +76,78 @@ export function NuevoRegistroPage() {
         />
       ) : null}
 
-      {!loading && proyectos.length > 0 ? (
-        <>
-          <section className={styles.toolbar}>
-            <div className={styles.toolbarCopy}>
-              <span className={styles.toolbarLabel}>Reclutar</span>
-              <h2 className={styles.toolbarTitle}>
-                {selected?.nombre ?? 'Elige un proyecto'}
-              </h2>
-            </div>
+      {showShell ? (
+        <Card className={styles.workspaceCard}>
+          <div className={`${styles.workspaceSwitch} ${styles.workspaceSwitchSplit}`}>
+            <Tabs
+              label="Vista de reclutamiento"
+              active={view}
+              onChange={(id) => {
+                const nextView = id as ReclutarView
+                syncParams({
+                  vista: nextView,
+                  proyecto: selectedId || undefined,
+                })
+              }}
+              items={[
+                {
+                  id: 'info',
+                  label: 'Información',
+                  icon: <IconImage size={16} />,
+                },
+                {
+                  id: 'registrar',
+                  label: 'Registrar',
+                  icon: <IconUserPlus size={16} />,
+                },
+              ]}
+            />
 
-            <div className={styles.toolbarActions}>
-              <div className={styles.selector}>
+            <div className={styles.workspaceSelector}>
+              {contentReady ? (
                 <Select
-                  label="Elegir proyecto"
+                  variant="pills"
+                  label="Proyecto"
                   name="proyecto"
                   value={selectedId}
                   icon={<IconFolder size={16} />}
-                  onChange={(e) => setSelectedId(e.target.value)}
+                  onChange={(e) => {
+                    const nextId = e.target.value
+                    setSelectedId(nextId)
+                    syncParams({ proyecto: nextId, vista: 'info' })
+                  }}
                   options={proyectos.map((item) => ({
                     value: item.id,
                     label: item.nombre,
                   }))}
                 />
-              </div>
+              ) : (
+                <SkeletonBlock height={48} />
+              )}
             </div>
-          </section>
+          </div>
 
-          {selected ? (
-            <section className={styles.workspace}>
-              <Card delay={40}>
-                <CardHeader
-                  eyebrow="Proyecto"
-                  title="Información"
-                  icon={<IconFileText size={18} />}
-                />
+          <SoftSwap loading={!contentReady} skeleton={<SkeletonBlock height={320} />}>
+            {selected ? (
+              view === 'info' ? (
                 <ProyectoInfo
+                  key={`info-${selected.id}`}
                   nombre={selected.nombre}
                   descripcionHtml={selected.descripcionHtml}
                   imagenUrl={selected.imagenUrl}
                   imagenNombre={selected.imagenNombre}
-                  ciudades={selected.ciudadesPermitidas}
-                  camposCount={selected.camposEspecificos.length}
-                  compact
+                  mediaOnly
                 />
-              </Card>
-
-              <Card delay={100}>
-                <CardHeader
-                  eyebrow="Formulario"
-                  title="Captura de datos"
-                  icon={<IconUserPlus size={18} />}
+              ) : (
+                <ProyectoForm
+                  key={`form-${selected.id}`}
+                  proyecto={selected}
+                  onRegistered={() => undefined}
                 />
-                <ProyectoForm proyecto={selected} onRegistered={() => undefined} />
-              </Card>
-            </section>
-          ) : null}
-        </>
+              )
+            ) : null}
+          </SoftSwap>
+        </Card>
       ) : null}
     </div>
   )

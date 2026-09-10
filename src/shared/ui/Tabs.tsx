@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import styles from './Tabs.module.css'
 
 export interface TabItem {
@@ -16,6 +16,14 @@ interface TabsProps {
 }
 
 export function Tabs({ items, active, onChange, label = 'Vistas' }: TabsProps) {
+  const [motionReady, setMotionReady] = useState(false)
+
+  useEffect(() => {
+    // Evita que el indicador “viaje” desde 0 al montar (p. ej. recarga en Registrar).
+    const id = window.requestAnimationFrame(() => setMotionReady(true))
+    return () => window.cancelAnimationFrame(id)
+  }, [])
+
   const activeIndex = Math.max(
     0,
     items.findIndex((item) => item.id === active),
@@ -23,11 +31,10 @@ export function Tabs({ items, active, onChange, label = 'Vistas' }: TabsProps) {
 
   return (
     <div
-      className={styles.tabs}
+      className={`${styles.tabs} ${motionReady ? styles.tabsReady : ''}`}
       role="tablist"
       aria-label={label}
       style={{
-        // Desplaza el indicador animado hacia la pestaña activa
         ['--tab-count' as string]: items.length,
         ['--tab-index' as string]: activeIndex,
       }}

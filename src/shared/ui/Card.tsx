@@ -7,13 +7,21 @@ interface CardProps {
   /** Retardo de entrada en ms para escalonar la animación */
   delay?: number
   padding?: 'none' | 'sm' | 'md'
+  /** Desactiva la animación de entrada (evita titileo al recargar). */
+  animate?: boolean
 }
 
-export function Card({ children, className = '', delay = 0, padding = 'md' }: CardProps) {
+export function Card({
+  children,
+  className = '',
+  delay = 0,
+  padding = 'md',
+  animate = false,
+}: CardProps) {
   return (
     <section
-      className={`${styles.card} ${styles[padding]} ${className}`}
-      style={delay ? { animationDelay: `${delay}ms` } : undefined}
+      className={`${styles.card} ${styles[padding]} ${animate ? styles.animated : styles.static} ${className}`}
+      style={animate && delay ? { animationDelay: `${delay}ms` } : undefined}
     >
       {children}
     </section>

@@ -3,6 +3,7 @@ import type {
   ParticipanteRepository,
   RegistrarParticipanteInput,
 } from '@modules/participantes/domain/types'
+import { mockLatency } from '@shared/api/mockLatency'
 
 const STORAGE_KEY = 'reclutadoras.mock.participantes'
 
@@ -11,8 +12,9 @@ const SEED: Participante[] = [
     id: 'p1',
     proyectoId: 'form1',
     nombre: 'Ana Pérez',
+    tipoDocumento: 'CC',
     documento: '1020304050',
-    ciudad: 'Bogota',
+    ciudad: 'Bogotá',
     telefono: '3001234567',
     estado: 'EN_FILTRO',
     camposExtra: { nombre_bebe: 'Mateo' },
@@ -23,6 +25,7 @@ const SEED: Participante[] = [
     id: 'p2',
     proyectoId: 'form2',
     nombre: 'Carlos Ruiz',
+    tipoDocumento: 'CE',
     documento: '1122334455',
     ciudad: 'Barranquilla',
     telefono: '3109876543',
@@ -41,7 +44,11 @@ function readStore(): Participante[] {
   }
 
   try {
-    return JSON.parse(raw) as Participante[]
+    const parsed = JSON.parse(raw) as Participante[]
+    return parsed.map((item) => ({
+      ...item,
+      tipoDocumento: item.tipoDocumento === 'CE' ? 'CE' : 'CC',
+    }))
   } catch {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED))
     return structuredClone(SEED)
@@ -54,6 +61,7 @@ function writeStore(items: Participante[]) {
 
 export class MockParticipanteRepository implements ParticipanteRepository {
   async list(filters?: { proyectoId?: string; estado?: string }): Promise<Participante[]> {
+    await mockLatency()
     return readStore().filter((item) => {
       if (filters?.proyectoId && item.proyectoId !== filters.proyectoId) return false
       if (filters?.estado && item.estado !== filters.estado) return false
@@ -62,10 +70,12 @@ export class MockParticipanteRepository implements ParticipanteRepository {
   }
 
   async register(input: RegistrarParticipanteInput): Promise<Participante> {
+    await mockLatency(160)
     const created: Participante = {
       id: `p-${crypto.randomUUID()}`,
       proyectoId: input.proyectoId,
       nombre: input.nombre,
+      tipoDocumento: input.tipoDocumento,
       documento: input.documento,
       ciudad: input.ciudad,
       telefono: input.telefono,

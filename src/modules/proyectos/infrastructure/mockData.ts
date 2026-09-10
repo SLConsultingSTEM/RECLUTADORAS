@@ -33,7 +33,7 @@ export const MOCK_PROYECTOS: Proyecto[] = [
     `,
     imagenUrl: '/proyectos/RCL.png',
     imagenNombre: 'RCL.png',
-    ciudadesPermitidas: ["Bogota","Cali","Medellin"],
+    ciudadesPermitidas: ["Bogotá","Cali","Medellín"],
     camposEspecificos: [
           {
                 "nombreCampo": "nombre_bebe",
@@ -94,7 +94,7 @@ export const MOCK_PROYECTOS: Proyecto[] = [
     `,
     imagenUrl: '/proyectos/piezareclu.jpg',
     imagenNombre: 'piezareclu.jpg',
-    ciudadesPermitidas: ["Bogota","Medellin","Barranquilla","Cali"],
+    ciudadesPermitidas: ["Bogotá","Medellín","Barranquilla","Cali"],
     camposEspecificos: [
           {
                 "nombreCampo": "parte_dolor",
@@ -156,7 +156,7 @@ export const MOCK_PROYECTOS: Proyecto[] = [
     `,
     imagenUrl: '/proyectos/bebidanoche.png',
     imagenNombre: 'bebidanoche.png',
-    ciudadesPermitidas: ["Bogota","Cali"],
+    ciudadesPermitidas: ["Bogotá","Cali"],
     camposEspecificos: [
           {
                 "nombreCampo": "marca_usuaria",
@@ -206,7 +206,7 @@ export const MOCK_PROYECTOS: Proyecto[] = [
     `,
     imagenUrl: '/proyectos/reclutadoras-rn.png',
     imagenNombre: 'reclutadoras-rn.png',
-    ciudadesPermitidas: ["Bogota","Medellin","Bucaramanga"],
+    ciudadesPermitidas: ["Bogotá","Medellín","Bucaramanga"],
     camposEspecificos: [
           {
                 "nombreCampo": "fecha_nacimiento_bebe",
@@ -265,7 +265,7 @@ export const MOCK_PROYECTOS: Proyecto[] = [
     `,
     imagenUrl: '/proyectos/reclutadoras-etapa-cero.png',
     imagenNombre: 'reclutadoras-etapa-cero.png',
-    ciudadesPermitidas: ["Bogota","Cali","Medellin","Cartagena"],
+    ciudadesPermitidas: ["Bogotá","Cali","Medellín","Cartagena"],
     camposEspecificos: [
           {
                 "nombreCampo": "semanas_gestacion",

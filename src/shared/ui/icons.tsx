@@ -134,6 +134,14 @@ export function IconChevronDown(props: IconProps) {
   )
 }
 
+export function IconCheck(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M5.5 12.5 10 17l8.5-9" />
+    </BaseIcon>
+  )
+}
+
 export function IconArrowRight(props: IconProps) {
   return (
     <BaseIcon {...props}>
@@ -167,6 +175,17 @@ export function IconDownload(props: IconProps) {
       <path d="M12 4v10" />
       <path d="m8 10.5 4 4 4-4" />
       <path d="M5 19h14" />
+    </BaseIcon>
+  )
+}
+
+export function IconMaximize(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M9 4.5H5.5V8" />
+      <path d="M15 4.5h3.5V8" />
+      <path d="M9 19.5H5.5V16" />
+      <path d="M15 19.5h3.5V16" />
     </BaseIcon>
   )
 }
@@ -390,8 +409,15 @@ export function IconSparkles(props: IconProps) {
   )
 }
 
+export function IconFilter(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M4 5h16l-6.2 7.2V19l-3.6-2v-4.8L4 5Z" />
+    </BaseIcon>
+  )
+}
+
 /* Alias de compatibilidad */
 
 export const IconPanel = IconGauge
 export const IconSettings = IconSliders
-export const IconFilter = IconListChecks

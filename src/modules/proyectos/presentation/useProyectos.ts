@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { listProyectosUseCase } from '@modules/proyectos/application/proyectoUseCases'
 import { createProyectoRepository } from '@modules/proyectos/infrastructure/proyectoRepositoryFactory'
 import type { Proyecto } from '@modules/proyectos/domain/types'
 
 const proyectoRepository = createProyectoRepository()
 
-export function useProyectos() {
+export function useProyectos(preferredId?: string) {
+  const preferredIdRef = useRef(preferredId)
   const [proyectos, setProyectos] = useState<Proyecto[]>([])
   const [selectedId, setSelectedId] = useState('')
   const [loading, setLoading] = useState(true)
@@ -21,7 +22,14 @@ export function useProyectos() {
         const activos = data.filter((item) => item.activo)
         if (!active) return
         setProyectos(activos)
-        setSelectedId((prev) => prev || activos[0]?.id || '')
+        const preferred = preferredIdRef.current
+        setSelectedId((prev) => {
+          if (prev && activos.some((item) => item.id === prev)) return prev
+          if (preferred && activos.some((item) => item.id === preferred)) {
+            return preferred
+          }
+          return activos[0]?.id || ''
+        })
       } catch (err) {
         if (active) {
           setError(err instanceof Error ? err.message : 'No se pudieron cargar proyectos')

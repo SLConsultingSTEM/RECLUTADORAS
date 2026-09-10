@@ -1,61 +1,187 @@
 .form {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-5);
+}
+
+.attention {
+  animation: fieldAttention 720ms var(--ease-out) both;
+}
+
+@keyframes fieldAttention {
+  0% {
+    transform: translateY(0);
+    box-shadow: var(--shadow-ring);
+  }
+  35% {
+    transform: translateY(-3px);
+    box-shadow:
+      var(--shadow-ring),
+      0 10px 22px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  }
+  100% {
+    transform: translateY(0);
+    box-shadow: var(--shadow-xs);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attention {
+    animation: none;
+  }
 }
 
 .section {
   display: grid;
-  gap: var(--space-3);
-  padding: var(--space-4);
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface-muted);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  background:
+    linear-gradient(
+      155deg,
+      var(--color-primary-soft) 0%,
+      color-mix(in srgb, var(--color-primary-soft) 70%, var(--color-accent-soft)) 55%,
+      color-mix(in srgb, var(--color-primary-soft) 55%, #fff) 100%
+    );
 }
 
 .sectionHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
 }
 
-.sectionHead h4 {
-  margin: 0;
+.sectionTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.sectionIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.sectionEyebrow {
+  display: block;
   font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-muted-deep);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 750;
   color: var(--color-ink);
+  line-height: 1.35;
 }
 
 .badge {
   display: inline-flex;
   align-items: center;
-  min-height: 24px;
-  padding: 0.15rem 0.55rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.8rem;
   border-radius: var(--radius-pill);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-muted);
-  font-size: var(--text-xs);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 24%, transparent);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
   font-weight: 700;
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-4) var(--space-4);
+  align-items: start;
+}
+
+/* Tipografía de campos alineada con el cuerpo de Información (~1rem) */
+.form label {
+  letter-spacing: 0;
+}
+
+.form label > span:first-child {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.form :is(input, select) {
+  min-height: 48px;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--color-muted-deep);
+  border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  background: #fff;
+  box-shadow: var(--shadow-xs);
+}
+
+.form :is(input, select):hover:not(:focus) {
+  border-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-border));
+  background: #fff;
+}
+
+.form :is(input, select):focus {
+  background: #fff;
+  color: var(--color-ink);
 }
 
 .actions {
   display: flex;
-  justify-content: flex-end;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 26%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      var(--color-primary-soft) 0%,
+      var(--color-accent-soft) 100%
+    );
+}
+
+.actionsHint {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  font-weight: 500;
+  color: var(--color-muted-deep);
+  max-width: 38ch;
 }
 
 @media (max-width: 720px) {
+  .section {
+    padding: var(--space-4);
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
 
   .actions {
-    justify-content: stretch;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .actions button {

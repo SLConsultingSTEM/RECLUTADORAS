@@ -150,9 +150,12 @@ export function Input({
         </span>
       ) : null}
       {control}
-      {!error && hint ? <span className={styles.hint}>{hint}</span> : null}
-      {/* En floating el mensaje va en el label; fuera de floating se muestra debajo. */}
-      {!useFloating && error ? <span className={styles.error}>{error}</span> : null}
+      {!useFloating ? (
+        <span className={styles.message}>
+          {error ? <span className={styles.error}>{error}</span> : null}
+          {!error && hint ? <span className={styles.hint}>{hint}</span> : null}
+        </span>
+      ) : null}
     </label>
   )
 }

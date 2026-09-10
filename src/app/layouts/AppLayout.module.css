@@ -101,10 +101,14 @@
   background: var(--color-sidebar-active);
   pointer-events: none;
   z-index: 0;
+  transition: none;
+  will-change: transform;
+}
+
+.sideNavReady .navIndicator {
   transition:
     transform var(--motion-slow) var(--ease-out),
     opacity var(--motion-fast) var(--ease-out);
-  will-change: transform;
 }
 
 .navIndicatorHidden {
@@ -244,10 +248,19 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 0 var(--space-5);
+  padding: 0 clamp(1.25rem, 4vw, 2.75rem);
   box-sizing: border-box;
   overflow-x: clip;
   background: var(--color-sidebar-active);
+}
+
+.contentColumn {
+  width: min(var(--content-width), 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .topbar {
@@ -259,7 +272,6 @@
   justify-content: space-between;
   gap: var(--space-4);
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
   flex-shrink: 0;
   min-height: 56px;
@@ -289,7 +301,6 @@
   gap: 0.55rem;
   min-width: 0;
   padding: 0.3rem 0.6rem 0.3rem 0.3rem;
-  animation: fadeIn var(--motion) var(--ease-out) both;
 }
 
 .pageIcon {
@@ -379,10 +390,9 @@
 /* ---------- Área principal ---------- */
 
 .main {
-  width: min(var(--content-width), 100%);
-  margin: 0 auto;
-  padding: clamp(0.9rem, 1.8vw, 1.4rem) clamp(0.35rem, 1vw, 0.75rem) var(--space-7);
-  animation: fadeUp var(--motion-slow) var(--ease-out) both;
+  width: 100%;
+  margin: 0;
+  padding: clamp(0.9rem, 1.8vw, 1.4rem) 0 var(--space-7);
   box-sizing: border-box;
 }
 
@@ -448,7 +458,7 @@
 
 @media (max-width: 720px) {
   .content {
-    padding: 0 var(--space-3);
+    padding: 0 var(--space-4);
   }
 
   .topbar {

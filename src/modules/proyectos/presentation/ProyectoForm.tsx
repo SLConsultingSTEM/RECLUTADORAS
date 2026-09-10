@@ -1,5 +1,6 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import type { Proyecto } from '@modules/proyectos/domain/types'
+import { TIPOS_DOCUMENTO, type TipoDocumento } from '@modules/participantes/domain/types'
 import { buildParticipanteSchema } from '@modules/participantes/application/participanteSchema'
 import { registerParticipanteUseCase } from '@modules/participantes/application/participanteUseCases'
 import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
@@ -8,10 +9,53 @@ import { Alert } from '@shared/ui/Alert'
 import { Button } from '@shared/ui/Button'
 import { Input } from '@shared/ui/Input'
 import { Select } from '@shared/ui/Select'
-import { IconMapPin, IconUser } from '@shared/ui/icons'
+import { IconListChecks, IconMapPin, IconUser, IconUserPlus } from '@shared/ui/icons'
 import styles from './ProyectoForm.module.css'
 
 const participanteRepository = createParticipanteRepository()
+
+const BASE_FIELD_ORDER = ['nombre', 'tipoDocumento', 'documento', 'ciudad', 'telefono'] as const
+
+function resolveFieldName(errorKey: string) {
+  return errorKey.startsWith('camposExtra.') ? errorKey.slice('camposExtra.'.length) : errorKey
+}
+
+function focusFirstInvalidField(
+  form: HTMLFormElement,
+  errors: Record<string, string>,
+  campoNames: string[],
+) {
+  const order = [
+    ...BASE_FIELD_ORDER,
+    ...campoNames.map((name) => `camposExtra.${name}`),
+  ]
+  const firstKey = order.find((key) => Boolean(errors[key]))
+  if (!firstKey) return
+
+  const fieldName = resolveFieldName(firstKey)
+  const field = form.querySelector<HTMLElement>(`[name="${CSS.escape(fieldName)}"]`)
+  if (!field) return
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  field.scrollIntoView({
+    behavior: prefersReduced ? 'auto' : 'smooth',
+    block: 'center',
+    inline: 'nearest',
+  })
+
+  field.classList.remove(styles.attention)
+  void field.offsetWidth
+  field.classList.add(styles.attention)
+
+  const focusDelay = prefersReduced ? 0 : 320
+  window.setTimeout(() => {
+    field.focus({ preventScroll: true })
+  }, focusDelay)
+
+  window.setTimeout(() => {
+    field.classList.remove(styles.attention)
+  }, prefersReduced ? 0 : 800)
+}
 
 interface ProyectoFormProps {
   proyecto: Proyecto
@@ -20,14 +64,16 @@ interface ProyectoFormProps {
 
 export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
   const { user } = useAuth()
+  const formRef = useRef<HTMLFormElement>(null)
   const schema = useMemo(
     () => buildParticipanteSchema(proyecto.camposEspecificos),
     [proyecto.camposEspecificos],
   )
 
   const [nombre, setNombre] = useState('')
+  const [tipoDocumento, setTipoDocumento] = useState<TipoDocumento | ''>('')
   const [documento, setDocumento] = useState('')
-  const [ciudad, setCiudad] = useState(proyecto.ciudadesPermitidas[0] ?? '')
+  const [ciudad, setCiudad] = useState('')
   const [telefono, setTelefono] = useState('')
   const [camposExtra, setCamposExtra] = useState<Record<string, string>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -35,7 +81,31 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  useEffect(() => {
+    setNombre('')
+    setTipoDocumento('')
+    setDocumento('')
+    setCiudad('')
+    setTelefono('')
+    setCamposExtra({})
+    setErrors({})
+    setSuccess('')
+    setError('')
+  }, [proyecto])
+
+  function clearFieldError(key: string) {
+    setErrors((prev) => {
+      if (!prev[key]) return prev
+      const next = { ...prev }
+      delete next[key]
+      return next
+    })
+    setError((prev) => (prev ? '' : prev))
+    setSuccess((prev) => (prev ? '' : prev))
+  }
+
   function updateExtra(key: string, value: string) {
+    clearFieldError(`camposExtra.${key}`)
     setCamposExtra((prev) => ({ ...prev, [key]: value }))
   }
 
@@ -46,10 +116,16 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
 
     const parsed = schema.safeParse({
       nombre,
+      tipoDocumento,
       documento,
       ciudad,
       telefono,
-      camposExtra,
+      camposExtra: Object.fromEntries(
+        proyecto.camposEspecificos.map((campo) => [
+          campo.nombreCampo,
+          camposExtra[campo.nombreCampo] ?? '',
+        ]),
+      ),
     })
 
     if (!parsed.success) {
@@ -59,6 +135,16 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
         next[key] = issue.message
       }
       setErrors(next)
+      const form = formRef.current
+      if (form) {
+        window.requestAnimationFrame(() => {
+          focusFirstInvalidField(
+            form,
+            next,
+            proyecto.camposEspecificos.map((campo) => campo.nombreCampo),
+          )
+        })
+      }
       return
     }
 
@@ -73,7 +159,9 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
       })
       setSuccess('Participante registrado correctamente')
       setNombre('')
+      setTipoDocumento('')
       setDocumento('')
+      setCiudad('')
       setTelefono('')
       setCamposExtra({})
       onRegistered()
@@ -84,12 +172,22 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
     }
   }
 
+  const filtroCount = proyecto.camposEspecificos.length
+
   return (
-    <form className={styles.form} onSubmit={handleSubmit} noValidate>
+    <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <h4>Datos base</h4>
-          <span className={styles.badge}>4 campos</span>
+          <div className={styles.sectionTitleWrap}>
+            <span className={styles.sectionIcon}>
+              <IconUser size={15} />
+            </span>
+            <div>
+              <span className={styles.sectionEyebrow}>Datos base</span>
+              <h4 className={styles.sectionTitle}>Información del participante</h4>
+            </div>
+          </div>
+          <span className={styles.badge}>5 campos</span>
         </div>
 
         <div className={styles.grid}>
@@ -97,28 +195,60 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
             label="Nombre completo"
             name="nombre"
             value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            onChange={(e) => {
+              clearFieldError('nombre')
+              setNombre(e.target.value)
+            }}
             error={errors.nombre}
             icon={<IconUser size={16} />}
+            placeholder="Ej. María Fernanda Gómez"
+            required
+          />
+          <Select
+            label="Tipo de documento"
+            name="tipoDocumento"
+            value={tipoDocumento}
+            onChange={(e) => {
+              clearFieldError('tipoDocumento')
+              setTipoDocumento(e.target.value as TipoDocumento | '')
+            }}
+            options={[
+              { value: '', label: 'Seleccione…' },
+              ...TIPOS_DOCUMENTO.map((item) => ({
+                value: item.value,
+                label: item.label,
+              })),
+            ]}
+            error={errors.tipoDocumento}
             required
           />
           <Input
             label="Documento"
             name="documento"
             value={documento}
-            onChange={(e) => setDocumento(e.target.value)}
+            onChange={(e) => {
+              clearFieldError('documento')
+              setDocumento(e.target.value)
+            }}
             error={errors.documento}
+            placeholder="Número de documento"
             required
           />
           <Select
             label="Ciudad"
             name="ciudad"
             value={ciudad}
-            onChange={(e) => setCiudad(e.target.value)}
-            options={proyecto.ciudadesPermitidas.map((item) => ({
-              value: item,
-              label: item,
-            }))}
+            onChange={(e) => {
+              clearFieldError('ciudad')
+              setCiudad(e.target.value)
+            }}
+            options={[
+              { value: '', label: 'Seleccione…' },
+              ...proyecto.ciudadesPermitidas.map((item) => ({
+                value: item,
+                label: item,
+              })),
+            ]}
             error={errors.ciudad}
             icon={<IconMapPin size={16} />}
             required
@@ -127,20 +257,32 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
             label="Teléfono"
             name="telefono"
             value={telefono}
-            onChange={(e) => setTelefono(e.target.value)}
+            onChange={(e) => {
+              clearFieldError('telefono')
+              setTelefono(e.target.value)
+            }}
             error={errors.telefono}
+            placeholder="Ej. 3001234567"
+            inputMode="numeric"
             required
           />
         </div>
       </section>
 
-      {proyecto.camposEspecificos.length > 0 ? (
+      {filtroCount > 0 ? (
         <section className={styles.section}>
           <div className={styles.sectionHead}>
-            <h4>Filtro del estudio</h4>
+            <div className={styles.sectionTitleWrap}>
+              <span className={styles.sectionIcon}>
+                <IconListChecks size={15} />
+              </span>
+              <div>
+                <span className={styles.sectionEyebrow}>Filtro del estudio</span>
+                <h4 className={styles.sectionTitle}>Campos específicos del proyecto</h4>
+              </div>
+            </div>
             <span className={styles.badge}>
-              {proyecto.camposEspecificos.length}{' '}
-              {proyecto.camposEspecificos.length === 1 ? 'campo' : 'campos'}
+              {filtroCount} {filtroCount === 1 ? 'campo' : 'campos'}
             </span>
           </div>
 
@@ -172,6 +314,13 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
                   value={camposExtra[campo.nombreCampo] ?? ''}
                   onChange={(e) => updateExtra(campo.nombreCampo, e.target.value)}
                   error={errors[`camposExtra.${campo.nombreCampo}`]}
+                  placeholder={
+                    campo.tipo === 'number'
+                      ? `Ingresa ${campo.etiqueta.toLowerCase()}`
+                      : campo.tipo === 'date'
+                        ? undefined
+                        : `Escribe ${campo.etiqueta.toLowerCase()}`
+                  }
                   required={campo.requerido}
                 />
               ),
@@ -184,7 +333,8 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
       {error ? <Alert tone="error">{error}</Alert> : null}
 
       <div className={styles.actions}>
-        <Button type="submit" loading={loading} icon={<IconUser size={16} />}>
+        <p className={styles.actionsHint}>Revisa los datos antes de guardar el registro.</p>
+        <Button type="submit" loading={loading} icon={<IconUserPlus size={16} />}>
           {loading ? 'Guardando…' : 'Registrar participante'}
         </Button>
       </div>

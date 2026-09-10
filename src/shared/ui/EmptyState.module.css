@@ -7,7 +7,7 @@
   border: 1px dashed var(--color-border-strong);
   background: var(--color-surface-muted);
   text-align: center;
-  animation: scaleIn var(--motion) var(--ease-out) both;
+  animation: none;
 }
 
 .icon {

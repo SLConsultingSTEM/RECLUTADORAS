@@ -32,7 +32,7 @@ const emptyForm = (): Proyecto => ({
   descripcionHtml: '',
   imagenUrl: '',
   imagenNombre: '',
-  ciudadesPermitidas: ['Bogota'],
+  ciudadesPermitidas: ['Bogotá'],
   camposEspecificos: [],
   activo: true,
 })
@@ -40,7 +40,7 @@ const emptyForm = (): Proyecto => ({
 export function AdminPage() {
   const [proyectos, setProyectos] = useState<Proyecto[]>([])
   const [form, setForm] = useState<Proyecto>(emptyForm())
-  const [ciudadesText, setCiudadesText] = useState('Bogota')
+  const [ciudadesText, setCiudadesText] = useState('Bogotá')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -71,7 +71,7 @@ export function AdminPage() {
 
   function resetForm() {
     setForm(emptyForm())
-    setCiudadesText('Bogota')
+    setCiudadesText('Bogotá')
   }
 
   function addCampo() {

@@ -6,11 +6,15 @@
   gap: 0.3rem;
   padding: var(--space-4);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background:
+    linear-gradient(
+      155deg,
+      var(--stat-soft) 0%,
+      color-mix(in srgb, var(--stat-soft) 60%, #fff) 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--stat-color) 22%, var(--color-border));
   box-shadow: var(--shadow-xs);
   overflow: hidden;
-  animation: fadeUp var(--motion-slow) var(--ease-out) both;
   transition:
     transform var(--motion) var(--ease-out),
     box-shadow var(--motion) var(--ease-out),
@@ -21,16 +25,16 @@
   content: '';
   position: absolute;
   inset: 0 0 auto 0;
-  height: 2px;
+  height: 3px;
   background: var(--stat-color);
-  opacity: 0;
+  opacity: 0.85;
   transition: opacity var(--motion) var(--ease-out);
 }
 
 .stat:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: color-mix(in srgb, var(--stat-color) 22%, var(--color-border));
+  border-color: color-mix(in srgb, var(--stat-color) 34%, var(--color-border));
 }
 
 .stat:hover::before {
@@ -49,7 +53,7 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--color-muted-soft);
+  color: var(--color-muted-deep);
 }
 
 .icon {
@@ -58,14 +62,17 @@
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  background: var(--stat-soft);
+  border: 1px solid color-mix(in srgb, var(--stat-color) 18%, transparent);
+  background: color-mix(in srgb, var(--stat-soft) 70%, #fff);
   color: var(--stat-color);
   flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .value {
   font-size: var(--text-xl);
   line-height: 1.2;
+  font-weight: 750;
   color: var(--color-ink);
   overflow-wrap: anywhere;
 }
@@ -73,7 +80,8 @@
 .detail {
   margin: 0;
   font-size: var(--text-sm);
-  color: var(--color-muted);
+  font-weight: 500;
+  color: var(--color-muted-deep);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;

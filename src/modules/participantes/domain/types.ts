@@ -5,10 +5,18 @@ export type EstadoParticipante =
   | 'NO_CONTESTA'
   | 'P_PACIENTE_FALLECIDO'
 
+export type TipoDocumento = 'CC' | 'CE'
+
+export const TIPOS_DOCUMENTO: ReadonlyArray<{ value: TipoDocumento; label: string }> = [
+  { value: 'CC', label: 'Cédula de ciudadanía (CC)' },
+  { value: 'CE', label: 'Extranjero (CE)' },
+]
+
 export interface Participante {
   id: string
   proyectoId: string
   nombre: string
+  tipoDocumento: TipoDocumento
   documento: string
   ciudad: string
   telefono: string
@@ -21,6 +29,7 @@ export interface Participante {
 export interface RegistrarParticipanteInput {
   proyectoId: string
   nombre: string
+  tipoDocumento: TipoDocumento
   documento: string
   ciudad: string
   telefono: string

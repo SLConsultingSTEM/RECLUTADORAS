@@ -9,6 +9,7 @@ interface StatCardProps {
   detail?: string
   icon?: ReactNode
   tone?: StatTone
+  /** @deprecated Sin efecto; se mantiene por compatibilidad. */
   delay?: number
 }
 
@@ -18,13 +19,9 @@ export function StatCard({
   detail,
   icon,
   tone = 'primary',
-  delay = 0,
 }: StatCardProps) {
   return (
-    <article
-      className={`${styles.stat} ${styles[tone]}`}
-      style={delay ? { animationDelay: `${delay}ms` } : undefined}
-    >
+    <article className={`${styles.stat} ${styles[tone]}`}>
       <div className={styles.top}>
         <span className={styles.label}>{label}</span>
         {icon ? <span className={styles.icon}>{icon}</span> : null}

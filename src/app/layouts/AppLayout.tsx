@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import logo from '@assets/logoIzq.png'
 import { useAuth } from '@app/providers/useAuth'
@@ -23,7 +23,7 @@ type PageMeta = {
 const PAGE_META: Record<string, PageMeta> = {
   '/panel': { title: 'Panel', label: 'Inicio', icon: 'home' },
   '/nuevo-registro': {
-    title: 'Reclutamiento',
+    title: 'Nuevo registro',
     label: 'Alta de participantes',
     icon: 'userPlus',
   },
@@ -56,7 +56,13 @@ export function AppLayout() {
   const { user, logout } = useAuth()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [navMotionReady, setNavMotionReady] = useState(false)
   const page = getPageMeta(location.pathname)
+
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => setNavMotionReady(true))
+    return () => window.cancelAnimationFrame(id)
+  }, [])
 
   function closeMenus() {
     setMobileOpen(false)
@@ -97,7 +103,10 @@ export function AppLayout() {
           </div>
         </div>
 
-        <nav className={styles.sideNav} aria-label="Navegación principal">
+        <nav
+          className={`${styles.sideNav} ${navMotionReady ? styles.sideNavReady : ''}`}
+          aria-label="Navegación principal"
+        >
           <span
             className={`${styles.navIndicator} ${activeNavIndex < 0 ? styles.navIndicatorHidden : ''}`}
             style={
@@ -155,39 +164,41 @@ export function AppLayout() {
       ) : null}
 
       <div className={styles.content}>
-        <header className={styles.topbar}>
-          <div className={styles.topbarLeft}>
-            <div className={styles.menuWrap}>
-              <IconButton label="Abrir menú" onClick={() => setMobileOpen(true)}>
-                <IconMenu size={19} />
-              </IconButton>
+        <div className={styles.contentColumn}>
+          <header className={styles.topbar}>
+            <div className={styles.topbarLeft}>
+              <div className={styles.menuWrap}>
+                <IconButton label="Abrir menú" onClick={() => setMobileOpen(true)}>
+                  <IconMenu size={19} />
+                </IconButton>
+              </div>
+
+              <div className={styles.pageContext}>
+                <span className={styles.pageIcon} aria-hidden="true">
+                  <PageIcon name={page.icon} />
+                </span>
+                <span className={styles.pageText}>
+                  <strong>{page.title}</strong>
+                  <small>{page.label}</small>
+                </span>
+              </div>
             </div>
 
-            <div className={styles.pageContext} key={location.pathname}>
-              <span className={styles.pageIcon} aria-hidden="true">
-                <PageIcon name={page.icon} />
-              </span>
-              <span className={styles.pageText}>
-                <strong>{page.title}</strong>
-                <small>{page.label}</small>
-              </span>
+            <div className={styles.topbarRight}>
+              <div className={styles.userProfile}>
+                <span className={styles.avatar}>{getInitials(user?.displayName ?? '')}</span>
+                <span className={styles.userInfo}>
+                  <strong>{user?.displayName}</strong>
+                  <small>{user?.role}</small>
+                </span>
+              </div>
             </div>
-          </div>
+          </header>
 
-          <div className={styles.topbarRight}>
-            <div className={styles.userProfile}>
-              <span className={styles.avatar}>{getInitials(user?.displayName ?? '')}</span>
-              <span className={styles.userInfo}>
-                <strong>{user?.displayName}</strong>
-                <small>{user?.role}</small>
-              </span>
-            </div>
-          </div>
-        </header>
-
-        <main className={styles.main} key={location.pathname}>
-          <Outlet />
-        </main>
+          <main className={styles.main}>
+            <Outlet />
+          </main>
+        </div>
       </div>
     </div>
   )

@@ -4,7 +4,6 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  animation: fadeIn var(--motion) var(--ease-out) both;
 }
 
 .table {

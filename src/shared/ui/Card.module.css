@@ -6,8 +6,15 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-xs);
-  animation: fadeUp var(--motion-slow) var(--ease-out) both;
   transition: box-shadow var(--motion) var(--ease-out), border-color var(--motion) var(--ease-out);
+}
+
+.animated {
+  animation: fadeUp var(--motion-slow) var(--ease-out) both;
+}
+
+.static {
+  animation: none;
 }
 
 .card:hover {

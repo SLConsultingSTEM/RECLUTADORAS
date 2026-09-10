@@ -4,6 +4,7 @@ import { createParticipanteRepository } from '@modules/participantes/infrastruct
 import type { EstadoParticipante, Participante } from '@modules/participantes/domain/types'
 import { Alert } from '@shared/ui/Alert'
 import { Badge } from '@shared/ui/Badge'
+import { Button } from '@shared/ui/Button'
 import { EmptyState } from '@shared/ui/EmptyState'
 import { Select } from '@shared/ui/Select'
 import { LoadingRow } from '@shared/ui/Skeleton'
@@ -11,8 +12,10 @@ import { Table } from '@shared/ui/Table'
 import {
   IconCheckCircle,
   IconClock,
+  IconFilter,
   IconInbox,
   IconPhoneMissed,
+  IconRefresh,
   IconXCircle,
 } from '@shared/ui/icons'
 import styles from './SeguimientoPanel.module.css'
@@ -67,6 +70,7 @@ function estadoLabel(estado: string) {
 
 export function SeguimientoPanel({ proyectoId, refreshKey }: SeguimientoPanelProps) {
   const [estado, setEstado] = useState('')
+  const [listTick, setListTick] = useState(0)
   const [items, setItems] = useState<Participante[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -96,25 +100,40 @@ export function SeguimientoPanel({ proyectoId, refreshKey }: SeguimientoPanelPro
     return () => {
       active = false
     }
-  }, [proyectoId, estado, refreshKey])
+  }, [proyectoId, estado, refreshKey, listTick])
 
   return (
     <section className={styles.section}>
       <div className={styles.toolbar}>
-        <div className={styles.summary}>
-          <span className={styles.summaryLabel}>Visible</span>
-          <strong className={styles.summaryValue}>{loading ? '…' : items.length}</strong>
-        </div>
-
         <div className={styles.filter}>
           <Select
-            label="Estado"
+            variant="pills"
+            showLabel
+            label="Filtrar por estado:"
             name="estado"
             value={estado}
+            icon={<IconFilter size={16} />}
             onChange={(e) => setEstado(e.target.value)}
             options={ESTADOS}
           />
         </div>
+
+        <Button
+          type="button"
+          variant="soft"
+          size="md"
+          className={styles.refreshBtn}
+          icon={
+            <IconRefresh
+              size={16}
+              className={loading ? styles.refreshIconSpinning : styles.refreshIcon}
+            />
+          }
+          disabled={loading}
+          onClick={() => setListTick((value) => value + 1)}
+        >
+          Actualizar
+        </Button>
       </div>
 
       {error ? <Alert tone="error">{error}</Alert> : null}
@@ -129,24 +148,28 @@ export function SeguimientoPanel({ proyectoId, refreshKey }: SeguimientoPanelPro
       ) : null}
 
       {!loading && items.length > 0 ? (
-        <Table headers={['Nombre', 'Documento', 'Ciudad', 'Teléfono', 'Estado', 'Creado por']}>
-          {items.map((item) => (
-            <tr key={item.id}>
-              <td>
-                <span className={styles.name}>{item.nombre}</span>
-              </td>
-              <td>{item.documento}</td>
-              <td>{item.ciudad}</td>
-              <td>{item.telefono}</td>
-              <td>
-                <Badge tone={estadoTone(item.estado)} icon={estadoIcon(item.estado)}>
-                  {estadoLabel(item.estado)}
-                </Badge>
-              </td>
-              <td>{item.creadoPor}</td>
-            </tr>
-          ))}
-        </Table>
+        <div className={styles.tableWrap}>
+          <Table headers={['Nombre', 'Documento', 'Ciudad', 'Teléfono', 'Estado', 'Creado por']}>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td>
+                  <span className={styles.name}>{item.nombre}</span>
+                </td>
+                <td>
+                  {item.tipoDocumento ? `${item.tipoDocumento} ${item.documento}` : item.documento}
+                </td>
+                <td>{item.ciudad}</td>
+                <td>{item.telefono}</td>
+                <td>
+                  <Badge tone={estadoTone(item.estado)} icon={estadoIcon(item.estado)}>
+                    {estadoLabel(item.estado)}
+                  </Badge>
+                </td>
+                <td>{item.creadoPor}</td>
+              </tr>
+            ))}
+          </Table>
+        </div>
       ) : null}
     </section>
   )
