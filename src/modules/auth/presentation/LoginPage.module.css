@@ -38,7 +38,7 @@
   padding: clamp(1.75rem, 5vh, 3rem) clamp(1.35rem, 3.2vw, 2.5rem);
   color: rgba(248, 242, 255, 0.94);
   background: transparent;
-  --floating-label-bg: #3a1760;
+  --floating-label-bg: #67298C;
   opacity: 0;
   animation: panelEnter 640ms var(--ease-out) 60ms both;
 }
@@ -493,9 +493,9 @@
     justify-items: center;
     padding: 1.25rem 1.25rem 2.5rem;
     background:
-      radial-gradient(ellipse 70% 55% at 22% 12%, rgba(155, 81, 224, 0.35), transparent 58%),
-      radial-gradient(ellipse 55% 50% at 92% 78%, rgba(103, 41, 140, 0.4), transparent 52%),
-      linear-gradient(155deg, #1c0b2e 0%, #3a1760 42%, #67298c 100%);
+      radial-gradient(ellipse 70% 55% at 22% 12%, rgba(155, 81, 224, 0.28), transparent 58%),
+      radial-gradient(ellipse 55% 50% at 92% 78%, rgba(103, 41, 140, 0.32), transparent 52%),
+      linear-gradient(155deg, #531f73 0%, #67298C 42%, #7d3aa8 100%);
   }
 
   .panelInner {

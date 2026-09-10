@@ -29,17 +29,17 @@ export function LoginDivider() {
       >
         <defs>
           <linearGradient id={gradMain} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1c0b2e" />
-            <stop offset="42%" stopColor="#3a1760" />
-            <stop offset="100%" stopColor="#67298c" />
+            <stop offset="0%" stopColor="#531f73" />
+            <stop offset="42%" stopColor="#67298C" />
+            <stop offset="100%" stopColor="#7d3aa8" />
           </linearGradient>
           <radialGradient id={gradA} cx="22%" cy="12%" r="55%">
-            <stop offset="0%" stopColor="#9b51e0" stopOpacity="0.35" />
+            <stop offset="0%" stopColor="#9b51e0" stopOpacity="0.28" />
             <stop offset="100%" stopColor="#9b51e0" stopOpacity="0" />
           </radialGradient>
           <radialGradient id={gradB} cx="92%" cy="78%" r="50%">
-            <stop offset="0%" stopColor="#67298c" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#67298c" stopOpacity="0" />
+            <stop offset="0%" stopColor="#67298C" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#67298C" stopOpacity="0" />
           </radialGradient>
         </defs>
 

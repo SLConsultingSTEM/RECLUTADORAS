@@ -1,6 +1,6 @@
 :root {
   /* Marca OPTIMASL */
-  --color-primary: #67298c;
+  --color-primary: #67298C;
   --color-primary-hover: #531f73;
   --color-primary-soft: #f3eaf8;
   --color-primary-ring: rgba(103, 41, 140, 0.18);
@@ -59,8 +59,8 @@
   --color-coral-soft: var(--color-danger-soft);
   --color-highlight: var(--color-accent);
 
-  /* Sidebar — mismo púrpura del panel de login (#3a1760) */
-  --color-sidebar: #3a1760;
+  /* Sidebar — púrpura de marca OPTIMASL */
+  --color-sidebar: #67298C;
   --color-sidebar-elevated: color-mix(in srgb, var(--color-sidebar) 82%, black);
   --color-sidebar-text: rgba(248, 242, 255, 0.72);
   --color-sidebar-muted: rgba(248, 242, 255, 0.48);
