@@ -235,7 +235,7 @@ export function LoginPage() {
           </form>
 
           <p className={`${styles.footer} ${styles.rise} ${styles.d6}`}>
-            Acceso exclusivo para el equipo OPTIMASL
+            © 2026 SL Insights & Archetypes
           </p>
         </div>
       </section>

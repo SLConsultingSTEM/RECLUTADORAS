@@ -47,14 +47,16 @@ export function NuevoRegistroPage() {
         <>
           <section className={styles.toolbar}>
             <div className={styles.toolbarCopy}>
-              <span className={styles.toolbarLabel}>Registro</span>
-              <h2 className={styles.toolbarTitle}>{selected?.nombre ?? 'Nuevo participante'}</h2>
+              <span className={styles.toolbarLabel}>Reclutar</span>
+              <h2 className={styles.toolbarTitle}>
+                {selected?.nombre ?? 'Elige un proyecto'}
+              </h2>
             </div>
 
             <div className={styles.toolbarActions}>
               <div className={styles.selector}>
                 <Select
-                  label="Proyecto"
+                  label="Elegir proyecto"
                   name="proyecto"
                   value={selectedId}
                   icon={<IconFolder size={16} />}
@@ -72,8 +74,8 @@ export function NuevoRegistroPage() {
             <section className={styles.workspace}>
               <Card delay={40}>
                 <CardHeader
-                  eyebrow="Referencia"
-                  title="Condiciones"
+                  eyebrow="Proyecto"
+                  title="Información"
                   icon={<IconFileText size={18} />}
                 />
                 <ProyectoInfo
@@ -89,8 +91,8 @@ export function NuevoRegistroPage() {
 
               <Card delay={100}>
                 <CardHeader
-                  eyebrow="Captura"
-                  title="Datos del participante"
+                  eyebrow="Formulario"
+                  title="Captura de datos"
                   icon={<IconUserPlus size={18} />}
                 />
                 <ProyectoForm proyecto={selected} onRegistered={() => undefined} />

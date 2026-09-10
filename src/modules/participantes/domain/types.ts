@@ -28,6 +28,15 @@ export interface RegistrarParticipanteInput {
   creadoPor: string
 }
 
+export interface SeguimientoResumen {
+  total: number
+  enFiltro: number
+  aprobados: number
+  rechazados: number
+  noContesta: number
+  pacienteFallecido: number
+}
+
 export interface ParticipanteRepository {
   list(filters?: { proyectoId?: string; estado?: string }): Promise<Participante[]>
   register(input: RegistrarParticipanteInput): Promise<Participante>
