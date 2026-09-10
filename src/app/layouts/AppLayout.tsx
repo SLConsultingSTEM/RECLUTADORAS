@@ -14,38 +14,73 @@ import {
 } from '@shared/ui/icons'
 import styles from './AppLayout.module.css'
 
+type PageMeta = {
+  title: string
+  label: string
+  icon: 'home' | 'userPlus' | 'folder'
+}
+
+const PAGE_META: Record<string, PageMeta> = {
+  '/panel': { title: 'Panel', label: 'Inicio', icon: 'home' },
+  '/nuevo-registro': {
+    title: 'Reclutamiento',
+    label: 'Alta de participantes',
+    icon: 'userPlus',
+  },
+  '/admin': { title: 'Administración', label: 'Gestión', icon: 'folder' },
+}
+
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/).slice(0, 2)
   if (parts.length === 0) return '·'
   return parts.map((part) => part.charAt(0).toUpperCase()).join('')
 }
 
+function getPageMeta(pathname: string): PageMeta {
+  return (
+    PAGE_META[pathname] ?? {
+      title: 'OPTIMASL',
+      label: 'App',
+      icon: 'home',
+    }
+  )
+}
+
+function PageIcon({ name }: { name: PageMeta['icon'] }) {
+  if (name === 'userPlus') return <IconUserPlus size={18} />
+  if (name === 'folder') return <IconFolder size={18} />
+  return <IconHome size={18} />
+}
+
 export function AppLayout() {
   const { user, logout } = useAuth()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const page = getPageMeta(location.pathname)
 
   function closeMenus() {
     setMobileOpen(false)
   }
 
   const navItems = [
-    { to: '/panel', label: 'Panel', icon: <IconHome size={20} /> },
+    { to: '/panel', label: 'Panel', icon: <IconHome size={24} /> },
     {
       to: '/nuevo-registro',
-      label: 'Nuevo registro',
-      icon: <IconUserPlus size={20} />,
+      label: 'Reclutar',
+      icon: <IconUserPlus size={24} />,
     },
     ...(user && canAccessAdmin(user.role)
       ? [
           {
             to: '/admin',
             label: 'Administración',
-            icon: <IconFolder size={20} />,
+            icon: <IconFolder size={24} />,
           },
         ]
       : []),
   ]
+
+  const activeNavIndex = navItems.findIndex((item) => item.to === location.pathname)
 
   return (
     <div className={styles.shell}>
@@ -63,6 +98,17 @@ export function AppLayout() {
         </div>
 
         <nav className={styles.sideNav} aria-label="Navegación principal">
+          <span
+            className={`${styles.navIndicator} ${activeNavIndex < 0 ? styles.navIndicatorHidden : ''}`}
+            style={
+              activeNavIndex >= 0
+                ? {
+                    transform: `translateY(calc(${activeNavIndex} * (var(--nav-item-size) + var(--nav-gap))))`,
+                  }
+                : undefined
+            }
+            aria-hidden="true"
+          />
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -90,7 +136,7 @@ export function AppLayout() {
             }}
           >
             <span className={styles.navIcon}>
-              <IconLogout size={20} />
+              <IconLogout size={24} />
             </span>
             <span className={styles.navTooltip} role="tooltip">
               Cerrar sesión
@@ -115,6 +161,16 @@ export function AppLayout() {
               <IconButton label="Abrir menú" onClick={() => setMobileOpen(true)}>
                 <IconMenu size={19} />
               </IconButton>
+            </div>
+
+            <div className={styles.pageContext} key={location.pathname}>
+              <span className={styles.pageIcon} aria-hidden="true">
+                <PageIcon name={page.icon} />
+              </span>
+              <span className={styles.pageText}>
+                <strong>{page.title}</strong>
+                <small>{page.label}</small>
+              </span>
             </div>
           </div>
 
