@@ -67,21 +67,26 @@ export function PanelReclutadoraPage() {
 
             <div className={styles.workspaceSelector}>
               {shellReady ? (
-                <Select
-                  variant="pills"
-                  label="Proyecto"
-                  name="proyecto"
-                  value={selectedId}
-                  icon={<IconFolder size={16} />}
-                  onChange={(e) => {
-                    setSelectedId(e.target.value)
-                    setRefreshKey((value) => value + 1)
-                  }}
-                  options={proyectos.map((item) => ({
-                    value: item.id,
-                    label: item.nombre,
-                  }))}
-                />
+                <>
+                  <span className={styles.selectorLabel}>Filtro por proyecto:</span>
+                  <div className={styles.selectorControl}>
+                    <Select
+                      variant="pills"
+                      label="Filtro por proyecto"
+                      name="proyecto"
+                      value={selectedId}
+                      icon={<IconFolder size={16} />}
+                      onChange={(e) => {
+                        setSelectedId(e.target.value)
+                        setRefreshKey((value) => value + 1)
+                      }}
+                      options={proyectos.map((item) => ({
+                        value: item.id,
+                        label: item.nombre,
+                      }))}
+                    />
+                  </div>
+                </>
               ) : (
                 <SkeletonBlock height={48} />
               )}

@@ -2,7 +2,7 @@ import type { Proyecto, ProyectoRepository } from '@modules/proyectos/domain/typ
 import { MOCK_PROYECTOS } from '@modules/proyectos/infrastructure/mockData'
 import { mockLatency } from '@shared/api/mockLatency'
 
-const STORAGE_KEY = 'reclutadoras.mock.proyectos.v3'
+const STORAGE_KEY = 'reclutadoras.mock.proyectos.v4'
 
 function readStore(): Proyecto[] {
   const raw = localStorage.getItem(STORAGE_KEY)

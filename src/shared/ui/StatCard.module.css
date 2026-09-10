@@ -25,8 +25,14 @@
   content: '';
   position: absolute;
   inset: 0 0 auto 0;
-  height: 3px;
-  background: var(--stat-color);
+  height: 2rem;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--stat-color) 14%, transparent) 0%,
+    color-mix(in srgb, var(--stat-color) 5%, transparent) 50%,
+    transparent 100%
+  );
   opacity: 0.85;
   transition: opacity var(--motion) var(--ease-out);
 }

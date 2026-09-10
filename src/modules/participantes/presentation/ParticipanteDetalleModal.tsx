@@ -141,6 +141,12 @@ export function ParticipanteDetalleModal({
               </article>
               <article className={styles.card}>
                 <div>
+                  <p className={styles.cardLabel}>Género</p>
+                  <p className={styles.cardValue}>{participante.genero || '—'}</p>
+                </div>
+              </article>
+              <article className={styles.card}>
+                <div>
                   <p className={styles.cardLabel}>Ciudad</p>
                   <p className={styles.cardValue}>{participante.ciudad}</p>
                 </div>

@@ -268,7 +268,12 @@
   padding: var(--space-5);
   background: rgba(12, 8, 18, 0.82);
   backdrop-filter: blur(8px);
-  animation: fadeUp var(--motion) var(--ease-out) both;
+  opacity: 0;
+  transition: opacity 280ms var(--ease-out);
+}
+
+.lightboxOpen {
+  opacity: 1;
 }
 
 .lightboxClose {
@@ -286,9 +291,17 @@
   color: #fff;
   cursor: pointer;
   backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(-4px);
   transition:
     background-color var(--motion-fast) var(--ease-out),
-    transform var(--motion-fast) var(--ease-out);
+    transform 280ms var(--ease-out),
+    opacity 280ms var(--ease-out);
+}
+
+.lightboxOpen .lightboxClose {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .lightboxClose:hover {
@@ -305,6 +318,16 @@
   object-fit: contain;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(14px) scale(0.97);
+  transition:
+    opacity 320ms var(--ease-out),
+    transform 320ms var(--ease-out);
+}
+
+.lightboxOpen .lightboxImage {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .reclutarSplit {
@@ -314,14 +337,118 @@
   align-items: start;
 }
 
-.piezaSolo {
-  width: min(100%, 42rem);
-  margin-inline: auto;
+.infoStack {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
 }
 
-.piezaSolo .mediaFeature {
+.mediaStrip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
   width: 100%;
-  min-height: 28rem;
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+  box-sizing: border-box;
+}
+
+.mediaStripPreview {
+  flex-shrink: 0;
+}
+
+.mediaStripThumbWrap {
+  display: block;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  overflow: hidden;
+  line-height: 0;
+}
+
+.mediaStripThumb {
+  display: block;
+  width: 8rem;
+  height: 8rem;
+  object-fit: cover;
+  object-position: center;
+}
+
+.mediaStripPlaceholder {
+  display: inline-grid;
+  place-items: center;
+  width: 8rem;
+  height: 8rem;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-muted);
+}
+
+.mediaStripBody {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.mediaStripMeta {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mediaStripView {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: fit-content;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mediaStripView:hover {
+  text-decoration: underline;
+}
+
+.mediaStripView:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring);
+  border-radius: var(--radius-sm);
+}
+
+.mediaStripActions {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .mediaStrip {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .mediaStripActions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  .mediaStripActions > * {
+    flex: 1 1 auto;
+  }
 }
 
 .reclutarInfo .content {
@@ -762,9 +889,18 @@
   display: inline-flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  align-items: stretch;
+  align-items: center;
   justify-content: flex-start;
   gap: 0.5rem;
+}
+
+.editorActionHint {
+  margin: 0;
+  max-width: 13rem;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-muted);
+  text-align: center;
 }
 
 .editorActionBtn {
@@ -774,14 +910,25 @@
 
 .editorHeading {
   display: grid;
-  gap: var(--space-3);
-  padding-bottom: var(--space-4);
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
   border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 16%, var(--color-border));
+}
+
+.editorHeadingSticky {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  margin: calc(var(--space-4) * -1) calc(var(--space-6) * -1) 0;
+  padding: var(--space-4) var(--space-6) var(--space-3);
+  background: color-mix(in srgb, var(--color-surface-muted) 92%, #fff);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 14%, var(--color-border));
 }
 
 .editorHeadingTop {
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4);
   flex-wrap: wrap;
@@ -790,15 +937,158 @@
 .editorHeadingLead {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
   gap: var(--space-3);
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 1 1 18rem;
+}
+
+.editorHelp {
+  margin: 0;
+  max-width: 40rem;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--color-muted-deep);
+}
+
+.editorHelp strong {
+  color: var(--color-ink);
+  font-weight: 700;
 }
 
 .editorHeadingLead .pagerControls {
-  margin-top: auto;
+  margin-top: 0.15rem;
+}
+
+.editorSections {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.editorSectionCard {
+  display: grid;
+  gap: 0;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.editorSectionCardOpen {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary-soft) 35%, var(--color-surface)) 0%,
+      var(--color-surface) 28%
+    );
+}
+
+.editorSectionCardCollapsed {
+  background: var(--color-surface);
+}
+
+.editorSectionToggle {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editorSectionToggle:hover {
+  background: color-mix(in srgb, var(--color-primary-soft) 28%, transparent);
+}
+
+.editorSectionToggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.editorSectionChevron {
+  display: inline-grid;
+  place-items: center;
+  color: var(--color-muted);
+  transition: transform var(--motion-fast) var(--ease-out);
+}
+
+.editorSectionChevronOpen {
+  transform: rotate(180deg);
+  color: var(--color-primary);
+}
+
+.editorSectionToggleBody {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.editorSectionToggleTitle {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editorSectionCount {
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+  font-weight: 650;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.editorSectionBody {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.editorSectionHeader {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.editorSectionTitleBlock {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.editorSectionFieldLabel {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-muted-deep);
+}
+
+.editorSectionEyebrow {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.editorSectionHint {
+  margin: 0;
+  padding-left: 0.35rem;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.editorSectionFooter {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .editorList {
@@ -806,7 +1096,7 @@
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 0.55rem;
+  gap: 0.45rem;
   font-size: 1rem;
   line-height: 1.75;
   color: var(--color-muted-deep);
@@ -831,8 +1121,8 @@
 
 .editorItem {
   display: grid;
-  gap: 0.75rem;
-  padding: 0.8rem 1rem;
+  gap: 0.45rem;
+  padding: 0.65rem 0.85rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
@@ -843,6 +1133,24 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
+}
+
+.editorRuleLabel {
+  font-size: var(--text-sm);
+  font-weight: 750;
+  color: var(--color-primary);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .editorField {
@@ -865,7 +1173,7 @@
   width: 100%;
   box-sizing: border-box;
   margin: 0;
-  padding: 0.8rem 1rem;
+  padding: 0.6rem 0.85rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface-muted);
@@ -873,7 +1181,7 @@
   font-family: inherit;
   font-size: 1rem;
   font-weight: 400;
-  line-height: 1.75;
+  line-height: 1.55;
   resize: vertical;
 }
 
@@ -893,6 +1201,33 @@
 .editorField input::placeholder,
 .editorField textarea::placeholder {
   color: color-mix(in srgb, var(--color-muted) 80%, transparent);
+}
+
+.editorAttention {
+  animation: editorFieldAttention 720ms var(--ease-out) both;
+}
+
+@keyframes editorFieldAttention {
+  0% {
+    transform: translateY(0);
+    box-shadow: var(--shadow-ring);
+  }
+  35% {
+    transform: translateY(-2px);
+    box-shadow:
+      var(--shadow-ring),
+      0 8px 18px color-mix(in srgb, var(--color-primary) 16%, transparent);
+  }
+  100% {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorAttention {
+    animation: none;
+  }
 }
 
 .editorField.editorSectionField input {

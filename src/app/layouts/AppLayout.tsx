@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import logo from '@assets/logoIzq.png'
 import { useAuth } from '@app/providers/useAuth'
-import { canAccessAdmin } from '@modules/auth/domain/roles'
+import { isCoordinadora } from '@modules/auth/domain/roles'
 import { IconButton } from '@shared/ui/Button'
 import {
   IconClose,
   IconFolder,
   IconHome,
+  IconLayers,
   IconLogout,
   IconMenu,
   IconUserPlus,
@@ -17,7 +18,7 @@ import styles from './AppLayout.module.css'
 type PageMeta = {
   title: string
   label: string
-  icon: 'home' | 'userPlus' | 'folder'
+  icon: 'home' | 'userPlus' | 'folder' | 'layers'
 }
 
 const PAGE_META: Record<string, PageMeta> = {
@@ -30,13 +31,22 @@ const PAGE_META: Record<string, PageMeta> = {
   '/admin': { title: 'Administración', label: 'Gestión', icon: 'folder' },
 }
 
+const COORD_NUEVO_REGISTRO_META: PageMeta = {
+  title: 'Gestión',
+  label: 'Control de proyectos, indicaciones y preguntas',
+  icon: 'layers',
+}
+
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/).slice(0, 2)
   if (parts.length === 0) return '·'
   return parts.map((part) => part.charAt(0).toUpperCase()).join('')
 }
 
-function getPageMeta(pathname: string): PageMeta {
+function getPageMeta(pathname: string, coordinadora: boolean): PageMeta {
+  if (pathname === '/nuevo-registro' && coordinadora) {
+    return COORD_NUEVO_REGISTRO_META
+  }
   return (
     PAGE_META[pathname] ?? {
       title: 'OPTIMASL',
@@ -49,6 +59,7 @@ function getPageMeta(pathname: string): PageMeta {
 function PageIcon({ name }: { name: PageMeta['icon'] }) {
   if (name === 'userPlus') return <IconUserPlus size={18} />
   if (name === 'folder') return <IconFolder size={18} />
+  if (name === 'layers') return <IconLayers size={18} />
   return <IconHome size={18} />
 }
 
@@ -57,7 +68,8 @@ export function AppLayout() {
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [navMotionReady, setNavMotionReady] = useState(false)
-  const page = getPageMeta(location.pathname)
+  const coordinadora = Boolean(user && isCoordinadora(user.role))
+  const page = getPageMeta(location.pathname, coordinadora)
 
   useEffect(() => {
     const id = window.requestAnimationFrame(() => setNavMotionReady(true))
@@ -76,18 +88,9 @@ export function AppLayout() {
     { to: '/panel', label: 'Panel', icon: <IconHome size={24} /> },
     {
       to: '/nuevo-registro',
-      label: 'Reclutar',
-      icon: <IconUserPlus size={24} />,
+      label: coordinadora ? 'Gestión' : 'Reclutar',
+      icon: coordinadora ? <IconLayers size={24} /> : <IconUserPlus size={24} />,
     },
-    ...(user && canAccessAdmin(user.role)
-      ? [
-          {
-            to: '/admin',
-            label: 'Administración',
-            icon: <IconFolder size={24} />,
-          },
-        ]
-      : []),
   ]
 
   const activeNavIndex = navItems.findIndex((item) => item.to === location.pathname)
@@ -96,8 +99,16 @@ export function AppLayout() {
     <div className={styles.shell}>
       <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.sidebarTop}>
-          <Link to="/panel" className={styles.brand} title="OPTIMASL" onClick={closeMenus}>
-            <img src={logo} alt="OPTIMASL" className={styles.brandLogo} />
+          <Link
+            to="/panel"
+            className={styles.brand}
+            aria-label="Optima SL"
+            onClick={closeMenus}
+          >
+            <img src={logo} alt="" className={styles.brandLogo} />
+            <span className={styles.navTooltip} role="tooltip">
+              Optima SL
+            </span>
           </Link>
 
           <div className={styles.closeWrap}>

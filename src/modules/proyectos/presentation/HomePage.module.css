@@ -174,14 +174,33 @@
 }
 
 .workspaceSelector {
-  flex: 0 1 360px;
-  width: min(100%, 360px);
-  max-width: min(100%, 360px);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 1 auto;
+  width: auto;
+  max-width: min(100%, 36rem);
   min-width: 0;
   position: relative;
   z-index: 5;
   overflow: visible;
   margin-left: auto;
+}
+
+.selectorLabel {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--color-muted-deep);
+}
+
+.selectorControl {
+  flex: 0 1 16.5rem;
+  width: 16.5rem;
+  min-width: 12rem;
 }
 
 .workspaceHeading {
@@ -216,8 +235,14 @@
   .workspaceSelector {
     max-width: none;
     width: 100%;
-    flex: 1 1 auto;
     margin-left: 0;
+    flex-wrap: wrap;
+  }
+
+  .selectorControl {
+    flex: 1 1 12rem;
+    width: auto;
+    min-width: 0;
   }
 }
 

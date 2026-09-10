@@ -46,8 +46,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
                 "etiqueta": "Género del bebé",
                 "tipo": "select",
                 "opciones": [
-                      "MASCULINO",
-                      "FEMENINO"
+                      "Masculino",
+                      "Femenino"
                 ],
                 "requerido": true
           },
@@ -296,8 +296,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
                 "etiqueta": "Género del bebé",
                 "tipo": "select",
                 "opciones": [
-                      "MASCULINO",
-                      "FEMENINO"
+                      "Masculino",
+                      "Femenino"
                 ],
                 "requerido": true
           },

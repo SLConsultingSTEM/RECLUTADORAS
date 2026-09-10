@@ -324,6 +324,25 @@ export function IconFolder(props: IconProps) {
   )
 }
 
+export function IconLayers(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="m12 3.5 8 4.2-8 4.2-8-4.2 8-4.2Z" />
+      <path d="m4 12.2 8 4.2 8-4.2" />
+      <path d="m4 16.5 8 4.2 8-4.2" />
+    </BaseIcon>
+  )
+}
+
+export function IconCopy(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <rect x="8.5" y="8.5" width="11" height="11" rx="2" />
+      <path d="M15.5 8.5V6.8A2.3 2.3 0 0 0 13.2 4.5H6.8A2.3 2.3 0 0 0 4.5 6.8v6.4A2.3 2.3 0 0 0 6.8 15.5H8.5" />
+    </BaseIcon>
+  )
+}
+
 /* Estados */
 
 export function IconCheckCircle(props: IconProps) {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { createPortal } from 'react-dom'
 import type { Proyecto } from '@modules/proyectos/domain/types'
-import { TIPOS_DOCUMENTO, type TipoDocumento } from '@modules/participantes/domain/types'
+import { TIPOS_DOCUMENTO, GENEROS_PARTICIPANTE, type TipoDocumento, type GeneroParticipante } from '@modules/participantes/domain/types'
 import { buildParticipanteSchema } from '@modules/participantes/application/participanteSchema'
 import { registerParticipanteUseCase } from '@modules/participantes/application/participanteUseCases'
 import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
@@ -11,12 +11,19 @@ import { Alert } from '@shared/ui/Alert'
 import { Button } from '@shared/ui/Button'
 import { Input } from '@shared/ui/Input'
 import { Select } from '@shared/ui/Select'
-import { IconListChecks, IconMapPin, IconUser } from '@shared/ui/icons'
+import { IconFilter, IconMapPin, IconUser } from '@shared/ui/icons'
 import styles from './ProyectoForm.module.css'
 
 const participanteRepository = createParticipanteRepository()
 
-const BASE_FIELD_ORDER = ['nombre', 'tipoDocumento', 'documento', 'ciudad', 'telefono'] as const
+const BASE_FIELD_ORDER = [
+  'nombre',
+  'genero',
+  'tipoDocumento',
+  'documento',
+  'ciudad',
+  'telefono',
+] as const
 
 function resolveFieldName(errorKey: string) {
   return errorKey.startsWith('camposExtra.') ? errorKey.slice('camposExtra.'.length) : errorKey
@@ -78,6 +85,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
   )
 
   const [nombre, setNombre] = useState('')
+  const [genero, setGenero] = useState<GeneroParticipante | ''>('')
   const [tipoDocumento, setTipoDocumento] = useState<TipoDocumento | ''>('')
   const [documento, setDocumento] = useState('')
   const [ciudad, setCiudad] = useState('')
@@ -90,6 +98,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
 
   function resetForm() {
     setNombre('')
+    setGenero('')
     setTipoDocumento('')
     setDocumento('')
     setCiudad('')
@@ -127,6 +136,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
 
     const parsed = schema.safeParse({
       nombre,
+      genero,
       tipoDocumento,
       documento,
       ciudad,
@@ -215,7 +225,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
               <h4 className={styles.sectionTitle}>Información del participante</h4>
             </div>
           </div>
-          <span className={styles.badge}>5 campos</span>
+          <span className={styles.badge}>6 campos</span>
         </div>
 
         <div className={styles.grid}>
@@ -233,6 +243,23 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
             required
           />
           <Select
+            label="Género"
+            name="genero"
+            value={genero}
+            onChange={(e) => {
+              clearFieldError('genero')
+              setGenero(e.target.value as GeneroParticipante | '')
+            }}
+            options={[
+              { value: '', label: 'Seleccione…' },
+              ...GENEROS_PARTICIPANTE.map((item) => ({
+                value: item.value,
+                label: item.label,
+              })),
+            ]}
+            error={errors.genero}
+          />
+          <Select
             label="Tipo de documento"
             name="tipoDocumento"
             value={tipoDocumento}
@@ -248,7 +275,6 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
               })),
             ]}
             error={errors.tipoDocumento}
-            required
           />
           <Input
             label="Documento"
@@ -302,7 +328,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
           <div className={styles.sectionHead}>
             <div className={styles.sectionTitleWrap}>
               <span className={styles.sectionIcon}>
-                <IconListChecks size={15} />
+                <IconFilter size={15} />
               </span>
               <div>
                 <span className={styles.sectionEyebrow}>Filtro del estudio</span>

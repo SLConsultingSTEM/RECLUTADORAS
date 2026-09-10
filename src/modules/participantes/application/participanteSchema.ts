@@ -3,10 +3,15 @@ import type { CampoEspecifico } from '@modules/proyectos/domain/types'
 
 const baseSchema = z.object({
   nombre: z.string().trim().min(2, 'El nombre es obligatorio'),
-  tipoDocumento: z.enum(['CC', 'CE'], {
-    error: 'Selecciona el tipo de documento',
-  }),
+  tipoDocumento: z.preprocess(
+    (value) => (value == null ? '' : value),
+    z.union([z.literal(''), z.enum(['CC', 'CE'])]),
+  ),
   documento: z.string().trim().min(5, 'El documento no es válido'),
+  genero: z.preprocess(
+    (value) => (value == null ? '' : value),
+    z.union([z.literal(''), z.enum(['Masculino', 'Femenino'])]),
+  ),
   ciudad: z.string().trim().min(1, 'Selecciona una ciudad'),
   telefono: z
     .string()

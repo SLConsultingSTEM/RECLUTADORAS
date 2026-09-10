@@ -62,6 +62,43 @@ export function useProyectos(preferredId?: string) {
     return saved
   }
 
+  async function createProyecto(input: {
+    nombre: string
+    ciudadesPermitidas: string[]
+    duplicarDesdeId?: string
+  }) {
+    const source = input.duplicarDesdeId
+      ? proyectos.find((item) => item.id === input.duplicarDesdeId) ?? null
+      : null
+
+    if (input.duplicarDesdeId && !source) {
+      throw new Error('No se encontró el proyecto a duplicar')
+    }
+
+    const proyecto: Proyecto = {
+      id: `form-${crypto.randomUUID().slice(0, 8)}`,
+      nombre: input.nombre.trim(),
+      descripcionHtml: source?.descripcionHtml ?? '',
+      imagenUrl: source?.imagenUrl ?? '',
+      imagenNombre: source?.imagenNombre ?? '',
+      ciudadesPermitidas:
+        input.ciudadesPermitidas.length > 0
+          ? input.ciudadesPermitidas
+          : source?.ciudadesPermitidas?.length
+            ? [...source.ciudadesPermitidas]
+            : ['Bogotá'],
+      camposEspecificos: source
+        ? structuredClone(source.camposEspecificos)
+        : [],
+      activo: true,
+    }
+    const saved = await saveProyectoUseCase(proyectoRepository, proyecto)
+    setProyectos((prev) => [...prev, saved])
+    setSelectedId(saved.id)
+    setError('')
+    return saved
+  }
+
   return {
     proyectos,
     selected,
@@ -70,5 +107,6 @@ export function useProyectos(preferredId?: string) {
     loading,
     error,
     updateSelected,
+    createProyecto,
   }
 }

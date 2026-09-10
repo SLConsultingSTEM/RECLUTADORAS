@@ -7,17 +7,28 @@ export type EstadoParticipante =
 
 export type TipoDocumento = 'CC' | 'CE'
 
+export type GeneroParticipante = 'Masculino' | 'Femenino'
+
 export const TIPOS_DOCUMENTO: ReadonlyArray<{ value: TipoDocumento; label: string }> = [
   { value: 'CC', label: 'Cédula de ciudadanía (CC)' },
   { value: 'CE', label: 'Extranjero (CE)' },
+]
+
+export const GENEROS_PARTICIPANTE: ReadonlyArray<{
+  value: GeneroParticipante
+  label: string
+}> = [
+  { value: 'Masculino', label: 'Masculino' },
+  { value: 'Femenino', label: 'Femenino' },
 ]
 
 export interface Participante {
   id: string
   proyectoId: string
   nombre: string
-  tipoDocumento: TipoDocumento
+  tipoDocumento: TipoDocumento | ''
   documento: string
+  genero: GeneroParticipante | ''
   ciudad: string
   telefono: string
   estado: EstadoParticipante
@@ -30,8 +41,9 @@ export interface Participante {
 export interface RegistrarParticipanteInput {
   proyectoId: string
   nombre: string
-  tipoDocumento: TipoDocumento
+  tipoDocumento: TipoDocumento | ''
   documento: string
+  genero: GeneroParticipante | ''
   ciudad: string
   telefono: string
   camposExtra: Record<string, string>

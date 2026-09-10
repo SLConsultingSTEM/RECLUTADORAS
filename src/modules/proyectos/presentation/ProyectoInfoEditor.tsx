@@ -20,19 +20,12 @@ export type ProyectoInfoPatch = Pick<
   'descripcionHtml' | 'imagenUrl' | 'imagenNombre'
 >
 
-export type ProyectoInfoSection = 'pieza' | 'indicaciones'
-
 interface ProyectoInfoEditorProps {
   proyecto: Proyecto
-  section: ProyectoInfoSection
   onSave: (patch: ProyectoInfoPatch) => Promise<void>
 }
 
-export function ProyectoInfoEditor({
-  proyecto,
-  section,
-  onSave,
-}: ProyectoInfoEditorProps) {
+export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps) {
   const [indicaciones, setIndicaciones] = useState<IndicacionEditable[]>(() =>
     descripcionToIndicaciones(proyecto.descripcionHtml),
   )
@@ -110,25 +103,23 @@ export function ProyectoInfoEditor({
       {error ? <Alert tone="error">{error}</Alert> : null}
 
       <article className={`${styles.article} ${styles.reclutarInfo}`}>
-        {section === 'pieza' ? (
-          <div className={styles.piezaSolo}>
-            <PiezaGraficaPanel
-              nombre={proyecto.nombre}
-              imagenUrl={pieza.imagenUrl}
-              imagenNombre={pieza.imagenNombre}
-              editable
-              disabled={saving}
-              onChange={setPieza}
-            />
-          </div>
-        ) : (
+        <div className={styles.infoStack}>
+          <PiezaGraficaPanel
+            nombre={proyecto.nombre}
+            imagenUrl={pieza.imagenUrl}
+            imagenNombre={pieza.imagenNombre}
+            editable
+            compact
+            disabled={saving}
+            onChange={setPieza}
+          />
           <IndicacionesEditor
             key={proyecto.id}
             items={indicaciones}
             onChange={setIndicaciones}
             disabled={saving}
           />
-        )}
+        </div>
       </article>
 
       {typeof document !== 'undefined' ? createPortal(floatingBar, document.body) : floatingBar}

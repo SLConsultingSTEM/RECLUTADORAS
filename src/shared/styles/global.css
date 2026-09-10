@@ -222,6 +222,7 @@ ol {
 
 /* Scrollbar de la app (navegador) — color de marca */
 html {
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--color-primary) 70%, #a57fc4)
     color-mix(in srgb, var(--color-primary-soft) 65%, #f4eef8);

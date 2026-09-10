@@ -1,0 +1,220 @@
+.field {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  text-align: left;
+  padding-bottom: 1.45rem;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--color-muted-deep);
+  font-weight: 650;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.45rem 0.75rem 0.45rem 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out);
+}
+
+.triggerDisabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.trigger:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border-strong));
+}
+
+.triggerOpen,
+.trigger:focus-visible {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-ring);
+}
+
+.triggerInvalid {
+  border-color: var(--color-danger);
+}
+
+.triggerIcon {
+  display: inline-flex;
+  color: var(--color-muted-soft);
+  flex-shrink: 0;
+}
+
+.triggerBody {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.placeholder {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  max-width: 100%;
+  padding: 0.2rem 0.35rem 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 650;
+}
+
+.chipRemove {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.chipRemove:hover {
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.arrow {
+  display: inline-flex;
+  color: var(--color-muted-soft);
+  transition: transform var(--motion-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.arrowOpen {
+  transform: rotate(180deg);
+}
+
+.menu {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  padding: 0.55rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  display: grid;
+  gap: 0.15rem;
+  min-height: 0;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: var(--color-surface-muted);
+}
+
+.optionSelected {
+  background: color-mix(in srgb, var(--color-primary-soft) 70%, transparent);
+  color: var(--color-primary);
+  font-weight: 650;
+}
+
+.optionCheck {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+}
+
+.addRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.addInput {
+  width: 100%;
+  min-height: 36px;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+}
+
+.addInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-ring);
+}
+
+.addError {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
+.error {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 1.35rem;
+  font-size: var(--text-xs);
+  line-height: 1.35;
+  color: var(--color-danger-text);
+  font-weight: 600;
+}

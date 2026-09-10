@@ -1,9 +1,9 @@
 .shell {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  display: block;
+  padding-left: var(--sidebar-width);
   background: var(--color-bg);
-  transition: grid-template-columns var(--motion) var(--ease-out);
+  transition: padding-left var(--motion) var(--ease-out);
 }
 
 /* ---------- Sidebar ---------- */
@@ -11,16 +11,22 @@
 .sidebar {
   --nav-item-size: 56px;
   --nav-gap: 0.4rem;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  width: var(--sidebar-width);
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
   padding: 0.65rem 0 1rem;
   background: var(--color-sidebar);
-  z-index: 30;
+  z-index: 40;
   overflow: visible;
+  /* Capa propia: evita que el scroll del documento mueva/rasterice los iconos */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .sidebarTop {
@@ -32,11 +38,13 @@
   margin-bottom: 0.55rem;
   padding: 0 0.5rem;
   position: relative;
-  z-index: 5;
+  z-index: 6;
+  overflow: visible;
   background: var(--color-sidebar);
 }
 
 .brand {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +58,18 @@
 }
 
 .brand:hover {
+  opacity: 1;
+}
+
+.brand:hover .brandLogo {
   opacity: 0.85;
+}
+
+.brand:hover .navTooltip,
+.brand:focus-visible .navTooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
 }
 
 .brandLogo {
@@ -60,6 +79,7 @@
   margin: 0 auto;
   object-fit: contain;
   object-position: center;
+  transition: opacity var(--motion-fast) var(--ease-out);
 }
 
 .closeWrap {
@@ -102,7 +122,6 @@
   pointer-events: none;
   z-index: 0;
   transition: none;
-  will-change: transform;
 }
 
 .sideNavReady .navIndicator {
@@ -186,6 +205,8 @@
   color: currentColor;
   position: relative;
   z-index: 1;
+  /* Evita jitter de antialiasing en SVG al hacer scroll */
+  transform: translateZ(0);
 }
 
 .navTooltip {
@@ -266,7 +287,7 @@
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 35;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -404,7 +425,7 @@
 
 @media (max-width: 1024px) {
   .shell {
-    grid-template-columns: minmax(0, 1fr);
+    padding-left: 0;
   }
 
   .sidebar {
