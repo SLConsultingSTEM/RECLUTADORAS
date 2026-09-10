@@ -1,6 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useProyectos } from '@modules/proyectos/presentation/useProyectos'
-import { SeguimientoPanel } from '@modules/participantes/presentation/SeguimientoPanel'
+import {
+  SeguimientoEstadoFilter,
+  SeguimientoPanel,
+  SeguimientoRefreshButton,
+} from '@modules/participantes/presentation/SeguimientoPanel'
 import { useSeguimientoResumen } from '@modules/participantes/presentation/useSeguimientoResumen'
 import { Alert } from '@shared/ui/Alert'
 import { Card } from '@shared/ui/Card'
@@ -23,10 +27,18 @@ import styles from './HomePage.module.css'
 export function PanelReclutadoraPage() {
   const { proyectos, selected, selectedId, setSelectedId, loading, error } = useProyectos()
   const [refreshKey, setRefreshKey] = useState(0)
+  const [listTick, setListTick] = useState(0)
+  const [listLoading, setListLoading] = useState(false)
+  const [estadoFiltro, setEstadoFiltro] = useState('')
   const { resumen, loading: resumenLoading, error: resumenError } = useSeguimientoResumen(
     selectedId,
     refreshKey,
   )
+
+  useEffect(() => {
+    setEstadoFiltro('')
+    setListTick(0)
+  }, [selectedId])
 
   const showEmpty = !loading && proyectos.length === 0 && !error
   const showShell = loading || proyectos.length > 0
@@ -144,11 +156,35 @@ export function PanelReclutadoraPage() {
                   <h3 className={styles.panelSectionTitle}>Listado de seguimiento</h3>
                 </div>
               </div>
+
+              <div className={styles.panelSectionActions}>
+                {shellReady ? (
+                  <>
+                    <SeguimientoEstadoFilter
+                      value={estadoFiltro}
+                      onChange={setEstadoFiltro}
+                      disabled={listLoading}
+                    />
+                    <SeguimientoRefreshButton
+                      loading={listLoading}
+                      onClick={() => setListTick((value) => value + 1)}
+                    />
+                  </>
+                ) : (
+                  <SkeletonBlock height={48} />
+                )}
+              </div>
             </header>
 
             <SoftSwap loading={!shellReady} skeleton={<SkeletonBlock height={220} />}>
               {selected ? (
-                <SeguimientoPanel proyectoId={selected.id} refreshKey={refreshKey} />
+                <SeguimientoPanel
+                  proyectoId={selected.id}
+                  refreshKey={refreshKey}
+                  listTick={listTick}
+                  estado={estadoFiltro}
+                  onLoadingChange={setListLoading}
+                />
               ) : null}
             </SoftSwap>
           </section>

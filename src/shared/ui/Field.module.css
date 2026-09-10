@@ -267,7 +267,41 @@
 }
 
 .fieldPillsLabeled {
-  gap: 0.35rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.75rem;
+  width: max-content;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.fieldPillsLabeled .controlWrapPills {
+  flex: 0 0 16.5rem;
+  width: 16.5rem;
+  min-width: 16.5rem;
+}
+
+.fieldPillsLabeled .controlPills {
+  min-height: 44px;
+  padding: 0.55rem 2.5rem 0.55rem 2.5rem;
+}
+
+.fieldPillsLabeled .controlPills.withAdornment {
+  padding-left: 2.5rem;
+}
+
+@media (max-width: 640px) {
+  .fieldPillsLabeled {
+    width: 100%;
+  }
+
+  .fieldPillsLabeled .controlWrapPills {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+  }
 }
 
 .labelPills {
@@ -283,11 +317,13 @@
 }
 
 .labelPillsVisible {
-  font-size: var(--text-base);
-  font-weight: 700;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  font-weight: 650;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--color-ink);
+  color: var(--color-muted-deep);
 }
 
 .controlWrapPills {

@@ -22,6 +22,7 @@ export interface Participante {
   telefono: string
   estado: EstadoParticipante
   camposExtra: Record<string, string>
+  observaciones: string
   creadoPor: string
   creadoEn: string
 }
@@ -34,6 +35,7 @@ export interface RegistrarParticipanteInput {
   ciudad: string
   telefono: string
   camposExtra: Record<string, string>
+  observaciones?: string
   creadoPor: string
 }
 

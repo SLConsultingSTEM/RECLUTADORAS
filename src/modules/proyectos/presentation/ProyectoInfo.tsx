@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
+import {
+  parseIndicacionBlocks,
+  stripLeadingHeading,
+} from '@modules/proyectos/application/indicacionesMapper'
 import { sanitizeHtml } from '@shared/security/sanitize'
 import { Badge } from '@shared/ui/Badge'
 import { EmptyState } from '@shared/ui/EmptyState'
 import {
   IconChevronLeft,
   IconChevronRight,
+  IconDownload,
   IconImage,
   IconListChecks,
   IconMapPin,
@@ -24,10 +29,6 @@ interface ProyectoInfoProps {
   mediaOnly?: boolean
 }
 
-type IndicacionBlock =
-  | { type: 'html'; html: string }
-  | { type: 'list'; items: string[] }
-
 type IndicacionRegla = {
   leadHtml: string
   html: string
@@ -46,64 +47,12 @@ function normalizeLabels(html: string, leadClass: string) {
 function unwrapSingleSpan(html: string) {
   const trimmed = html.trim()
   const matched = trimmed.match(/^<span\b[^>]*>([\s\S]*)<\/span>$/i)
-  return matched ? matched[1] : trimmed
+  return matched?.[1] ?? trimmed
 }
 
-/** Quita el H3 inicial del HTML (p. ej. "Información de…") para controlar el título en UI. */
-function stripLeadingHeading(html: string) {
-  return html.replace(/^\s*<h[1-6][^>]*>[\s\S]*?<\/h[1-6]>/i, '').trim()
-}
-
-/** Separa labels/texto libre de listas para poder numerar en React. */
-function parseIndicacionBlocks(html: string): IndicacionBlock[] {
-  if (typeof DOMParser === 'undefined') {
-    return [{ type: 'html', html }]
-  }
-
-  const doc = new DOMParser().parseFromString(`<div id="root">${html}</div>`, 'text/html')
-  const root = doc.getElementById('root') ?? doc.body
-  if (!root) return [{ type: 'html', html }]
-
-  const readListItems = (list: Element) =>
-    Array.from(list.children)
-      .filter((child) => child.tagName === 'LI')
-      .map((li) => (li as HTMLElement).innerHTML.trim())
-      .filter(Boolean)
-
-  const blocks: IndicacionBlock[] = []
-  let htmlParts: string[] = []
-
-  const flushHtml = () => {
-    const joined = htmlParts.join('').trim()
-    if (joined) blocks.push({ type: 'html', html: joined })
-    htmlParts = []
-  }
-
-  Array.from(root.children).forEach((el) => {
-    if (el.tagName === 'OL' || el.tagName === 'UL') {
-      flushHtml()
-      const items = readListItems(el)
-      if (items.length) blocks.push({ type: 'list', items })
-      return
-    }
-    htmlParts.push(el.outerHTML)
-  })
-
-  flushHtml()
-
-  if (!blocks.some((block) => block.type === 'list')) {
-    const lists = Array.from(root.querySelectorAll('ol, ul'))
-      .map((list) => readListItems(list))
-      .filter((items) => items.length > 0)
-      .map((items) => ({ type: 'list' as const, items }))
-
-    if (lists.length) return lists
-  }
-
-  return blocks.length ? blocks : [{ type: 'html', html }]
-}
-
-function flattenReglas(blocks: IndicacionBlock[]): IndicacionRegla[] {
+function flattenReglas(
+  blocks: ReturnType<typeof parseIndicacionBlocks>,
+): IndicacionRegla[] {
   const reglas: IndicacionRegla[] = []
   let currentLead = ''
 
@@ -244,29 +193,18 @@ export function ProyectoInfo({
   if (mediaOnly) {
     const cuerpoHtml = normalizeLabels(
       sanitizeHtml(stripLeadingHeading(descripcionHtml)),
-      styles.indicacionLead,
+      styles.indicacionLead ?? 'indicacionLead',
     )
 
     return (
       <article className={`${styles.article} ${styles.reclutarInfo}`}>
         <div className={styles.reclutarSplit}>
           <IndicacionesPanel html={cuerpoHtml} />
-
-          {imagenUrl ? (
-            <PiezaGraficaPanel
-              nombre={nombre}
-              imagenUrl={imagenUrl}
-              imagenNombre={imagenNombre}
-            />
-          ) : (
-            <aside className={styles.mediaFeature}>
-              <EmptyState
-                icon={<IconImage size={22} />}
-                title="Sin pieza gráfica"
-                description="Este proyecto aún no tiene imagen para descargar."
-              />
-            </aside>
-          )}
+          <PiezaGraficaPanel
+            nombre={nombre}
+            imagenUrl={imagenUrl}
+            imagenNombre={imagenNombre}
+          />
         </div>
       </article>
     )

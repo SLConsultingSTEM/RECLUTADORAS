@@ -42,6 +42,13 @@
   flex-wrap: wrap;
 }
 
+.mediaActions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .mediaLabel {
   display: inline-flex;
   align-items: center;
@@ -307,6 +314,16 @@
   align-items: start;
 }
 
+.piezaSolo {
+  width: min(100%, 42rem);
+  margin-inline: auto;
+}
+
+.piezaSolo .mediaFeature {
+  width: 100%;
+  min-height: 28rem;
+}
+
 .reclutarInfo .content {
   max-height: none;
 }
@@ -401,37 +418,9 @@
   flex: 0 0 auto;
   padding: 0.32rem 0.4rem 0.32rem 0.32rem;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(255, 255, 255, 0.38) 42%,
-    color-mix(in srgb, var(--color-primary-soft) 55%, rgba(255, 255, 255, 0.28)) 100%
-  );
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 -1px 0 rgba(103, 41, 140, 0.08) inset,
-    0 8px 22px rgba(26, 18, 36, 0.08),
-    0 1px 2px rgba(26, 18, 36, 0.04);
-  backdrop-filter: blur(16px) saturate(1.45);
-  -webkit-backdrop-filter: blur(16px) saturate(1.45);
-  isolation: isolate;
-  overflow: hidden;
-}
-
-.pagerControls::before {
-  content: '';
-  position: absolute;
-  inset: 1px 12% auto 12%;
-  height: 45%;
-  border-radius: 999px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.75) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  pointer-events: none;
-  z-index: 0;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
 }
 
 .pagerDots {
@@ -447,10 +436,9 @@
   width: 0.45rem;
   height: 0.45rem;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
   border-radius: 50%;
-  background: color-mix(in srgb, var(--color-primary) 28%, rgba(255, 255, 255, 0.55));
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset;
+  background: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface));
   cursor: pointer;
   transition:
     width var(--motion-fast) var(--ease-out),
@@ -461,30 +449,20 @@
 
 .pagerDot:hover {
   transform: scale(1.15);
-  background: color-mix(in srgb, var(--color-primary) 48%, rgba(255, 255, 255, 0.4));
+  background: color-mix(in srgb, var(--color-primary) 42%, var(--color-surface));
 }
 
 .pagerDotActive {
   width: 1.15rem;
   border-radius: 999px;
-  border-color: rgba(255, 255, 255, 0.45);
-  background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--color-primary) 82%, #fff) 0%,
-    var(--color-primary) 100%
-  );
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.35) inset,
-    0 4px 10px color-mix(in srgb, var(--color-primary) 28%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background: var(--color-primary);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--color-primary) 22%, transparent);
 }
 
 .pagerDotActive:hover {
   transform: none;
-  background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--color-primary) 82%, #fff) 0%,
-    var(--color-primary) 100%
-  );
+  background: var(--color-primary);
 }
 
 .content {
@@ -582,20 +560,11 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.7) 0%,
-    rgba(255, 255, 255, 0.22) 48%,
-    color-mix(in srgb, var(--color-primary) 12%, transparent) 100%
-  );
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   color: var(--color-primary);
   cursor: pointer;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.8) inset,
-    0 4px 10px rgba(26, 18, 36, 0.06);
-  backdrop-filter: blur(10px) saturate(1.3);
-  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow: none;
   transition:
     background var(--motion-fast) var(--ease-out),
     border-color var(--motion-fast) var(--ease-out),
@@ -605,15 +574,9 @@
 }
 
 .pagerButton:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, 0.75);
-  background: linear-gradient(
-    155deg,
-    rgba(255, 255, 255, 0.88) 0%,
-    color-mix(in srgb, var(--color-primary-soft) 70%, rgba(255, 255, 255, 0.35)) 100%
-  );
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 6px 14px color-mix(in srgb, var(--color-primary) 16%, transparent);
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  background: var(--color-primary-soft);
+  box-shadow: none;
   transform: translateY(-1px);
 }
 
@@ -738,4 +701,204 @@
 
 .indicacionHtml .indicacionLead + .indicacionLead {
   margin-top: var(--space-3);
+}
+
+.editorShell {
+  display: grid;
+  gap: var(--space-3);
+  padding-bottom: 5.5rem;
+}
+
+.editorToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.editorFloatingBar {
+  position: fixed;
+  z-index: 50;
+  left: calc(var(--sidebar-width) + ((100vw - var(--sidebar-width)) / 2));
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(
+    155deg,
+    rgba(52, 42, 68, 0.78) 0%,
+    rgba(40, 32, 54, 0.72) 48%,
+    rgba(46, 36, 62, 0.8) 100%
+  );
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 14px 36px rgba(26, 18, 36, 0.28),
+    0 2px 10px rgba(26, 18, 36, 0.16);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+}
+
+.editorFloatingBtn {
+  border-radius: var(--radius-pill);
+  padding-inline: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .editorFloatingBar {
+    left: 50%;
+    right: auto;
+    bottom: 1rem;
+    max-width: calc(100vw - 1.5rem);
+  }
+}
+
+.editorHeaderActions {
+  display: inline-flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.editorActionBtn {
+  border-radius: var(--radius-pill);
+  padding-inline: 1.25rem;
+}
+
+.editorHeading {
+  display: grid;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 16%, var(--color-border));
+}
+
+.editorHeadingTop {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.editorHeadingLead {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.editorHeadingLead .pagerControls {
+  margin-top: auto;
+}
+
+.editorList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--color-muted-deep);
+}
+
+.editorGroup {
+  display: grid;
+  gap: 0.55rem;
+  list-style: none;
+  margin: 0;
+}
+
+.editorSectionField {
+  margin-top: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.editorSectionField span {
+  color: var(--color-muted-deep);
+  font-weight: 600;
+}
+
+.editorItem {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.editorItemHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.editorField {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 1rem;
+  color: var(--color-muted-deep);
+}
+
+.editorField span {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.editorField input,
+.editorField textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+  color: var(--color-muted-deep);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.75;
+  resize: vertical;
+}
+
+.editorField input:focus,
+.editorField textarea:focus {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 1px;
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.editorField input:disabled,
+.editorField textarea:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.editorField input::placeholder,
+.editorField textarea::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 80%, transparent);
+}
+
+.editorField.editorSectionField input {
+  background: #fff;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--color-muted-deep);
+  border-color: color-mix(in srgb, var(--color-ink) 14%, var(--color-border));
 }

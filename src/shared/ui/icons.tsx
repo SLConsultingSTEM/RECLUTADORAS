@@ -163,8 +163,10 @@ export function IconPlus(props: IconProps) {
 export function IconRefresh(props: IconProps) {
   return (
     <BaseIcon {...props}>
-      <path d="M20 12a8 8 0 1 1-2.6-5.9" />
-      <path d="M20 4.5V10h-5.5" />
+      <path d="M3.5 12a8.5 8.5 0 0 1 14.2-6.2" />
+      <path d="M17.7 3.8v4.2h-4.2" />
+      <path d="M20.5 12a8.5 8.5 0 0 1-14.2 6.2" />
+      <path d="M6.3 20.2v-4.2h4.2" />
     </BaseIcon>
   )
 }
@@ -352,6 +354,14 @@ export function IconClock(props: IconProps) {
   )
 }
 
+export function IconPhone(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M5.6 4.5h2.6l1.3 3.3-1.9 1.4a10.6 10.6 0 0 0 4.8 4.8l1.4-1.9 3.3 1.3v2.6a1.9 1.9 0 0 1-2.1 1.9C9.4 17.2 6.3 14.1 3.7 6.6a1.9 1.9 0 0 1 1.9-2.1Z" />
+    </BaseIcon>
+  )
+}
+
 export function IconPhoneMissed(props: IconProps) {
   return (
     <BaseIcon {...props}>
@@ -413,6 +423,16 @@ export function IconFilter(props: IconProps) {
   return (
     <BaseIcon {...props}>
       <path d="M4 5h16l-6.2 7.2V19l-3.6-2v-4.8L4 5Z" />
+    </BaseIcon>
+  )
+}
+
+export function IconMessageSquare(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M5.5 4.5h13a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H10l-3.8 3.1v-3.1H5.5a2 2 0 0 1-2-2V6.5a2 2 0 0 1 2-2Z" />
+      <path d="M8.5 9.5h7" />
+      <path d="M8.5 13h4.5" />
     </BaseIcon>
   )
 }

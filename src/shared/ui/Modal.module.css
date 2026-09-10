@@ -1,0 +1,162 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  background: rgba(26, 18, 36, 0.55);
+  backdrop-filter: blur(7px);
+  animation: fadeIn 220ms var(--ease-out) both;
+}
+
+.dialog {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(100%, 36rem);
+  max-height: min(90vh, 44rem);
+  border-radius: var(--radius-xl);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary-soft) 40%, #fff) 0%,
+      #f3eef8 100%
+    );
+  box-shadow:
+    0 24px 48px rgba(103, 41, 140, 0.22),
+    0 2px 8px rgba(26, 18, 36, 0.08);
+  overflow: hidden;
+  animation: dialogIn 280ms var(--ease-out) both;
+}
+
+.dialogLg {
+  width: min(100%, 54rem);
+  max-height: min(92vh, 52rem);
+}
+
+.dialogNoHeader {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 1.2rem 1.5rem 1.05rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
+  background:
+    linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--color-primary-soft) 78%, #fff) 0%,
+      color-mix(in srgb, var(--color-accent-soft) 50%, #fff) 100%
+    );
+}
+
+.heading {
+  min-width: 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  line-height: 1.25;
+}
+
+.description {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted-deep);
+}
+
+.headerAside {
+  margin-top: 0.25rem;
+}
+
+.body {
+  overflow: auto;
+  padding: 1.2rem 1.35rem 1.4rem;
+  overscroll-behavior: contain;
+  background:
+    radial-gradient(
+      80% 60% at 100% 0%,
+      color-mix(in srgb, var(--color-primary-soft) 55%, transparent) 0%,
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-primary-soft) 35%, #f7f2fb) 0%,
+      #efe8f6 100%
+    );
+}
+
+.dialogNoHeader .body {
+  padding-top: 1.2rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 720px) {
+  .root {
+    padding: 0.75rem;
+    align-items: end;
+  }
+
+  .dialog,
+  .dialogLg {
+    width: 100%;
+    max-height: min(92vh, 100%);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .header,
+  .body {
+    padding-inline: 1.15rem;
+  }
+
+  .title {
+    font-size: 1.08rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .dialog {
+    animation: none;
+  }
+}

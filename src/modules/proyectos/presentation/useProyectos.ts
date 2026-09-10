@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { listProyectosUseCase } from '@modules/proyectos/application/proyectoUseCases'
+import {
+  listProyectosUseCase,
+  saveProyectoUseCase,
+} from '@modules/proyectos/application/proyectoUseCases'
 import { createProyectoRepository } from '@modules/proyectos/infrastructure/proyectoRepositoryFactory'
 import type { Proyecto } from '@modules/proyectos/domain/types'
 
@@ -47,6 +50,18 @@ export function useProyectos(preferredId?: string) {
 
   const selected = proyectos.find((item) => item.id === selectedId) ?? null
 
+  async function updateSelected(
+    patch: Pick<Proyecto, 'descripcionHtml' | 'imagenUrl' | 'imagenNombre'>,
+  ) {
+    if (!selected) throw new Error('No hay proyecto seleccionado')
+    const saved = await saveProyectoUseCase(proyectoRepository, {
+      ...selected,
+      ...patch,
+    })
+    setProyectos((prev) => prev.map((item) => (item.id === saved.id ? saved : item)))
+    return saved
+  }
+
   return {
     proyectos,
     selected,
@@ -54,5 +69,6 @@ export function useProyectos(preferredId?: string) {
     setSelectedId,
     loading,
     error,
+    updateSelected,
   }
 }

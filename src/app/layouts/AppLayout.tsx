@@ -64,6 +64,10 @@ export function AppLayout() {
     return () => window.cancelAnimationFrame(id)
   }, [])
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [location.pathname])
+
   function closeMenus() {
     setMobileOpen(false)
   }

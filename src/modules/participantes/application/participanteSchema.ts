@@ -26,13 +26,23 @@ function campoTextoSchema(etiqueta: string, requerido: boolean) {
   )
 }
 
-export function buildParticipanteSchema(campos: CampoEspecifico[]) {
+export interface BuildParticipanteSchemaOptions {
+  /** Si es false, los campos del filtro del estudio quedan opcionales (p. ej. rol reclutadora). */
+  requireCamposEspecificos?: boolean
+}
+
+export function buildParticipanteSchema(
+  campos: CampoEspecifico[],
+  options: BuildParticipanteSchemaOptions = {},
+) {
+  const requireExtras = options.requireCamposEspecificos !== false
   const extraShape: Record<string, z.ZodType<string>> = {}
 
   for (const campo of campos) {
+    const requerido = requireExtras && campo.requerido !== false
     extraShape[campo.nombreCampo] = campoTextoSchema(
       campo.etiqueta,
-      campo.requerido !== false,
+      requerido,
     ) as z.ZodType<string>
   }
 

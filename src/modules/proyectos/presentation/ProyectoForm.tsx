@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { createPortal } from 'react-dom'
 import type { Proyecto } from '@modules/proyectos/domain/types'
 import { TIPOS_DOCUMENTO, type TipoDocumento } from '@modules/participantes/domain/types'
 import { buildParticipanteSchema } from '@modules/participantes/application/participanteSchema'
 import { registerParticipanteUseCase } from '@modules/participantes/application/participanteUseCases'
 import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
 import { useAuth } from '@app/providers/useAuth'
+import { isCoordinadora } from '@modules/auth/domain/roles'
 import { Alert } from '@shared/ui/Alert'
 import { Button } from '@shared/ui/Button'
 import { Input } from '@shared/ui/Input'
 import { Select } from '@shared/ui/Select'
-import { IconListChecks, IconMapPin, IconUser, IconUserPlus } from '@shared/ui/icons'
+import { IconListChecks, IconMapPin, IconUser } from '@shared/ui/icons'
 import styles from './ProyectoForm.module.css'
 
 const participanteRepository = createParticipanteRepository()
@@ -65,9 +67,14 @@ interface ProyectoFormProps {
 export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
   const { user } = useAuth()
   const formRef = useRef<HTMLFormElement>(null)
+  /** Reclutadora: solo Datos base obligatorios; el filtro del estudio es opcional. */
+  const requireCamposEspecificos = Boolean(user && isCoordinadora(user.role))
   const schema = useMemo(
-    () => buildParticipanteSchema(proyecto.camposEspecificos),
-    [proyecto.camposEspecificos],
+    () =>
+      buildParticipanteSchema(proyecto.camposEspecificos, {
+        requireCamposEspecificos,
+      }),
+    [proyecto.camposEspecificos, requireCamposEspecificos],
   )
 
   const [nombre, setNombre] = useState('')
@@ -81,7 +88,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
+  function resetForm() {
     setNombre('')
     setTipoDocumento('')
     setDocumento('')
@@ -91,6 +98,10 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
     setErrors({})
     setSuccess('')
     setError('')
+  }
+
+  useEffect(() => {
+    resetForm()
   }, [proyecto])
 
   function clearFieldError(key: string) {
@@ -157,13 +168,8 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
         ...parsed.data,
         creadoPor: user?.username ?? 'desconocido',
       })
+      resetForm()
       setSuccess('Participante registrado correctamente')
-      setNombre('')
-      setTipoDocumento('')
-      setDocumento('')
-      setCiudad('')
-      setTelefono('')
-      setCamposExtra({})
       onRegistered()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo registrar')
@@ -173,6 +179,28 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
   }
 
   const filtroCount = proyecto.camposEspecificos.length
+
+  const floatingBar = (
+    <div className={styles.floatingBar} role="toolbar" aria-label="Acciones del registro">
+      <Button
+        type="button"
+        variant="secondary"
+        className={styles.floatingBtn}
+        disabled={loading}
+        onClick={resetForm}
+      >
+        Descartar
+      </Button>
+      <Button
+        type="button"
+        className={styles.floatingBtn}
+        loading={loading}
+        onClick={() => formRef.current?.requestSubmit()}
+      >
+        Guardar
+      </Button>
+    </div>
+  )
 
   return (
     <form ref={formRef} className={styles.form} onSubmit={handleSubmit} noValidate>
@@ -303,7 +331,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
                     })),
                   ]}
                   error={errors[`camposExtra.${campo.nombreCampo}`]}
-                  required={campo.requerido}
+                  required={requireCamposEspecificos && campo.requerido}
                 />
               ) : (
                 <Input
@@ -321,7 +349,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
                         ? undefined
                         : `Escribe ${campo.etiqueta.toLowerCase()}`
                   }
-                  required={campo.requerido}
+                  required={requireCamposEspecificos && campo.requerido}
                 />
               ),
             )}
@@ -332,12 +360,7 @@ export function ProyectoForm({ proyecto, onRegistered }: ProyectoFormProps) {
       {success ? <Alert tone="success">{success}</Alert> : null}
       {error ? <Alert tone="error">{error}</Alert> : null}
 
-      <div className={styles.actions}>
-        <p className={styles.actionsHint}>Revisa los datos antes de guardar el registro.</p>
-        <Button type="submit" loading={loading} icon={<IconUserPlus size={16} />}>
-          {loading ? 'Guardando…' : 'Registrar participante'}
-        </Button>
-      </div>
+      {typeof document !== 'undefined' ? createPortal(floatingBar, document.body) : floatingBar}
     </form>
   )
 }
