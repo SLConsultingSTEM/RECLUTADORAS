@@ -26,9 +26,11 @@ export interface Participante {
   id: string
   proyectoId: string
   nombre: string
-  tipoDocumento: TipoDocumento | ''
+  /** Valor libre según opciones configuradas en el formulario del proyecto. */
+  tipoDocumento: string
   documento: string
-  genero: GeneroParticipante | ''
+  /** Valor libre según opciones configuradas en el formulario del proyecto. */
+  genero: string
   ciudad: string
   telefono: string
   estado: EstadoParticipante
@@ -41,9 +43,9 @@ export interface Participante {
 export interface RegistrarParticipanteInput {
   proyectoId: string
   nombre: string
-  tipoDocumento: TipoDocumento | ''
+  tipoDocumento: string
   documento: string
-  genero: GeneroParticipante | ''
+  genero: string
   ciudad: string
   telefono: string
   camposExtra: Record<string, string>

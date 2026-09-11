@@ -37,13 +37,7 @@
   padding: var(--space-5) var(--space-6);
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
-  background:
-    linear-gradient(
-      155deg,
-      var(--color-primary-soft) 0%,
-      color-mix(in srgb, var(--color-primary-soft) 70%, var(--color-accent-soft)) 55%,
-      color-mix(in srgb, var(--color-primary-soft) 55%, #fff) 100%
-    );
+  background: #f1f1f1;
 }
 
 .sectionHead {
@@ -60,6 +54,11 @@
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
+  flex: 1 1 auto;
+}
+
+.sectionTitleWrapEdit {
+  align-items: flex-start;
 }
 
 .sectionIcon {
@@ -73,6 +72,10 @@
   color: var(--color-primary);
   flex-shrink: 0;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.sectionTitleWrapEdit .sectionIcon {
+  margin-top: 1.05rem;
 }
 
 .sectionEyebrow {
@@ -193,6 +196,879 @@
   }
 
   .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.builderHint {
+  margin: 0.35rem 0 0;
+  max-width: 34rem;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--color-muted-deep);
+}
+
+.sectionHeadActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.sectionHeadMeta {
+  display: grid;
+  justify-items: end;
+  gap: 0.45rem;
+}
+
+.dirtyBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--color-warning, #c27803) 35%, var(--color-border));
+  background: color-mix(in srgb, #fff7e8 80%, #fff);
+  color: #9a6700;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.addCampoBtn {
+  border-radius: var(--radius-pill);
+}
+
+.campoTile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.55rem;
+  min-width: 0;
+  height: auto;
+  padding: 1rem 1rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary-soft) 82%, var(--color-surface-muted, #ebe7f0));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    background-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
+}
+
+.campoTileEditing {
+  justify-content: flex-start;
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary-soft) 88%, var(--color-primary) 6%);
+  box-shadow: var(--shadow-xs);
+  padding: 1rem 1rem 0.9rem;
+}
+
+.campoTileBody {
+  position: relative;
+  display: grid;
+  gap: 0.55rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.campoTileToolbar {
+  position: absolute;
+  top: 0.1rem;
+  right: 0;
+  z-index: 6;
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.3rem;
+  margin: 0;
+  pointer-events: auto;
+}
+
+.campoTile:hover,
+.campoTile:focus-within {
+  border-color: color-mix(in srgb, var(--color-primary) 36%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary-soft) 92%, var(--color-primary) 8%);
+  box-shadow: var(--shadow-xs);
+}
+
+.campoTile.campoTileDragging,
+.campoTile.campoTileDragging:hover {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--color-primary) 55%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-primary-soft));
+  box-shadow: none;
+  transform: scale(0.98);
+}
+
+.campoTile.campoTileDrop,
+.campoTile.campoTileDrop:hover {
+  border-style: solid;
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary-soft) 70%, var(--color-primary) 12%);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--color-primary) 28%, transparent),
+    var(--shadow-sm);
+  transform: scale(1.01);
+}
+
+.campoTileDragging {
+  opacity: 1;
+}
+
+.campoTileDragging .campoTilePreview {
+  opacity: 0.55;
+}
+
+.campoCloseBtn {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out);
+}
+
+.campoCloseBtn:hover:not(:disabled) {
+  background: var(--color-primary-soft);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.campoCloseBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.campoLabelRow {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0;
+  padding-right: 0;
+}
+
+.campoLabelRow:has(.campoLabelActions) {
+  padding-right: 4.7rem;
+}
+
+.campoLabelActions {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  transform: translateY(-50%);
+}
+
+.campoLabelActions .campoLabelEditBtn {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.campoTileDraggable {
+  cursor: grab;
+  padding-left: 1.65rem;
+}
+
+.campoTileDraggable:active {
+  cursor: grabbing;
+}
+
+.campoDragHint {
+  position: absolute;
+  top: 50%;
+  left: 0.35rem;
+  z-index: 2;
+  display: inline-grid;
+  place-items: center;
+  width: 1.1rem;
+  color: color-mix(in srgb, var(--color-primary) 55%, var(--color-muted));
+  opacity: 0.55;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: opacity var(--motion-fast) var(--ease-out);
+}
+
+.campoTileDraggable:hover .campoDragHint,
+.campoTileDraggable:focus-within .campoDragHint {
+  opacity: 0.9;
+}
+
+.campoTilePreview {
+  position: relative;
+  min-width: 0;
+  padding-top: 0.15rem;
+  padding-right: 0.15rem;
+}
+
+.campoTileBody:has(.campoTileToolbar) .campoTilePreview :global(label) {
+  padding-top: 0;
+}
+
+.campoTileBody:has(.campoTileToolbar) .campoTilePreview :global(label > span:first-child) {
+  min-height: 1.55rem;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.campoControlSwap {
+  position: relative;
+  z-index: 1;
+  animation: campoControlIn 200ms var(--ease-out);
+}
+
+.campoEditMeta {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+  padding-left: 0.35rem;
+}
+
+.campoMetaBlock {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.campoMetaLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.campoMetaLabel {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: 0.01em;
+}
+
+.campoMetaLabelRow .campoCloseBtn {
+  flex-shrink: 0;
+}
+
+.campoTipoRow {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+.campoTileEditing .campoControlOnly {
+  padding-left: 0.35rem;
+}
+
+.campoLabelInput {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  min-height: 2rem;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1.3;
+  box-shadow: var(--shadow-xs);
+}
+
+.campoLabelInput:focus {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 1px;
+  border-color: color-mix(in srgb, var(--color-primary) 50%, var(--color-border));
+}
+
+.campoLabelInput:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@keyframes campoControlIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Al editar, el label original del Input/Select se oculta: lo reemplaza el input */
+.campoControlOnly :global(label > span:first-child) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.campoControlOnly :global(label) {
+  gap: 0;
+}
+
+.campoTilePreview :global(label) {
+  margin-bottom: 0;
+  gap: 0.7rem;
+  padding-bottom: 0;
+}
+
+/* Reserva de error/hint: solo ocupa espacio si hay contenido */
+.campoTilePreview :global([class*='message']) {
+  position: static;
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.campoTilePreview :global([class*='message']:has(*)) {
+  height: auto;
+  overflow: visible;
+  margin-top: 0.3rem;
+  min-height: 1.2rem;
+}
+
+.campoLabelEditBtn {
+  position: static;
+  z-index: 3;
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out);
+}
+
+.campoLabelEditBtn:hover:not(:disabled) {
+  background: var(--color-primary-soft);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  color: var(--color-primary);
+}
+
+.campoLabelDangerBtn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-danger, #c62828) 10%, #fff);
+  border-color: color-mix(in srgb, var(--color-danger, #c62828) 40%, var(--color-border));
+  color: var(--color-danger, #c62828);
+}
+
+.campoLabelEditBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.form .campoTilePreview :global(label > span:first-child) {
+  padding-right: 2rem;
+}
+
+.campoTile:has(.campoTileToolbarWide) .campoTilePreview :global(label > span:first-child) {
+  padding-right: 5.4rem;
+}
+
+.campoTileEditing .form .campoTilePreview :global(label > span:first-child),
+.campoTileEditing .campoTilePreview :global(label > span:first-child) {
+  padding-right: 0;
+}
+
+/* Inputs blancos sobre el tile tintado, para que se distingan */
+.form .campoTilePreview :is(input, select) {
+  background: #fff;
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+  box-shadow: 0 1px 2px rgba(40, 24, 60, 0.07);
+}
+
+.form .campoTilePreview :is(input, select):hover:not(:focus) {
+  background: #fff;
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.form .campoTilePreview :is(input, select):focus {
+  background: #fff;
+}
+
+.sectionTitleView {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.sectionTitleBlock {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.sectionTitlePencil {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.55rem;
+  height: 1.55rem;
+  margin-top: 0.15rem;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-primary);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out);
+}
+
+.sectionTitlePencil:hover:not(:disabled) {
+  background: var(--color-primary-soft);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.sectionTitlePencil:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sectionTitleEditor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1 1 16rem;
+  align-items: stretch;
+  padding-left: 0.55rem;
+}
+
+.sectionTitleEditorActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 0;
+  max-width: 28rem;
+  width: 100%;
+}
+
+.sectionTitleDoneBtn {
+  width: 100%;
+  min-width: 0;
+  border-radius: 999px;
+}
+
+.sectionNameField {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  max-width: 28rem;
+  width: 100%;
+}
+
+.form .sectionNameField > span,
+.sectionNameField > span {
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--color-muted);
+  line-height: 1.2;
+}
+
+.form .sectionNameField input {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  min-height: 2.25rem;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.35;
+  box-shadow: var(--shadow-xs);
+}
+
+.form .sectionNameField input:focus {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 1px;
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.form .sectionNameField input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .sectionTitleEditorActions {
+    justify-content: flex-start;
+  }
+}
+
+.campoEditPanel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary-soft) 28%, #fff);
+  animation: campoEditIn 220ms var(--ease-out);
+}
+
+@keyframes campoEditIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.campoEditField {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.campoEditField > span,
+.campoOptionsLabel {
+  font-size: var(--text-sm);
+  font-weight: 750;
+  color: var(--color-ink);
+}
+
+.campoEditField input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 42px;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--color-muted-deep);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.campoEditField input:focus {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 1px;
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.campoSegmented {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0.28rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
+  background: color-mix(in srgb, var(--color-surface-muted) 70%, #fff);
+}
+
+.campoSegment {
+  flex: 1 1 calc(33.333% - 0.2rem);
+  min-width: 5.2rem;
+  min-height: 2.15rem;
+  padding: 0.3rem 0.35rem;
+  border: 0;
+  border-radius: calc(var(--radius-md) - 2px);
+  background: transparent;
+  color: var(--color-muted-deep);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.campoSegment:hover:not(:disabled):not(.campoSegmentActive) {
+  background: color-mix(in srgb, var(--color-primary-soft) 45%, transparent);
+  color: var(--color-primary);
+}
+
+.campoSegmentActive {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.campoSegment:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.campoRequiredRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 14%, var(--color-border));
+  background: #fff;
+}
+
+.campoRequiredTitle {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 750;
+  color: var(--color-ink);
+}
+
+.campoRequiredHint {
+  margin: 0.15rem 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted-deep);
+}
+
+.campoSwitch {
+  position: relative;
+  width: 2.85rem;
+  height: 1.65rem;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1.5px solid color-mix(in srgb, var(--color-ink) 28%, var(--color-border));
+  border-radius: var(--radius-pill);
+  background: #d8d8d8;
+  cursor: pointer;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.campoSwitchOn {
+  background: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-primary) 70%, #000);
+  box-shadow: none;
+}
+
+.campoSwitch:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.campoSwitchThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: transform var(--motion-fast) var(--ease-out);
+}
+
+.campoSwitchOn .campoSwitchThumb {
+  transform: translateX(1.15rem);
+}
+
+.campoOptionList {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.campoOptionRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.campoOptionRow input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 40px;
+  margin: 0;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--color-muted-deep);
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.campoOptionRow input:focus {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  outline-offset: 1px;
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+}
+
+.campoOptions {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 12%, var(--color-border));
+  min-width: 0;
+}
+
+.campoChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.campoChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-height: 1.75rem;
+  padding: 0.15rem 0.3rem 0.15rem 0.65rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary-soft) 45%, #fff);
+  font-size: var(--text-sm);
+  font-weight: 650;
+}
+
+.campoChipRemove {
+  display: inline-grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-muted-deep);
+  cursor: pointer;
+}
+
+.campoChipRemove:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+
+.campoOptionAdd {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem;
+}
+
+.campoOptionAdd input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 40px;
+  margin: 0;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: #fff;
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.campoEditFooter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.campoEditFooter :global(button) {
+  width: 100%;
+  min-width: 0;
+}
+
+.addCampoTile {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.25rem;
+  min-height: 7.5rem;
+  padding: 1rem;
+  border: 1.5px dashed color-mix(in srgb, var(--color-primary) 42%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary-soft) 35%, #fff);
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out),
+    transform var(--motion-fast) var(--ease-out);
+}
+
+.addCampoTile span {
+  font-size: 0.95rem;
+}
+
+.addCampoTile small {
+  font-size: var(--text-sm);
+  font-weight: 550;
+  color: var(--color-muted-deep);
+}
+
+.addCampoTile:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-primary-soft) 62%, #fff);
+  border-color: color-mix(in srgb, var(--color-primary) 58%, var(--color-border));
+  transform: translateY(-1px);
+}
+
+.addCampoTile:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campoEditPanel,
+  .addCampoTile,
+  .campoTile,
+  .campoControlSwap {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .campoSegment {
+    flex-basis: calc(50% - 0.15rem);
+    min-width: 4.5rem;
+  }
+
+  .campoOptionAdd {
     grid-template-columns: 1fr;
   }
 }

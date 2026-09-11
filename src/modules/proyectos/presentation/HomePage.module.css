@@ -158,6 +158,12 @@
   overflow-x: clip;
 }
 
+.registrarStack {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
 .workspaceSwitch {
   display: flex;
   align-items: center;

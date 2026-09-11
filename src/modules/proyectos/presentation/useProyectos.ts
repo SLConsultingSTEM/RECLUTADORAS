@@ -51,7 +51,17 @@ export function useProyectos(preferredId?: string) {
   const selected = proyectos.find((item) => item.id === selectedId) ?? null
 
   async function updateSelected(
-    patch: Pick<Proyecto, 'descripcionHtml' | 'imagenUrl' | 'imagenNombre'>,
+    patch: Partial<
+      Pick<
+        Proyecto,
+        | 'descripcionHtml'
+        | 'imagenUrl'
+        | 'imagenNombre'
+        | 'camposEspecificos'
+        | 'camposBase'
+        | 'titulosFormulario'
+      >
+    >,
   ) {
     if (!selected) throw new Error('No hay proyecto seleccionado')
     const saved = await saveProyectoUseCase(proyectoRepository, {
@@ -87,6 +97,12 @@ export function useProyectos(preferredId?: string) {
           : source?.ciudadesPermitidas?.length
             ? [...source.ciudadesPermitidas]
             : ['Bogotá'],
+      camposBase: source?.camposBase
+        ? structuredClone(source.camposBase)
+        : undefined,
+      titulosFormulario: source?.titulosFormulario
+        ? structuredClone(source.titulosFormulario)
+        : undefined,
       camposEspecificos: source
         ? structuredClone(source.camposEspecificos)
         : [],

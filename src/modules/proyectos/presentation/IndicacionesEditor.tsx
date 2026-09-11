@@ -134,7 +134,7 @@ export function IndicacionesEditor({
   }
 
   function addSection() {
-    const created = createEmptyIndicacion('Nuevo tema')
+    const created = createEmptyIndicacion('Nuevo título')
     onChange([...items, created])
     setOpenSectionKey(created.id)
     setFocusTarget({ type: 'lead', id: created.id })
@@ -157,8 +157,8 @@ export function IndicacionesEditor({
           <div className={styles.editorHeadingLead}>
             <span className={styles.panelLabel}>Indicaciones</span>
             <p className={styles.editorHelp}>
-              Trabaja <strong>un tema a la vez</strong>. Abre el que necesites; el resto se mantiene
-              cerrado para evitar tanto scroll.
+              Cada bloque tiene un <strong>título</strong> y las <strong>reglas</strong> que debe
+              seguir la reclutadora.
             </p>
           </div>
 
@@ -171,9 +171,8 @@ export function IndicacionesEditor({
               disabled={disabled}
               onClick={addSection}
             >
-              Agregar tema
+              Agregar
             </Button>
-            <p className={styles.editorActionHint}>Se abre listo para editar</p>
           </div>
         </div>
       </header>
@@ -183,7 +182,7 @@ export function IndicacionesEditor({
           <EmptyState
             icon={<IconListChecks size={22} />}
             title="Aún no hay indicaciones"
-            description="Empieza con un tema (por ejemplo “Tener en cuenta que”) y luego agrega las reglas una por una."
+            description="Agrega un título (por ejemplo “Tener en cuenta que”) y luego escribe las reglas una por una."
             action={
               <Button
                 type="button"
@@ -193,14 +192,14 @@ export function IndicacionesEditor({
                 disabled={disabled}
                 onClick={addSection}
               >
-                Agregar primer tema
+                Agregar
               </Button>
             }
           />
         </div>
       ) : (
         <div className={styles.editorSections}>
-          {secciones.map((seccion) => {
+          {secciones.map((seccion, seccionIndex) => {
             const firstAbsolute = seccion.items[0]?.absoluteIndex ?? 0
             const firstId = seccion.items[0]?.item.id
             const isOpen = openSectionKey === seccion.key
@@ -222,91 +221,102 @@ export function IndicacionesEditor({
                     setOpenSectionKey((prev) => (prev === seccion.key ? null : seccion.key))
                   }
                 >
-                  <span
-                    className={`${styles.editorSectionChevron} ${
-                      isOpen ? styles.editorSectionChevronOpen : ''
-                    }`}
-                    aria-hidden="true"
-                  >
-                    <IconChevronDown size={18} />
+                  <span className={styles.editorSectionIndex} aria-hidden="true">
+                    {seccionIndex + 1}
                   </span>
                   <span className={styles.editorSectionToggleBody}>
-                    <span className={styles.editorSectionEyebrow}>Tema</span>
-                    <strong className={styles.editorSectionToggleTitle}>
+                    <span className={styles.editorSectionToggleTitle}>
                       {seccion.lead.trim() || 'Sin título'}
-                    </strong>
+                    </span>
                   </span>
-                  <span className={styles.editorSectionCount}>
-                    {reglasCount} {reglasCount === 1 ? 'regla' : 'reglas'}
+                  <span className={styles.editorSectionMeta}>
+                    <span className={styles.editorSectionCount}>
+                      {reglasCount} {reglasCount === 1 ? 'regla' : 'reglas'}
+                    </span>
+                    <span
+                      className={`${styles.editorSectionChevron} ${
+                        isOpen ? styles.editorSectionChevronOpen : ''
+                      }`}
+                      aria-hidden="true"
+                    >
+                      <IconChevronDown size={16} />
+                    </span>
                   </span>
                 </button>
 
-                {isOpen ? (
-                  <div className={styles.editorSectionBody}>
-                    <div className={styles.editorSectionTitleBlock}>
-                      <label className={styles.editorField}>
-                        <span className={styles.editorSectionFieldLabel}>Título del tema</span>
-                        <input
-                          type="text"
-                          data-lead-id={firstId}
-                          value={seccion.lead}
-                          disabled={disabled}
-                          placeholder="Ej. Tener en cuenta que:"
-                          onChange={(e) => updateGroupLead(firstAbsolute, e.target.value)}
-                        />
-                      </label>
-                    </div>
+                <div
+                  className={`${styles.editorSectionCollapse} ${
+                    isOpen ? styles.editorSectionCollapseOpen : ''
+                  }`}
+                  aria-hidden={!isOpen}
+                >
+                  <div className={styles.editorSectionCollapseInner}>
+                    <div className={styles.editorSectionBody}>
+                      <div className={styles.editorSectionTitleBlock}>
+                        <label className={styles.editorField}>
+                          <span className={styles.editorSectionFieldLabel}>Título</span>
+                          <input
+                            type="text"
+                            data-lead-id={firstId}
+                            value={seccion.lead}
+                            disabled={disabled || !isOpen}
+                            tabIndex={isOpen ? 0 : -1}
+                            placeholder="Ej. Tener en cuenta que:"
+                            onChange={(e) => updateGroupLead(firstAbsolute, e.target.value)}
+                          />
+                        </label>
+                      </div>
 
-                    <ol className={styles.editorList}>
-                      {seccion.items.map(({ item, absoluteIndex }) => {
-                        const numero = absoluteIndex + 1
-                        return (
-                          <li key={item.id} className={styles.editorItem}>
-                            <div className={styles.editorItemHead}>
-                              <strong className={styles.editorRuleLabel}>Regla {numero}</strong>
-                              <IconButton
-                                type="button"
-                                label={`Eliminar regla ${numero}`}
-                                variant="plain"
-                                disabled={disabled}
-                                onClick={() => removeItem(item.id)}
-                              >
-                                <IconTrash size={18} />
-                              </IconButton>
-                            </div>
+                      <ol className={styles.editorList}>
+                        {seccion.items.map(({ item, absoluteIndex }) => {
+                          const numero = absoluteIndex + 1
+                          return (
+                            <li key={item.id} className={styles.editorItem}>
+                              <div className={styles.editorItemHead}>
+                                <strong className={styles.editorRuleLabel}>Regla {numero}</strong>
+                                <IconButton
+                                  type="button"
+                                  label={`Eliminar regla ${numero}`}
+                                  variant="plain"
+                                  disabled={disabled || !isOpen}
+                                  onClick={() => removeItem(item.id)}
+                                >
+                                  <IconTrash size={18} />
+                                </IconButton>
+                              </div>
 
-                            <label className={styles.editorField}>
-                              <span className={styles.srOnly}>Texto de la regla {numero}</span>
-                              <textarea
-                                data-rule-id={item.id}
-                                value={item.texto}
-                                disabled={disabled}
-                                rows={2}
-                                placeholder="Escribe la condición o instrucción para la reclutadora…"
-                                onChange={(e) => updateItem(item.id, { texto: e.target.value })}
-                              />
-                            </label>
-                          </li>
-                        )
-                      })}
-                    </ol>
+                              <label className={styles.editorField}>
+                                <span className={styles.srOnly}>Texto de la regla {numero}</span>
+                                <textarea
+                                  data-rule-id={item.id}
+                                  value={item.texto}
+                                  disabled={disabled || !isOpen}
+                                  tabIndex={isOpen ? 0 : -1}
+                                  rows={2}
+                                  placeholder="Escribe la condición o instrucción para la reclutadora…"
+                                  onChange={(e) => updateItem(item.id, { texto: e.target.value })}
+                                />
+                              </label>
+                            </li>
+                          )
+                        })}
+                      </ol>
 
-                    <div className={styles.editorSectionFooter}>
-                      <Button
+                      <button
                         type="button"
-                        variant="secondary"
-                        size="sm"
-                        icon={<IconPlus size={16} />}
-                        disabled={disabled}
+                        className={styles.editorAddRule}
+                        disabled={disabled || !isOpen}
+                        tabIndex={isOpen ? 0 : -1}
                         onClick={() =>
                           addRuleToSection(seccion.lead, firstAbsolute, seccion.key)
                         }
                       >
-                        Agregar regla a este tema
-                      </Button>
+                        <IconPlus size={18} />
+                        Agregar regla
+                      </button>
                     </div>
                   </div>
-                ) : null}
+                </div>
               </article>
             )
           })}

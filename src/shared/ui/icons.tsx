@@ -343,6 +343,19 @@ export function IconCopy(props: IconProps) {
   )
 }
 
+export function IconGrip(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <circle cx="9" cy="7" r="1.15" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="7" r="1.15" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="12" r="1.15" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="12" r="1.15" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="17" r="1.15" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="17" r="1.15" fill="currentColor" stroke="none" />
+    </BaseIcon>
+  )
+}
+
 /* Estados */
 
 export function IconCheckCircle(props: IconProps) {
@@ -377,6 +390,26 @@ export function IconPhone(props: IconProps) {
   return (
     <BaseIcon {...props}>
       <path d="M5.6 4.5h2.6l1.3 3.3-1.9 1.4a10.6 10.6 0 0 0 4.8 4.8l1.4-1.9 3.3 1.3v2.6a1.9 1.9 0 0 1-2.1 1.9C9.4 17.2 6.3 14.1 3.7 6.6a1.9 1.9 0 0 1 1.9-2.1Z" />
+    </BaseIcon>
+  )
+}
+
+export function IconMail(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <rect x="3.2" y="5.2" width="17.6" height="13.6" rx="2" />
+      <path d="m4.2 6.8 7.8 5.4 7.8-5.4" />
+    </BaseIcon>
+  )
+}
+
+export function IconHash(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M5.5 9.2h13" />
+      <path d="M5.5 14.8h13" />
+      <path d="M10.2 4.8 8.4 19.2" />
+      <path d="M15.6 4.8 13.8 19.2" />
     </BaseIcon>
   )
 }

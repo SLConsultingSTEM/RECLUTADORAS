@@ -1,7 +1,22 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '@app/providers/useAuth'
 import { isCoordinadora } from '@modules/auth/domain/roles'
+import {
+  areCamposEqual,
+  toEditableCampos,
+  toPersistableCampos,
+  type CampoEditable,
+} from '@modules/proyectos/application/camposEspecificosHelpers'
+import {
+  areCamposBaseEqual,
+  areFormularioTitulosEqual,
+  normalizeFormularioTitulos,
+  toEditableCamposBase,
+  toPersistableCamposBase,
+  type CampoBaseEditable,
+} from '@modules/proyectos/application/formularioConfigHelpers'
+import type { FormularioTitulos } from '@modules/proyectos/domain/types'
 import { useProyectos } from '@modules/proyectos/presentation/useProyectos'
 import { CrearProyectoCard } from '@modules/proyectos/presentation/CrearProyectoCard'
 import { ProyectoInfo } from '@modules/proyectos/presentation/ProyectoInfo'
@@ -16,9 +31,9 @@ import { SkeletonBlock } from '@shared/ui/Skeleton'
 import { SoftSwap } from '@shared/ui/SoftSwap'
 import { Tabs } from '@shared/ui/Tabs'
 import {
+  IconFileText,
   IconFolder,
   IconInbox,
-  IconListChecks,
   IconUserPlus,
 } from '@shared/ui/icons'
 import styles from './HomePage.module.css'
@@ -46,6 +61,96 @@ export function NuevoRegistroPage() {
     updateSelected,
     createProyecto,
   } = useProyectos(preferredProyectoId)
+
+  const [camposDraft, setCamposDraft] = useState<CampoEditable[]>([])
+  const [camposBaseDraft, setCamposBaseDraft] = useState<CampoBaseEditable[]>([])
+  const [titulosDraft, setTitulosDraft] = useState<FormularioTitulos>(() =>
+    normalizeFormularioTitulos(null),
+  )
+  const [camposSaving, setCamposSaving] = useState(false)
+  const [camposError, setCamposError] = useState('')
+
+  // Solo al cambiar de proyecto; el guardado del editor sincroniza el draft a mano.
+  useEffect(() => {
+    if (!selected) {
+      setCamposDraft([])
+      setCamposBaseDraft([])
+      setTitulosDraft(normalizeFormularioTitulos(null))
+      setCamposError('')
+      return
+    }
+    setCamposDraft(toEditableCampos(selected.camposEspecificos))
+    setCamposBaseDraft(toEditableCamposBase(selected.camposBase, selected.ciudadesPermitidas))
+    setTitulosDraft(normalizeFormularioTitulos(selected.titulosFormulario))
+    setCamposError('')
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- evitar pisar el draft al guardar
+  }, [selected?.id])
+
+  const camposPersistibles = useMemo(
+    () => toPersistableCampos(camposDraft),
+    [camposDraft],
+  )
+  const camposBasePersistibles = useMemo(
+    () => toPersistableCamposBase(camposBaseDraft, selected?.ciudadesPermitidas ?? []),
+    [camposBaseDraft, selected?.ciudadesPermitidas],
+  )
+  const titulosPersistibles = useMemo(
+    () => normalizeFormularioTitulos(titulosDraft),
+    [titulosDraft],
+  )
+
+  const camposDirty = Boolean(
+    selected &&
+      (!areCamposEqual(camposPersistibles, selected.camposEspecificos) ||
+        !areCamposBaseEqual(
+          camposBasePersistibles,
+          selected.camposBase ?? [],
+          selected.ciudadesPermitidas,
+        ) ||
+        !areFormularioTitulosEqual(
+          titulosPersistibles,
+          normalizeFormularioTitulos(selected.titulosFormulario),
+        )),
+  )
+
+  function clearDraftFeedback() {
+    setCamposError('')
+  }
+
+  async function handleSaveCampos() {
+    if (!selected) return
+    setCamposSaving(true)
+    setCamposError('')
+    try {
+      await updateSelected({
+        camposEspecificos: camposPersistibles,
+        camposBase: camposBasePersistibles,
+        titulosFormulario: titulosPersistibles,
+      })
+      // Mantener el draft local para no interrumpir la edición ni perder foco.
+    } catch (err) {
+      setCamposError(err instanceof Error ? err.message : 'No se pudo guardar el diseño')
+    } finally {
+      setCamposSaving(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!canEditInfo || !selected || !camposDirty || camposSaving) return
+    const timer = window.setTimeout(() => {
+      void handleSaveCampos()
+    }, 1100)
+    return () => window.clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- autosave al cambiar el draft
+  }, [
+    canEditInfo,
+    selected?.id,
+    camposDirty,
+    camposPersistibles,
+    camposBasePersistibles,
+    titulosPersistibles,
+    camposSaving,
+  ])
 
   function syncParams(patch: { vista?: ReclutarView; proyecto?: string }) {
     setSearchParams(
@@ -86,7 +191,7 @@ export function NuevoRegistroPage() {
     {
       id: 'info',
       label: 'Información',
-      icon: <IconListChecks size={16} />,
+      icon: <IconFileText size={16} />,
     },
     {
       id: 'registrar',
@@ -180,6 +285,29 @@ export function NuevoRegistroPage() {
                   key={`form-${selected.id}`}
                   proyecto={selected}
                   onRegistered={() => undefined}
+                  builder={
+                    canEditInfo
+                      ? {
+                          campos: camposDraft,
+                          camposBase: camposBaseDraft,
+                          titulos: titulosDraft,
+                          onChangeCampos: (items) => {
+                            setCamposDraft(items)
+                            clearDraftFeedback()
+                          },
+                          onChangeCamposBase: (items) => {
+                            setCamposBaseDraft(items)
+                            clearDraftFeedback()
+                          },
+                          onChangeTitulos: (next) => {
+                            setTitulosDraft(next)
+                            clearDraftFeedback()
+                          },
+                          saving: camposSaving,
+                          error: camposError,
+                        }
+                      : undefined
+                  }
                 />
               ) : canEditInfo ? (
                 <ProyectoInfoEditor

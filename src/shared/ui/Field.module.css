@@ -79,6 +79,13 @@
     background-color var(--motion-fast) var(--ease-out);
 }
 
+.textarea {
+  min-height: 5.5rem;
+  resize: none;
+  line-height: 1.45;
+  font-family: inherit;
+}
+
 .withAdornment {
   padding-left: 2.4rem;
 }

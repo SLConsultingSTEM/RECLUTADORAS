@@ -418,9 +418,8 @@ function readStore(): Participante[] {
     const parsed = JSON.parse(raw) as Participante[]
     return parsed.map((item) => ({
       ...item,
-      tipoDocumento: item.tipoDocumento === 'CE' ? 'CE' : item.tipoDocumento === 'CC' ? 'CC' : '',
-      genero:
-        item.genero === 'Masculino' || item.genero === 'Femenino' ? item.genero : '',
+      tipoDocumento: item.tipoDocumento ?? '',
+      genero: item.genero ?? '',
       observaciones: item.observaciones ?? '',
     }))
   } catch {

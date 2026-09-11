@@ -92,7 +92,7 @@ export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps
         loading={saving}
         onClick={() => void handleSave()}
       >
-        Guardar cambios
+        Guardar
       </Button>
     </div>
   )

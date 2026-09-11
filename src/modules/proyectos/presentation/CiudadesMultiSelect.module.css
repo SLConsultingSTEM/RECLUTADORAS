@@ -7,6 +7,10 @@
   padding-bottom: 1.45rem;
 }
 
+.fieldCompact {
+  padding-bottom: 0;
+}
+
 .label {
   display: inline-flex;
   align-items: center;
@@ -86,6 +90,13 @@
   color: var(--color-primary);
   font-size: var(--text-xs);
   font-weight: 650;
+}
+
+.chipLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chipRemove {
