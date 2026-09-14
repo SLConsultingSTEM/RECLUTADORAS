@@ -66,7 +66,7 @@ export function PanelReclutadoraPage() {
       ) : null}
 
       {showShell ? (
-        <Card className={styles.workspaceCard}>
+        <Card className={styles.workspaceCard} padding="none">
           <div className={`${styles.workspaceSwitch} ${styles.workspaceSwitchSplit}`}>
             <div className={styles.workspaceHeading}>
               <p className={styles.workspaceHeadingLead}>Seguimiento</p>

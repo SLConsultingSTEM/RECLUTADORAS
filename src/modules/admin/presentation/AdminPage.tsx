@@ -10,6 +10,7 @@ import { Alert } from '@shared/ui/Alert'
 import { Badge } from '@shared/ui/Badge'
 import { Button } from '@shared/ui/Button'
 import { Card, CardHeader } from '@shared/ui/Card'
+import { useConfirmDialog } from '@shared/ui/ConfirmDialog'
 import { Input } from '@shared/ui/Input'
 import { Select } from '@shared/ui/Select'
 import { LoadingRow } from '@shared/ui/Skeleton'
@@ -45,6 +46,7 @@ export function AdminPage() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
+  const { confirm, dialog: confirmDialog } = useConfirmDialog()
 
   async function refresh() {
     const data = await listProyectosUseCase(proyectoRepository)
@@ -97,7 +99,16 @@ export function AdminPage() {
     }))
   }
 
-  function removeCampo(index: number) {
+  async function removeCampo(index: number) {
+    const campo = form.camposEspecificos[index]
+    const label = campo?.etiqueta?.trim() || campo?.nombreCampo || 'este campo'
+    const ok = await confirm({
+      title: '¿Quitar este campo?',
+      message: 'Vas a quitar',
+      subject: label,
+      confirmLabel: 'Sí, quitar',
+    })
+    if (!ok) return
     setForm((prev) => ({
       ...prev,
       camposEspecificos: prev.camposEspecificos.filter((_, i) => i !== index),
@@ -142,7 +153,14 @@ export function AdminPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm('¿Eliminar este proyecto?')) return
+    const proyecto = proyectos.find((item) => item.id === id)
+    const ok = await confirm({
+      title: '¿Eliminar este proyecto?',
+      message: 'Vas a eliminar',
+      subject: proyecto?.nombre ?? 'este proyecto',
+      confirmLabel: 'Sí, eliminar',
+    })
+    if (!ok) return
     try {
       await removeProyectoUseCase(proyectoRepository, id)
       await refresh()
@@ -274,7 +292,7 @@ export function AdminPage() {
                   variant="danger"
                   size="sm"
                   icon={<IconTrash size={14} />}
-                  onClick={() => removeCampo(index)}
+                  onClick={() => void removeCampo(index)}
                 >
                   Quitar
                 </Button>
@@ -333,6 +351,7 @@ export function AdminPage() {
           </Table>
         </Card>
       </section>
+      {confirmDialog}
     </div>
   )
 }

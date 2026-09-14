@@ -98,9 +98,69 @@
   overflow-wrap: anywhere;
 }
 
+@media (max-width: 1024px) {
+  .stat {
+    padding: 0.85rem 1rem;
+    min-height: 5.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .stat:hover {
+    transform: none;
+  }
+
+  .stat:active {
+    transform: scale(0.98);
+  }
+
+  .value {
+    font-size: clamp(1.35rem, 5vw, 1.55rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .detail {
+    font-size: var(--text-xs);
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .primary {
+    background: var(--color-primary-field);
+    background-size: 160% 160%;
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .primary .label,
+  .primary .detail {
+    color: rgba(248, 242, 255, 0.72);
+  }
+
+  .primary .value {
+    color: #fff;
+  }
+
+  .primary .icon {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .primary::before {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .stat {
-    padding: 0.9rem 1rem;
+    padding: 0.8rem 0.9rem;
   }
 }
 

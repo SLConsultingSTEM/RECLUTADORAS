@@ -98,10 +98,16 @@ export function OpcionesMultiSelect({
     }
 
     const openUp = openUpRef.current
+    const gutter = 8
+    const maxMenuWidth = window.innerWidth - gutter * 2
+    const preferWidth = window.innerWidth <= 640 ? rect.width : Math.max(rect.width, 280)
+    const width = Math.min(preferWidth, maxMenuWidth)
+    const left = Math.max(gutter, Math.min(rect.left, window.innerWidth - width - gutter))
+
     setMenuStyle({
       position: 'fixed',
-      left: Math.max(8, Math.min(rect.left, window.innerWidth - 288)),
-      width: Math.min(Math.max(rect.width, 280), window.innerWidth - 16),
+      left,
+      width,
       top: openUp ? undefined : rect.bottom + gap,
       bottom: openUp ? window.innerHeight - rect.top + gap : undefined,
       maxHeight,

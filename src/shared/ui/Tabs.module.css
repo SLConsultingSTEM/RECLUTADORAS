@@ -93,11 +93,18 @@
 @media (max-width: 560px) {
   .tabs {
     width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .indicator {
+    border-radius: var(--radius-sm);
   }
 
   .tab {
     min-width: 0;
+    min-height: 48px;
     padding-inline: 0.7rem;
+    border-radius: var(--radius-sm);
   }
 }
 

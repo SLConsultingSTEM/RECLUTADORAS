@@ -4,6 +4,7 @@ import {
   type IndicacionEditable,
 } from '@modules/proyectos/application/indicacionesMapper'
 import { Button, IconButton } from '@shared/ui/Button'
+import { useConfirmDialog } from '@shared/ui/ConfirmDialog'
 import { EmptyState } from '@shared/ui/EmptyState'
 import {
   IconChevronDown,
@@ -86,6 +87,12 @@ function focusEditorField(selector: string, selectText = false) {
   }, prefersReduced ? 0 : 750)
 }
 
+function autosizeRuleTextarea(el: HTMLTextAreaElement | null) {
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = `${el.scrollHeight}px`
+}
+
 export function IndicacionesEditor({
   items,
   onChange,
@@ -94,6 +101,7 @@ export function IndicacionesEditor({
   const secciones = useMemo(() => groupBySection(items), [items])
   const [openSectionKey, setOpenSectionKey] = useState<string | null>(null)
   const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null)
+  const { confirm, dialog: confirmDialog } = useConfirmDialog()
 
   useEffect(() => {
     if (secciones.length === 0) {
@@ -119,6 +127,23 @@ export function IndicacionesEditor({
     return () => window.cancelAnimationFrame(id)
   }, [items, focusTarget, openSectionKey])
 
+  useEffect(() => {
+    if (!openSectionKey) return
+
+    const resizeOpenRules = () => {
+      document
+        .querySelectorAll<HTMLTextAreaElement>('textarea[data-rule-id]')
+        .forEach(autosizeRuleTextarea)
+    }
+
+    const frame = window.requestAnimationFrame(resizeOpenRules)
+    const afterCollapse = window.setTimeout(resizeOpenRules, 300)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.clearTimeout(afterCollapse)
+    }
+  }, [openSectionKey, items])
+
   function updateItem(id: string, patch: Partial<IndicacionEditable>) {
     onChange(items.map((item) => (item.id === id ? { ...item, ...patch } : item)))
   }
@@ -132,7 +157,14 @@ export function IndicacionesEditor({
     )
   }
 
-  function removeItem(id: string) {
+  async function removeItem(id: string, numero: number) {
+    const ok = await confirm({
+      title: '¿Eliminar esta regla?',
+      message: 'Vas a eliminar',
+      subject: `Regla ${numero}`,
+      confirmLabel: 'Sí, eliminar',
+    })
+    if (!ok) return
     onChange(items.filter((item) => item.id !== id))
   }
 
@@ -231,19 +263,17 @@ export function IndicacionesEditor({
                     <span className={styles.editorSectionToggleTitle}>
                       {seccion.lead.trim() || 'Sin título'}
                     </span>
-                  </span>
-                  <span className={styles.editorSectionMeta}>
                     <span className={styles.editorSectionCount}>
                       {reglasCount} {reglasCount === 1 ? 'regla' : 'reglas'}
                     </span>
-                    <span
-                      className={`${styles.editorSectionChevron} ${
-                        isOpen ? styles.editorSectionChevronOpen : ''
-                      }`}
-                      aria-hidden="true"
-                    >
-                      <IconChevronDown size={16} />
-                    </span>
+                  </span>
+                  <span
+                    className={`${styles.editorSectionChevron} ${
+                      isOpen ? styles.editorSectionChevronOpen : ''
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <IconChevronDown size={16} />
                   </span>
                 </button>
 
@@ -281,8 +311,9 @@ export function IndicacionesEditor({
                                   type="button"
                                   label={`Eliminar regla ${numero}`}
                                   variant="plain"
+                                  className={styles.editorDeleteRule}
                                   disabled={disabled || !isOpen}
-                                  onClick={() => removeItem(item.id)}
+                                  onClick={() => void removeItem(item.id, numero)}
                                 >
                                   <IconTrash size={18} />
                                 </IconButton>
@@ -292,12 +323,16 @@ export function IndicacionesEditor({
                                 <span className={styles.srOnly}>Texto de la regla {numero}</span>
                                 <textarea
                                   data-rule-id={item.id}
+                                  className={styles.editorRuleTextarea}
                                   value={item.texto}
                                   disabled={disabled || !isOpen}
                                   tabIndex={isOpen ? 0 : -1}
                                   rows={2}
                                   placeholder="Escribe la condición o instrucción para la reclutadora…"
-                                  onChange={(e) => updateItem(item.id, { texto: e.target.value })}
+                                  onChange={(e) => {
+                                    updateItem(item.id, { texto: e.target.value })
+                                    autosizeRuleTextarea(e.currentTarget)
+                                  }}
                                 />
                               </label>
                             </li>
@@ -325,6 +360,7 @@ export function IndicacionesEditor({
           })}
         </div>
       )}
+      {confirmDialog}
     </section>
   )
 }

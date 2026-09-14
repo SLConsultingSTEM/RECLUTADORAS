@@ -900,9 +900,8 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                 <Button
                   type="button"
                   variant="soft"
-                  size="sm"
                   className={styles.addCampoBtn}
-                  icon={<IconPlus size={14} />}
+                  icon={<IconPlus size={16} />}
                   disabled={busyBuilder}
                   onClick={addBuilderCampo}
                 >

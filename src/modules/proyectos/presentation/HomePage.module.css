@@ -157,6 +157,11 @@
   min-width: 0;
   max-width: 100%;
   overflow-x: clip;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
 }
 
 .registrarStack {
@@ -215,6 +220,10 @@
   gap: 0.25rem;
   min-width: 0;
   flex: 1 1 auto;
+}
+
+.viewTabs {
+  min-width: 0;
 }
 
 .workspaceHeadingLead {
@@ -282,9 +291,186 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1024px) {
+  .page {
+    gap: var(--space-4);
+    overflow: visible;
+  }
+
+  .page .workspaceCard {
+    gap: var(--space-3);
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    /* Evita que overflow rompa el sticky respecto al viewport */
+    overflow: visible;
+  }
+
+  .page .workspaceCard:hover {
+    box-shadow: none;
+    border-color: transparent;
+  }
+
+  .workspaceSwitchSplit {
+    position: sticky;
+    top: calc(var(--mobile-topbar-height) + env(safe-area-inset-top, 0px));
+    z-index: 12;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.65rem;
+    /* Sin margen negativo: si hay contenido arriba (p. ej. creación),
+       no se mete detrás del card anterior. */
+    margin: 0 calc(-1 * var(--mobile-gutter)) var(--space-2);
+    padding: 0.95rem var(--mobile-gutter) 0.75rem;
+    background: var(--color-sidebar-active);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* En móvil las vistas van en la bottom nav */
+  .viewTabsMobileHidden {
+    display: none;
+  }
+
+  /*
+    Solo cuando el workspace es el primer bloque (panel):
+    cancela el padding del main y tapa el hueco bajo el topbar.
+  */
+  .page > .workspaceCard:first-child .workspaceSwitchSplit {
+    margin-top: -0.75rem;
+  }
+
+  .page > .workspaceCard:first-child .workspaceSwitchSplit::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(-1 * (var(--mobile-topbar-height) + env(safe-area-inset-top, 0px)));
+    height: calc(var(--mobile-topbar-height) + env(safe-area-inset-top, 0px));
+    background: var(--color-sidebar-active);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .workspaceHeading {
+    justify-items: center;
+    width: 100%;
+  }
+
+  .workspaceHeadingLead {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .workspaceHeadingName {
+    font-size: clamp(1.15rem, 4.5vw, 1.35rem);
+  }
+
+  .workspaceSelector {
+    max-width: none;
+    width: 100%;
+    margin-left: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .selectorLabel {
+    display: none;
+  }
+
+  .selectorControl {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .selectorControl :global([class*='controlPills']) {
+    min-height: 40px;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+    font-size: var(--text-sm);
+  }
+
+  .selectorControl :global([class*='controlWrapPills'] [class*='adornment']) {
+    transform: scale(0.92);
+  }
+
+  /* Métricas en grilla — sin scroll horizontal */
   .stats {
+    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .stats > * {
+    min-width: 0;
+    animation: none;
+  }
+
+  .stats > *:nth-child(1) {
+    grid-column: 1 / -1;
+  }
+
+  .panelSection {
+    margin-top: var(--space-2);
+    padding: var(--space-4) 0 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .panelSectionHead {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 12%, var(--color-border));
+  }
+
+  .panelSectionActions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: stretch;
+  }
+
+  .panelSectionActions > * {
+    flex: 1 1 auto;
+  }
+
+  .panelSectionIcon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .panelSectionTitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .workspaceSwitchSplit {
+    /* sticky rules live in 1024 */
+  }
+
+  .workspaceSelector {
+    max-width: none;
+    width: 100%;
+    margin-left: 0;
+    flex-wrap: wrap;
+  }
+
+  .selectorControl {
+    flex: 1 1 12rem;
+    width: auto;
+    min-width: 0;
   }
 }
 
@@ -300,16 +486,6 @@
 
   .selector {
     max-width: none;
-  }
-
-  .panelSection {
-    padding: var(--space-4);
-  }
-
-  .panelSectionHead {
-    flex-wrap: wrap;
-    align-items: center;
-    row-gap: 0.85rem;
   }
 
   .panelSectionActions {
@@ -330,16 +506,18 @@
     font-size: clamp(1.1rem, 7vw, var(--text-xl));
   }
 
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
   .workspaceSelector {
     gap: 0.45rem;
   }
 
   .selectorLabel {
     white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stats > * {
+    animation: none;
   }
 }
 

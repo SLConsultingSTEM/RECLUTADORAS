@@ -72,6 +72,10 @@
   transform: translateY(0);
 }
 
+.artPending:not(.artActive) {
+  opacity: 0;
+}
+
 .visualLite .art,
 .visualLite .artActive {
   transition: none;
@@ -195,11 +199,15 @@
   }
 }
 
-/* Mobile: el login usa layout full-screen propio; el visual solo en desktop */
+/* Mobile: sin panel visual — solo formulario */
 @media (max-width: 900px) {
   .visual {
     display: none;
   }
+}
+
+.mobileCurve {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

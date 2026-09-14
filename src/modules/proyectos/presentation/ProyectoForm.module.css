@@ -156,38 +156,61 @@
   bottom: max(1.25rem, env(safe-area-inset-bottom));
   transform: translateX(-50%);
   display: inline-flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  gap: 0.65rem;
-  padding: 0.7rem 0.85rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: linear-gradient(
-    155deg,
-    rgba(78, 62, 108, 0.42) 0%,
-    rgba(62, 50, 86, 0.38) 48%,
-    rgba(70, 56, 98, 0.44) 100%
-  );
+  gap: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.22) inset,
-    0 12px 28px rgba(26, 18, 36, 0.16),
-    0 2px 8px rgba(26, 18, 36, 0.1);
-  backdrop-filter: blur(18px) saturate(1.25);
-  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+    0 8px 24px rgba(26, 18, 36, 0.12),
+    var(--shadow-xs);
 }
 
 .floatingBtn {
-  border-radius: var(--radius-pill);
-  padding-inline: 1.25rem;
+  border-radius: var(--radius-sm);
+  padding-inline: 1.1rem;
+  min-height: 42px;
+}
+
+@media (max-width: 1024px) {
+  .form {
+    /* Solo la barra flotante: el shell ya reserva el bottom nav */
+    padding-bottom: 4.25rem;
+  }
+
+  .floatingBar {
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+    max-width: none;
+    transform: none;
+    bottom: calc(
+      var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 0.5rem
+    );
+    z-index: 45;
+    gap: 0.45rem;
+    padding: 0.45rem;
+  }
+
+  .floatingBtn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 0.75rem;
+  }
 }
 
 @media (max-width: 900px) {
   .floatingBar {
-    left: 50%;
-    right: auto;
-    bottom: max(1rem, env(safe-area-inset-bottom));
-    max-width: calc(100vw - 1.5rem);
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+    transform: none;
+    bottom: calc(
+      var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 0.5rem
+    );
   }
 }
 
@@ -197,15 +220,74 @@
   }
 
   .sectionHead {
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .sectionHeadActions,
-  .sectionHeadMeta {
+  .sectionTitleWrap {
     width: 100%;
+  }
+
+  .sectionHeadActions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .sectionHeadMeta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: flex-start;
+    gap: 0.4rem;
+    width: auto;
+    min-width: 0;
     justify-items: start;
+  }
+
+  .badge {
+    min-height: 2.75rem;
+    padding: 0.45rem 0.9rem;
+    font-size: var(--text-sm);
+  }
+
+  .addCampoBtn {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding-inline: 1.15rem;
+    font-size: var(--text-sm);
+    justify-content: center;
+  }
+
+  .sectionTitleWrapEdit {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .sectionTitleWrapEdit .sectionIcon {
+    margin-top: 0;
+  }
+
+  .sectionTitleEditor {
+    padding-left: 0;
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .sectionNameField {
+    max-width: none;
+    width: 100%;
+  }
+
+  .sectionTitleEditorActions {
+    max-width: none;
   }
 
   .grid {
@@ -435,13 +517,18 @@
 
 .campoTileBody:has(.campoTileToolbar) .campoTilePreview :global(label) {
   padding-top: 0;
+  /* Reserva espacio bajo los botones absolutos (2.15rem) para que no peguen al input */
+  gap: 0.9rem;
 }
 
 .campoTileBody:has(.campoTileToolbar) .campoTilePreview :global(label > span:first-child) {
-  min-height: 1.55rem;
-  display: inline-flex;
-  align-items: center;
+  display: block;
   box-sizing: border-box;
+  width: 100%;
+  min-height: 2.15rem;
+  padding-right: 2.75rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .campoControlSwap {
@@ -607,11 +694,12 @@
 }
 
 .form .campoTilePreview :global(label > span:first-child) {
-  padding-right: 2.5rem;
+  padding-right: 2.75rem;
 }
 
 .campoTile:has(.campoTileToolbarWide) .campoTilePreview :global(label > span:first-child) {
-  padding-right: 5.7rem;
+  /* 3 botones (2.15rem) + gaps */
+  padding-right: 7.1rem;
 }
 
 .campoTileEditing .form .campoTilePreview :global(label > span:first-child),
@@ -752,7 +840,12 @@
 
 @media (max-width: 720px) {
   .sectionTitleEditorActions {
-    justify-content: flex-start;
+    justify-content: stretch;
+    max-width: none;
+  }
+
+  .sectionTitleDoneBtn {
+    width: 100%;
   }
 }
 
@@ -1077,14 +1170,15 @@
 
 @media (max-width: 720px) {
   .floatingBar {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: calc(100vw - 1.5rem);
-    border-radius: var(--radius-lg);
+    left: 0.65rem;
+    right: 0.65rem;
+    bottom: calc(
+      var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 0.45rem
+    );
   }
 
   .floatingBtn {
-    width: 100%;
+    width: auto;
     min-width: 0;
   }
 
@@ -1100,7 +1194,13 @@
 
 @media (max-width: 420px) {
   .floatingBar {
-    grid-template-columns: 1fr;
+    gap: 0.4rem;
+    padding: 0.4rem;
+  }
+
+  .floatingBtn {
+    font-size: var(--text-sm);
+    padding-inline: 0.65rem;
   }
 
   .campoLabelActions {
@@ -1110,9 +1210,7 @@
     transform: none;
   }
 
-  .campoLabelRow:has(.campoLabelActions),
-  .form .campoTilePreview :global(label > span:first-child),
-  .campoTile:has(.campoTileToolbarWide) .campoTilePreview :global(label > span:first-child) {
+  .campoLabelRow:has(.campoLabelActions) {
     padding-right: 0;
   }
 }

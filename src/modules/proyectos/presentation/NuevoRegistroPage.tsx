@@ -234,20 +234,22 @@ export function NuevoRegistroPage() {
       ) : null}
 
       {showShell ? (
-        <Card className={styles.workspaceCard}>
+        <Card className={styles.workspaceCard} padding="none">
           <div className={`${styles.workspaceSwitch} ${styles.workspaceSwitchSplit}`}>
-            <Tabs
-              label="Vista de reclutamiento"
-              active={view}
-              onChange={(id) => {
-                const nextView = id as ReclutarView
-                syncParams({
-                  vista: nextView,
-                  proyecto: selectedId || undefined,
-                })
-              }}
-              items={tabItems}
-            />
+            <div className={`${styles.viewTabs} ${styles.viewTabsMobileHidden}`}>
+              <Tabs
+                label="Vista de reclutamiento"
+                active={view}
+                onChange={(id) => {
+                  const nextView = id as ReclutarView
+                  syncParams({
+                    vista: nextView,
+                    proyecto: selectedId || undefined,
+                  })
+                }}
+                items={tabItems}
+              />
+            </div>
 
             <div className={styles.workspaceSelector}>
               {contentReady ? (

@@ -85,7 +85,7 @@ export function IconMenu(props: IconProps) {
   return (
     <BaseIcon {...props}>
       <path d="M4 7h16" />
-      <path d="M4 12h11" />
+      <path d="M4 12h16" />
       <path d="M4 17h16" />
     </BaseIcon>
   )

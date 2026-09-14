@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from '@shared/ui/Button'
+import { useConfirmDialog } from '@shared/ui/ConfirmDialog'
 import { EmptyState } from '@shared/ui/EmptyState'
 import { safeMediaUrl } from '@shared/security/url'
 import {
@@ -146,6 +147,7 @@ export function PiezaGraficaPanel({
   const [abierta, setAbierta] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const { confirm, dialog: confirmDialog } = useConfirmDialog()
   const mediaUrl = safeMediaUrl(imagenUrl)
 
   async function handleFile(file: File | undefined) {
@@ -175,6 +177,18 @@ export function PiezaGraficaPanel({
     } catch {
       setUploadError('No se pudo leer la imagen')
     }
+  }
+
+  async function requestClearImage() {
+    if (!onChange) return
+    const ok = await confirm({
+      title: '¿Quitar la pieza gráfica?',
+      message: 'Vas a quitar la imagen de',
+      subject: nombre,
+      confirmLabel: 'Sí, quitar',
+    })
+    if (!ok) return
+    onChange({ imagenUrl: '', imagenNombre: '' })
   }
 
   const fileInput = (
@@ -253,8 +267,9 @@ export function PiezaGraficaPanel({
             <>
               <Button
                 type="button"
+                size="sm"
                 variant="soft"
-                icon={<IconPlus size={18} />}
+                icon={<IconPlus size={16} />}
                 disabled={disabled}
                 onClick={() => inputRef.current?.click()}
               >
@@ -262,10 +277,11 @@ export function PiezaGraficaPanel({
               </Button>
               <Button
                 type="button"
+                size="sm"
                 variant="danger"
-                icon={<IconTrash size={18} />}
+                icon={<IconTrash size={16} />}
                 disabled={disabled}
-                onClick={() => onChange?.({ imagenUrl: '', imagenNombre: '' })}
+                onClick={() => void requestClearImage()}
               >
                 Quitar
               </Button>
@@ -273,8 +289,9 @@ export function PiezaGraficaPanel({
           ) : (
             <Button
               type="button"
+              size="sm"
               variant="soft"
-              icon={<IconPlus size={18} />}
+              icon={<IconPlus size={16} />}
               disabled={disabled}
               onClick={() => inputRef.current?.click()}
             >
@@ -284,6 +301,7 @@ export function PiezaGraficaPanel({
         </div>
 
         {lightbox}
+        {confirmDialog}
       </aside>
     )
   }
@@ -363,18 +381,31 @@ export function PiezaGraficaPanel({
                 variant="danger"
                 icon={<IconTrash size={18} />}
                 disabled={disabled}
-                onClick={() => onChange?.({ imagenUrl: '', imagenNombre: '' })}
+                onClick={() => void requestClearImage()}
               >
                 Quitar
               </Button>
             </>
           ) : (
-            <a className={styles.download} href={mediaUrl} download={imagenNombre}>
-              <span className={styles.downloadIcon}>
-                <IconDownload size={16} />
-              </span>
-              <span className={styles.downloadLabel}>Descargar imagen</span>
-            </a>
+            <>
+              <a className={styles.download} href={mediaUrl} download={imagenNombre}>
+                <span className={styles.downloadIcon}>
+                  <IconDownload size={16} />
+                </span>
+                <span className={styles.downloadLabel}>Descargar imagen</span>
+              </a>
+              <button
+                type="button"
+                className={styles.expandAction}
+                aria-label="Ampliar imagen"
+                onClick={() => setAbierta(true)}
+              >
+                <span className={styles.expandActionIcon}>
+                  <IconMaximize size={16} />
+                </span>
+                <span className={styles.expandActionLabel}>Ampliar</span>
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -390,21 +421,11 @@ export function PiezaGraficaPanel({
             loading="lazy"
             decoding="async"
           />
-          {!editable ? (
-            <button
-              type="button"
-              className={styles.expandButton}
-              aria-label="Ampliar imagen"
-              onClick={() => setAbierta(true)}
-            >
-              <IconMaximize size={15} />
-              <span className={styles.expandLabel}>Ampliar</span>
-            </button>
-          ) : null}
         </div>
       </div>
 
       {lightbox}
+      {confirmDialog}
     </aside>
   )
 }

@@ -6,6 +6,7 @@ import {
 import type { CampoTipo } from '@modules/proyectos/domain/types'
 import { OpcionesMultiSelect } from '@modules/proyectos/presentation/OpcionesMultiSelect'
 import { Button } from '@shared/ui/Button'
+import { useConfirmDialog } from '@shared/ui/ConfirmDialog'
 import {
   IconCopy,
   IconGrip,
@@ -89,6 +90,7 @@ export function CampoFormTile({
   const snapshotRef = useRef<CampoSnapshot | null>(
     startsEditing ? captureCampoSnapshot(campo) : null,
   )
+  const { confirm, dialog: confirmDialog } = useConfirmDialog()
   const canDrag = !disabled && !editing
   const showToolbar = Boolean(onDuplicate || onRemove)
   const tipoOptions = locked
@@ -98,6 +100,19 @@ export function CampoFormTile({
     : CAMPO_TIPO_OPTIONS
   const canChangeTipo = tipoOptions.length > 0
   const canEditOpciones = campo.tipo === 'select' || Boolean(campo.baseSelect)
+
+  async function requestRemove() {
+    if (!onRemove) return
+    const label = campo.etiqueta.trim() || 'este campo'
+    const ok = await confirm({
+      title: '¿Eliminar este campo?',
+      message: 'Vas a eliminar',
+      subject: label,
+      confirmLabel: 'Sí, eliminar',
+    })
+    if (!ok) return
+    onRemove()
+  }
   const opciones =
     campo.opciones?.length
       ? campo.opciones
@@ -228,7 +243,7 @@ export function CampoFormTile({
                 disabled={disabled}
                 aria-label="Eliminar campo"
                 title="Eliminar"
-                onClick={onRemove}
+                onClick={() => void requestRemove()}
               >
                 <IconTrash size={14} />
               </button>
@@ -297,7 +312,7 @@ export function CampoFormTile({
                       disabled={disabled}
                       aria-label="Eliminar campo"
                       title="Eliminar"
-                      onClick={onRemove}
+                      onClick={() => void requestRemove()}
                     >
                       <IconTrash size={15} />
                     </button>
@@ -397,6 +412,7 @@ export function CampoFormTile({
         </div>
       ) : null}
       </div>
+      {confirmDialog}
     </div>
   )
 }

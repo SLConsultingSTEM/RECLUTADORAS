@@ -87,17 +87,21 @@ export function LoginVisual() {
   if (!current) return null
 
   return (
-    <aside className={`${styles.visual} ${ready ? styles.visualReady : ''} ${lite ? styles.visualLite : ''}`}>
+    <aside
+      className={`${styles.visual} ${ready ? styles.visualReady : ''} ${lite ? styles.visualLite : ''}`}
+      aria-label="Presentación OPTIMASL"
+    >
       <div className={`${styles.content} ${ready ? styles.contentReady : ''}`}>
         <div className={styles.stage} aria-hidden="true">
           {slides.map((slide, index) => {
-            const isActive = ready && index === active
+            // En mobile el hero ya es visible; no esperar ready para mostrar la ilustración activa
+            const isActive = index === active
             return (
               <img
                 key={slide.src}
                 src={slide.src}
                 alt=""
-                className={`${styles.art} ${isActive ? styles.artActive : ''}`}
+                className={`${styles.art} ${isActive ? styles.artActive : ''} ${ready ? '' : styles.artPending}`}
                 width={640}
                 height={640}
                 decoding="async"
@@ -127,6 +131,20 @@ export function LoginVisual() {
           ) : null}
         </div>
       </div>
+
+      {/* Organic curve edge — mobile brand field */}
+      <svg
+        className={styles.mobileCurve}
+        viewBox="0 0 100 12"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          d="M0 0 L100 0 L100 4 C88 10 72 2 50 6 C28 10 12 2 0 8 Z"
+          fill="var(--color-bg, #f4f4f4)"
+        />
+      </svg>
     </aside>
   )
 }

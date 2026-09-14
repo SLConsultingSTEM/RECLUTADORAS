@@ -9,12 +9,13 @@
   width: 100%;
   background: linear-gradient(
     90deg,
-    var(--color-surface-muted) 25%,
-    var(--color-surface-low) 37%,
-    var(--color-surface-muted) 63%
+    color-mix(in srgb, var(--color-primary-soft) 45%, var(--color-surface-muted)) 25%,
+    color-mix(in srgb, var(--color-primary-soft) 70%, #fff) 37%,
+    color-mix(in srgb, var(--color-primary-soft) 45%, var(--color-surface-muted)) 63%
   );
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius-xs);
 }
 
 .loadingRow {

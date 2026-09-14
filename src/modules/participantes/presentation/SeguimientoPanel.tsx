@@ -141,7 +141,9 @@ export function SeguimientoRefreshButton({
         className={`${styles.refreshIcon} ${loading ? styles.refreshIconSpinning : ''}`}
         aria-hidden
       />
-      <span className={styles.refreshLabel}>Actualizar</span>
+      <span className={styles.refreshLabel}>
+        {loading ? 'Actualizando…' : 'Actualizar'}
+      </span>
     </button>
   )
 }
@@ -162,7 +164,9 @@ export function SeguimientoPanel({
   const [refreshMessage, setRefreshMessage] = useState<string>(REFRESH_MESSAGES[0])
   const [selected, setSelected] = useState<Participante | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
+  const [revealedIds, setRevealedIds] = useState<Set<string>>(() => new Set())
   const hasLoadedRef = useRef(false)
+  const listWrapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     hasLoadedRef.current = false
@@ -178,6 +182,7 @@ export function SeguimientoPanel({
 
     async function load() {
       const softRefresh = hasLoadedRef.current
+      const startedAt = Date.now()
       if (softRefresh) setRefreshMessage(pickRefreshMessage())
       setLoading(true)
       onLoadingChange?.(true)
@@ -202,6 +207,17 @@ export function SeguimientoPanel({
         }
       } finally {
         if (active) {
+          // Soft refresh: mantener el estado visible un mínimo para que se note
+          if (softRefresh) {
+            const elapsed = Date.now() - startedAt
+            const minVisibleMs = 900
+            if (elapsed < minVisibleMs) {
+              await new Promise((resolve) => {
+                window.setTimeout(resolve, minVisibleMs - elapsed)
+              })
+            }
+          }
+          if (!active) return
           setLoading(false)
           onLoadingChange?.(false)
         }
@@ -224,6 +240,55 @@ export function SeguimientoPanel({
   const isRefreshing = loading && hasLoaded
   const tableHeaders = ['Nombre', 'Documento', 'Ciudad', 'Teléfono', 'Estado', 'Acción']
 
+  useEffect(() => {
+    setRevealedIds(new Set())
+  }, [contentKey, estado])
+
+  useEffect(() => {
+    if (showInitialLoader || isRefreshing) return
+
+    const root = listWrapRef.current
+    if (!root) return
+
+    const rows = root.querySelectorAll<HTMLElement>('[data-reveal-id]')
+    if (rows.length === 0) return
+
+    const mobileQuery = window.matchMedia('(max-width: 1024px)')
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // Desktop / reduced motion: mostrar todo de una
+    if (!mobileQuery.matches || prefersReduced) {
+      setRevealedIds(new Set(visibleItems.map((item) => item.id)))
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          const row = entry.target as HTMLElement
+          const id = row.dataset.revealId
+          if (!id) continue
+          setRevealedIds((prev) => {
+            if (prev.has(id)) return prev
+            const next = new Set(prev)
+            next.add(id)
+            return next
+          })
+          observer.unobserve(row)
+        }
+      },
+      {
+        root: null,
+        threshold: 0.08,
+        rootMargin: '48px 0px -4% 0px',
+      },
+    )
+
+    rows.forEach((row) => observer.observe(row))
+    return () => observer.disconnect()
+  }, [contentKey, showInitialLoader, isRefreshing, visibleItems])
+
   function openDetalle(item: Participante) {
     setSelected(item)
     setDetailOpen(true)
@@ -242,7 +307,7 @@ export function SeguimientoPanel({
       {!showInitialLoader ? (
         <div className={styles.contentSwap} aria-busy={isRefreshing}>
           {isRefreshing || visibleItems.length > 0 ? (
-            <div className={`${styles.contentPane} ${styles.tableWrap}`}>
+            <div ref={listWrapRef} className={`${styles.contentPane} ${styles.tableWrap}`}>
               <Table headers={tableHeaders}>
                 {isRefreshing ? (
                   <tr className={styles.loadingRow}>
@@ -263,11 +328,13 @@ export function SeguimientoPanel({
                     </td>
                   </tr>
                 ) : (
-                  visibleItems.map((item, index) => (
+                  visibleItems.map((item) => (
                     <tr
                       key={`${contentKey}-${item.id}`}
-                      className={styles.dataRow}
-                      style={{ animationDelay: `${Math.min(index, 14) * 55}ms` }}
+                      data-reveal-id={item.id}
+                      className={`${styles.dataRow} ${styles.rowReveal} ${
+                        revealedIds.has(item.id) ? styles.rowRevealVisible : ''
+                      }`}
                     >
                       <td data-label="Nombre">
                         <span className={styles.name}>{item.nombre}</span>
