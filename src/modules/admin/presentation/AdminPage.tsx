@@ -15,6 +15,7 @@ import { Select } from '@shared/ui/Select'
 import { LoadingRow } from '@shared/ui/Skeleton'
 import { Table } from '@shared/ui/Table'
 import { sanitizeHtml } from '@shared/security/sanitize'
+import { safeMediaUrl } from '@shared/security/url'
 import {
   IconFolder,
   IconListChecks,
@@ -113,6 +114,12 @@ export function AdminPage() {
       return
     }
 
+    const imagenUrl = form.imagenUrl.trim()
+    if (imagenUrl && !safeMediaUrl(imagenUrl)) {
+      setError('URL de imagen no permitida. Use ruta relativa o http(s).')
+      return
+    }
+
     const payload: Proyecto = {
       ...form,
       id: form.id || `form-${crypto.randomUUID().slice(0, 8)}`,
@@ -121,6 +128,7 @@ export function AdminPage() {
         .map((item) => item.trim())
         .filter(Boolean),
       descripcionHtml: sanitizeHtml(form.descripcionHtml),
+      imagenUrl: safeMediaUrl(imagenUrl),
     }
 
     try {
@@ -293,14 +301,14 @@ export function AdminPage() {
           <Table headers={['Nombre', 'Ciudades', 'Campos', 'Acciones']}>
             {proyectos.map((proyecto) => (
               <tr key={proyecto.id}>
-                <td>
+                <td data-label="Nombre">
                   <strong className={styles.projectName}>{proyecto.nombre}</strong>
                 </td>
-                <td>{proyecto.ciudadesPermitidas.join(', ')}</td>
-                <td>
+                <td data-label="Ciudades">{proyecto.ciudadesPermitidas.join(', ')}</td>
+                <td data-label="Campos">
                   <Badge tone="neutral">{proyecto.camposEspecificos.length}</Badge>
                 </td>
-                <td className={styles.rowActions}>
+                <td data-label="Acciones" className={styles.rowActions}>
                   <Button
                     type="button"
                     variant="secondary"

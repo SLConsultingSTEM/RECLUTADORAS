@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button } from '@shared/ui/Button'
 import { EmptyState } from '@shared/ui/EmptyState'
+import { safeMediaUrl } from '@shared/security/url'
 import {
   IconClose,
   IconDownload,
@@ -31,6 +32,8 @@ interface PiezaGraficaPanelProps {
 }
 
 const ACCEPT = 'image/png,image/jpeg,image/webp,image/gif'
+const ALLOWED_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif'])
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024
 
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -39,6 +42,17 @@ function readFileAsDataUrl(file: File): Promise<string> {
     reader.onerror = () => reject(new Error('No se pudo leer la imagen'))
     reader.readAsDataURL(file)
   })
+}
+
+function sanitizeDownloadName(name: string): string {
+  const withoutControls = Array.from(name)
+    .filter((ch) => {
+      const code = ch.charCodeAt(0)
+      return code >= 32 && code !== 127
+    })
+    .join('')
+  const base = withoutControls.replace(/[\\/:*?"<>|]/g, '_').trim()
+  return base.slice(0, 120) || 'pieza-grafica.png'
 }
 
 function PiezaLightbox({
@@ -110,6 +124,9 @@ function PiezaLightbox({
         src={imagenUrl}
         alt={`Pieza gráfica ampliada de ${nombre}`}
         className={styles.lightboxImage}
+        width={1200}
+        height={1200}
+        decoding="async"
         onClick={(event) => event.stopPropagation()}
       />
     </div>,
@@ -127,15 +144,37 @@ export function PiezaGraficaPanel({
   onChange,
 }: PiezaGraficaPanelProps) {
   const [abierta, setAbierta] = useState(false)
+  const [uploadError, setUploadError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const mediaUrl = safeMediaUrl(imagenUrl)
 
   async function handleFile(file: File | undefined) {
     if (!file || !onChange) return
-    const dataUrl = await readFileAsDataUrl(file)
-    onChange({
-      imagenUrl: dataUrl,
-      imagenNombre: file.name || 'pieza-grafica.png',
-    })
+    setUploadError('')
+
+    if (!ALLOWED_TYPES.has(file.type)) {
+      setUploadError('Formato no permitido. Usa PNG, JPEG, WebP o GIF.')
+      return
+    }
+
+    if (file.size > MAX_IMAGE_BYTES) {
+      setUploadError('La imagen supera el límite de 2 MB.')
+      return
+    }
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file)
+      if (!safeMediaUrl(dataUrl)) {
+        setUploadError('La imagen no es válida.')
+        return
+      }
+      onChange({
+        imagenUrl: dataUrl,
+        imagenNombre: sanitizeDownloadName(file.name || 'pieza-grafica.png'),
+      })
+    } catch {
+      setUploadError('No se pudo leer la imagen')
+    }
   }
 
   const fileInput = (
@@ -156,7 +195,7 @@ export function PiezaGraficaPanel({
     <PiezaLightbox
       open={abierta}
       nombre={nombre}
-      imagenUrl={imagenUrl}
+      imagenUrl={mediaUrl}
       onClose={() => setAbierta(false)}
     />
   )
@@ -166,12 +205,16 @@ export function PiezaGraficaPanel({
       <aside className={styles.mediaStrip}>
         {fileInput}
         <div className={styles.mediaStripPreview}>
-          {imagenUrl ? (
+          {mediaUrl ? (
             <div className={styles.mediaStripThumbWrap}>
               <img
-                src={imagenUrl}
+                src={mediaUrl}
                 alt={`Pieza gráfica de ${nombre}`}
                 className={styles.mediaStripThumb}
+                width={96}
+                height={96}
+                loading="lazy"
+                decoding="async"
               />
             </div>
           ) : (
@@ -187,11 +230,13 @@ export function PiezaGraficaPanel({
             Pieza gráfica
           </span>
           <p className={styles.mediaStripMeta}>
-            {imagenUrl
-              ? imagenNombre || 'Imagen cargada'
-              : 'Sin imagen. Las reclutadoras la usan para descargar.'}
+            {uploadError
+              ? uploadError
+              : mediaUrl
+                ? imagenNombre || 'Imagen cargada'
+                : 'Sin imagen. Las reclutadoras la usan para descargar.'}
           </p>
-          {imagenUrl ? (
+          {mediaUrl ? (
             <button
               type="button"
               className={styles.mediaStripView}
@@ -204,7 +249,7 @@ export function PiezaGraficaPanel({
         </div>
 
         <div className={styles.mediaStripActions}>
-          {imagenUrl ? (
+          {mediaUrl ? (
             <>
               <Button
                 type="button"
@@ -243,7 +288,7 @@ export function PiezaGraficaPanel({
     )
   }
 
-  const emptyEditable = editable && !imagenUrl
+  const emptyEditable = editable && !mediaUrl
 
   if (emptyEditable) {
     return (
@@ -257,7 +302,10 @@ export function PiezaGraficaPanel({
         <EmptyState
           icon={<IconImage size={22} />}
           title="Sin pieza gráfica"
-          description="Sube una imagen para que las reclutadoras puedan descargarla."
+          description={
+            uploadError ||
+            'Sube una imagen para que las reclutadoras puedan descargarla.'
+          }
           action={
             <>
               {fileInput}
@@ -277,7 +325,7 @@ export function PiezaGraficaPanel({
     )
   }
 
-  if (!imagenUrl && !editable) {
+  if (!mediaUrl && !editable) {
     return (
       <aside className={styles.mediaFeature}>
         <EmptyState
@@ -321,7 +369,7 @@ export function PiezaGraficaPanel({
               </Button>
             </>
           ) : (
-            <a className={styles.download} href={imagenUrl} download={imagenNombre}>
+            <a className={styles.download} href={mediaUrl} download={imagenNombre}>
               <span className={styles.downloadIcon}>
                 <IconDownload size={16} />
               </span>
@@ -334,9 +382,13 @@ export function PiezaGraficaPanel({
       <div className={styles.mediaStage}>
         <div className={styles.imageFrame}>
           <img
-            src={imagenUrl}
+            src={mediaUrl}
             alt={`Pieza gráfica de ${nombre}`}
             className={styles.imageFeature}
+            width={1200}
+            height={1200}
+            loading="lazy"
+            decoding="async"
           />
           {!editable ? (
             <button

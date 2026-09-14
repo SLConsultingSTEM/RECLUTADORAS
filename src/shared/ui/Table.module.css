@@ -1,5 +1,6 @@
 .wrapper {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -9,7 +10,7 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 680px;
+  min-width: min(100%, 680px);
   font-size: var(--text-sm);
 }
 
@@ -55,4 +56,90 @@
 
 .table tbody tr:last-child td {
   border-bottom: none;
+}
+
+@media (max-width: 760px) {
+  .wrapper {
+    overflow-x: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .table,
+  .table thead,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+    width: 100%;
+  }
+
+  .table {
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .table thead {
+    position: absolute;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0);
+    border: 0 !important;
+  }
+
+  .table tbody {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .table tbody tr {
+    display: grid;
+    gap: 0;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .table tbody tr:hover {
+    background: var(--color-surface);
+  }
+
+  .table tbody td {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 35%) minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px dashed var(--color-border);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .table tbody td::before {
+    content: attr(data-label);
+    min-width: 0;
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    text-transform: uppercase;
+    color: var(--color-muted-soft);
+  }
+
+  .table tbody td:last-child {
+    grid-template-columns: 1fr;
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .table tbody td:last-child::before {
+    display: none;
+  }
 }

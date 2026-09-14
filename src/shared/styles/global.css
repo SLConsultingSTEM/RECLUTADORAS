@@ -132,6 +132,7 @@ html,
 body,
 #root {
   min-height: 100%;
+  width: 100%;
 }
 
 body {
@@ -143,6 +144,7 @@ body {
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-wrap: break-word;
 }
 
 a {
@@ -165,7 +167,15 @@ button {
 
 img {
   max-width: 100%;
+  height: auto;
   display: block;
+}
+
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
 }
 
 h1,
@@ -198,6 +208,17 @@ h4 {
 p {
   margin: 0 0 var(--space-3);
   color: var(--color-muted);
+}
+
+p,
+li,
+dd,
+dt,
+figcaption,
+span,
+strong,
+small {
+  overflow-wrap: anywhere;
 }
 
 ul,

@@ -1,5 +1,6 @@
 .shell {
   min-height: 100vh;
+  min-height: 100dvh;
   display: block;
   padding-left: var(--sidebar-width);
   background: var(--color-bg);
@@ -269,6 +270,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 0 clamp(1.25rem, 4vw, 2.75rem);
   box-sizing: border-box;
   overflow-x: clip;
@@ -356,6 +358,7 @@
 .pageText small {
   font-size: var(--text-xs);
   color: var(--color-muted-soft);
+  overflow-wrap: anywhere;
 }
 
 .topbarRight {
@@ -400,6 +403,8 @@
   font-weight: 650;
   color: var(--color-ink);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .userInfo small {
@@ -429,20 +434,33 @@
   }
 
   .sidebar {
+    --nav-item-size: 52px;
     position: fixed;
     inset: 0 auto 0 0;
-    width: var(--sidebar-width);
+    width: min(82vw, 18rem);
+    max-width: calc(100vw - 2.75rem);
+    padding: max(0.65rem, env(safe-area-inset-top)) 0 1rem;
     transform: translateX(-102%);
+    visibility: hidden;
     transition: transform var(--motion) var(--ease-out);
     box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .sidebarOpen {
     transform: translateX(0);
+    visibility: visible;
   }
 
   .navItem {
-    margin-right: 0;
+    justify-content: flex-start;
+    gap: 0.85rem;
+    min-height: 52px;
+    margin: 0 0.75rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-md);
+    text-align: left;
   }
 
   .navIndicator::before,
@@ -451,7 +469,10 @@
   }
 
   .navIndicator {
-    border-radius: 999px var(--radius-md) var(--radius-md) 999px;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 52px;
+    border-radius: var(--radius-md);
   }
 
   .closeWrap,
@@ -460,8 +481,41 @@
   }
 
   .sidebarTop {
-    justify-content: center;
-    padding-inline: 0.5rem 2rem;
+    justify-content: space-between;
+    padding-inline: 0.85rem 0.55rem;
+  }
+
+  .brand {
+    width: auto;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    min-height: 44px;
+    color: var(--color-white);
+  }
+
+  .brand .navTooltip,
+  .navItem .navTooltip {
+    position: static;
+    z-index: auto;
+    transform: none;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    color: currentColor;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0;
+    white-space: normal;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+    transition: none;
+  }
+
+  .brand .navTooltip::before,
+  .navItem .navTooltip::before {
+    display: none;
   }
 
   .backdrop {
@@ -479,7 +533,7 @@
 
 @media (max-width: 720px) {
   .content {
-    padding: 0 var(--space-4);
+    padding: 0 clamp(0.75rem, 4vw, 1rem);
   }
 
   .topbar {
@@ -492,5 +546,26 @@
   .pageText small,
   .userInfo {
     display: none;
+  }
+
+  .userProfile {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .topbar {
+    gap: 0.55rem;
+    padding-inline: 0.65rem;
+  }
+
+  .pageContext {
+    padding-right: 0;
+  }
+
+  .pageIcon,
+  .avatar {
+    width: 34px;
+    height: 34px;
   }
 }

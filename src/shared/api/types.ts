@@ -18,4 +18,6 @@ export interface HttpRequestOptions {
   headers?: Record<string, string>
   signal?: AbortSignal
   authToken?: string | null
+  /** Override fetch cache mode. Defaults: GET → default, mutations → no-store. */
+  cache?: RequestCache
 }

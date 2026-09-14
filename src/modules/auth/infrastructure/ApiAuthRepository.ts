@@ -1,4 +1,5 @@
 import { AuthError } from '@modules/auth/domain/AuthError'
+import { ROLES, type UserRole } from '@modules/auth/domain/roles'
 import type {
   AuthRepository,
   AuthSession,
@@ -6,20 +7,54 @@ import type {
 } from '@modules/auth/domain/types'
 import { ApiError } from '@shared/api/types'
 import { httpClient } from '@shared/api/HttpClient'
-import type { UserRole } from '@modules/auth/domain/roles'
-
-interface LoginResponse {
-  token: string
-  user: {
-    username: string
-    displayName: string
-    role: UserRole
-  }
-}
 
 interface LoginErrorBody {
   field?: 'username' | 'password'
   code?: string
+}
+
+const GENERIC_LOGIN_ERROR = 'Usuario o contraseña incorrectos'
+
+function isRole(value: unknown): value is UserRole {
+  return value === ROLES.RECLUTADORA || value === ROLES.COORDINADORA
+}
+
+function parseLoginResponse(data: unknown): AuthSession {
+  if (!data || typeof data !== 'object') {
+    throw new AuthError('password', 'Respuesta de autenticación inválida')
+  }
+
+  const root = data as Record<string, unknown>
+  const token = root.token
+  const user = root.user
+
+  if (typeof token !== 'string' || token.length === 0) {
+    throw new AuthError('password', 'Respuesta de autenticación inválida')
+  }
+
+  if (!user || typeof user !== 'object') {
+    throw new AuthError('password', 'Respuesta de autenticación inválida')
+  }
+
+  const profile = user as Record<string, unknown>
+  const username = profile.username
+  const displayName = profile.displayName
+  const role = profile.role
+
+  if (
+    typeof username !== 'string' ||
+    username.length === 0 ||
+    typeof displayName !== 'string' ||
+    displayName.length === 0 ||
+    !isRole(role)
+  ) {
+    throw new AuthError('password', 'Respuesta de autenticación inválida')
+  }
+
+  return {
+    token,
+    user: { username, displayName, role },
+  }
 }
 
 function mapLoginError(error: unknown): never {
@@ -28,17 +63,19 @@ function mapLoginError(error: unknown): never {
     const code = body?.code?.toUpperCase() ?? ''
     const field = body?.field
 
-    // Mensajes fijos de cliente: no reenviar textos crudos del backend.
-    if (field === 'username' || code.includes('USERNAME') || code === 'INVALID_USER') {
-      throw new AuthError('username', 'Usuario incorrecto')
-    }
-
-    if (field === 'password' || code.includes('PASSWORD') || code === 'INVALID_PASSWORD') {
-      throw new AuthError('password', 'La contraseña no es válida')
-    }
-
-    if (error.status === 401 || error.status === 403) {
-      throw new AuthError('password', 'La contraseña no es válida')
+    // Mensaje genérico: evita enumeración de usuarios.
+    // El campo se usa solo para foco UX, no para revelar qué falló.
+    if (
+      field === 'username' ||
+      field === 'password' ||
+      code.includes('USERNAME') ||
+      code.includes('PASSWORD') ||
+      code === 'INVALID_USER' ||
+      code === 'INVALID_PASSWORD' ||
+      error.status === 401 ||
+      error.status === 403
+    ) {
+      throw new AuthError('password', GENERIC_LOGIN_ERROR)
     }
 
     throw new AuthError('password', 'No se pudo iniciar sesión')
@@ -50,16 +87,17 @@ function mapLoginError(error: unknown): never {
 export class ApiAuthRepository implements AuthRepository {
   async login(credentials: LoginCredentials): Promise<AuthSession> {
     try {
-      const data = await httpClient.request<LoginResponse>('/api/v1/auth/login', {
+      const data = await httpClient.request<unknown>('/api/v1/auth/login', {
         method: 'POST',
-        body: credentials,
+        body: {
+          username: credentials.username.trim(),
+          password: credentials.password,
+        },
       })
 
-      return {
-        token: data.token,
-        user: data.user,
-      }
+      return parseLoginResponse(data)
     } catch (error) {
+      if (error instanceof AuthError) throw error
       mapLoginError(error)
     }
   }

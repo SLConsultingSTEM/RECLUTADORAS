@@ -11,8 +11,25 @@ export class HttpClient {
   }
 
   async request<T>(path: string, options: HttpRequestOptions = {}): Promise<T> {
+    if (!this.baseUrl) {
+      throw new ApiError(
+        'VITE_API_URL no está configurada. Configure la URL de la API o active mocks solo en desarrollo.',
+        0,
+      )
+    }
+
     const controller = new AbortController()
     const timeout = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS)
+    const externalSignal = options.signal
+
+    const onExternalAbort = () => controller.abort()
+    if (externalSignal) {
+      if (externalSignal.aborted) {
+        controller.abort()
+      } else {
+        externalSignal.addEventListener('abort', onExternalAbort, { once: true })
+      }
+    }
 
     const headers: Record<string, string> = {
       Accept: 'application/json',
@@ -28,11 +45,14 @@ export class HttpClient {
     }
 
     try {
+      const method = options.method ?? 'GET'
       const response = await fetch(`${this.baseUrl}${path}`, {
-        method: options.method ?? 'GET',
+        method,
         headers,
         body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-        signal: options.signal ?? controller.signal,
+        signal: controller.signal,
+        credentials: 'omit',
+        cache: options.cache ?? (method === 'GET' ? 'default' : 'no-store'),
       })
 
       if (response.status === 204) {
@@ -51,8 +71,20 @@ export class HttpClient {
       }
 
       return payload as T
+    } catch (error) {
+      if (error instanceof ApiError) throw error
+
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw new ApiError('La solicitud superó el tiempo de espera', 408)
+      }
+
+      throw new ApiError(
+        error instanceof Error ? error.message : 'Error de red',
+        0,
+      )
     } finally {
       clearTimeout(timeout)
+      externalSignal?.removeEventListener('abort', onExternalAbort)
     }
   }
 }

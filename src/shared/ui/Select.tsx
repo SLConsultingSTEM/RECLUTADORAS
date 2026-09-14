@@ -142,8 +142,8 @@ function PillsSelect({
 
     setMenuStyle({
       position: 'fixed',
-      left: rect.left,
-      width: rect.width,
+      left: Math.max(8, Math.min(rect.left, window.innerWidth - rect.width - 8)),
+      width: Math.min(rect.width, window.innerWidth - 16),
       top: openUp ? undefined : rect.bottom + gap,
       bottom: openUp ? window.innerHeight - rect.top + gap : undefined,
       maxHeight,

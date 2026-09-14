@@ -468,7 +468,8 @@
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .pillsOptionCheck {
@@ -581,6 +582,33 @@
   min-height: 1.35rem;
   font-size: var(--text-xs);
   line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  .field {
+    padding-bottom: 1.65rem;
+  }
+
+  .fieldToolbar,
+  .fieldFloating,
+  .fieldPills {
+    padding-bottom: 0;
+  }
+
+  .fieldPillsLabeled {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.35rem;
+  }
+
+  .labelPillsVisible {
+    white-space: normal;
+  }
+
+  .controlPills {
+    min-height: 48px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

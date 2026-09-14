@@ -100,8 +100,8 @@ export function OpcionesMultiSelect({
     const openUp = openUpRef.current
     setMenuStyle({
       position: 'fixed',
-      left: rect.left,
-      width: Math.max(rect.width, 280),
+      left: Math.max(8, Math.min(rect.left, window.innerWidth - 288)),
+      width: Math.min(Math.max(rect.width, 280), window.innerWidth - 16),
       top: openUp ? undefined : rect.bottom + gap,
       bottom: openUp ? window.innerHeight - rect.top + gap : undefined,
       maxHeight,

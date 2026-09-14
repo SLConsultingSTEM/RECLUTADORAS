@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
+  max-width: 100%;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
@@ -24,8 +25,8 @@
 }
 
 .sm {
-  min-height: 34px;
-  padding: 0.35rem 0.75rem;
+  min-height: 40px;
+  padding: 0.45rem 0.8rem;
   font-size: var(--text-xs);
 }
 
@@ -73,6 +74,10 @@
 .label {
   display: inline-flex;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .primary {
@@ -132,8 +137,8 @@
 .iconButton {
   display: inline-grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   color: var(--color-muted);
@@ -166,4 +171,15 @@
 
 .plain:hover {
   background: var(--color-surface-muted);
+}
+
+@media (max-width: 480px) {
+  .button {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .sm {
+    min-height: 44px;
+  }
 }

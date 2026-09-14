@@ -8,7 +8,9 @@ import { useAuth } from '@app/providers/useAuth'
 import { Button } from '@shared/ui/Button'
 import { Input } from '@shared/ui/Input'
 import { IconEye, IconEyeOff, IconLock, IconUser } from '@shared/ui/icons'
+import { LoginBottomDecoration } from './LoginBottomDecoration'
 import { LoginDivider } from './LoginDivider'
+import { LoginTopDecoration } from './LoginTopDecoration'
 import { LoginVisual } from './LoginVisual'
 import styles from './LoginPage.module.css'
 
@@ -156,9 +158,19 @@ export function LoginPage() {
       <LoginVisual />
       <section className={styles.panel}>
         <LoginDivider />
+        <LoginTopDecoration />
+        <LoginBottomDecoration />
         <div className={styles.panelInner}>
           <header className={styles.header}>
-            <img src={logo} alt="OPTIMASL" className={`${styles.logo} ${styles.rise} ${styles.d1}`} />
+            <img
+              src={logo}
+              alt="OPTIMASL"
+              width={590}
+              height={188}
+              decoding="async"
+              fetchPriority="high"
+              className={`${styles.logo} ${styles.rise} ${styles.d1}`}
+            />
             <div className={`${styles.headerText} ${styles.rise} ${styles.d2}`}>
               <h1>Iniciar sesión</h1>
               <p>Ingresa con tu usuario del equipo para continuar.</p>

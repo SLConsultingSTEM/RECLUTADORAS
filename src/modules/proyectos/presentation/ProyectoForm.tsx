@@ -74,9 +74,12 @@ function focusFirstInvalidField(
     inline: 'nearest',
   })
 
-  field.classList.remove(styles.attention)
+  const attentionClass = styles.attention
+  if (!attentionClass) return
+
+  field.classList.remove(attentionClass)
   void field.offsetWidth
-  field.classList.add(styles.attention)
+  field.classList.add(attentionClass)
 
   const focusDelay = prefersReduced ? 0 : 320
   window.setTimeout(() => {
@@ -84,7 +87,7 @@ function focusFirstInvalidField(
   }, focusDelay)
 
   window.setTimeout(() => {
-    field.classList.remove(styles.attention)
+    field.classList.remove(attentionClass)
   }, prefersReduced ? 0 : 800)
 }
 

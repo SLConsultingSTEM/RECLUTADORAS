@@ -68,9 +68,12 @@ function focusEditorField(selector: string, selectText = false) {
     inline: 'nearest',
   })
 
-  field.classList.remove(styles.editorAttention)
+  const attentionClass = styles.editorAttention
+  if (!attentionClass) return
+
+  field.classList.remove(attentionClass)
   void field.offsetWidth
-  field.classList.add(styles.editorAttention)
+  field.classList.add(attentionClass)
 
   const focusDelay = prefersReduced ? 0 : 280
   window.setTimeout(() => {
@@ -79,7 +82,7 @@ function focusEditorField(selector: string, selectText = false) {
   }, focusDelay)
 
   window.setTimeout(() => {
-    field.classList.remove(styles.editorAttention)
+    field.classList.remove(attentionClass)
   }, prefersReduced ? 0 : 750)
 }
 

@@ -31,8 +31,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
         <li><span style="font-weight: normal;">Si <b>SL RESEARCH COLOMBIA SAS</b> recibe del <b>RECLUTADOR</b> un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span>
       </ol>
     `,
-    imagenUrl: '/proyectos/RCL.png',
-    imagenNombre: 'RCL.png',
+    imagenUrl: '/proyectos/RCL.webp',
+    imagenNombre: 'RCL.webp',
     ciudadesPermitidas: ["Bogotá","Cali","Medellín"],
     camposEspecificos: [
           {
@@ -92,8 +92,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
         <li><span style="font-weight: normal;">Si <b>SL RESEARCH COLOMBIA SAS</b> recibe del <b>RECLUTADOR</b> un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span>
       </ol>
     `,
-    imagenUrl: '/proyectos/piezareclu.jpg',
-    imagenNombre: 'piezareclu.jpg',
+    imagenUrl: '/proyectos/piezareclu.webp',
+    imagenNombre: 'piezareclu.webp',
     ciudadesPermitidas: ["Bogotá","Medellín","Barranquilla","Cali"],
     camposEspecificos: [
           {
@@ -154,8 +154,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
         <li><span style="font-weight: normal;">Si <b>SL RESEARCH COLOMBIA SAS</b> recibe del <b>RECLUTADOR</b> un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span>
       </ol>
     `,
-    imagenUrl: '/proyectos/bebidanoche.png',
-    imagenNombre: 'bebidanoche.png',
+    imagenUrl: '/proyectos/bebidanoche.webp',
+    imagenNombre: 'bebidanoche.webp',
     ciudadesPermitidas: ["Bogotá","Cali"],
     camposEspecificos: [
           {
@@ -204,8 +204,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
         <li><span style="font-weight: normal;"><strong>Re-contacto y pago</strong>, SL RESEARCH COLOMBIA SAS recibe del RECLUTADOR un dato gestionando de un perfil que ya se encuentra en la base de datos de la empresa, este se considerá como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span></li>
       </ol>
     `,
-    imagenUrl: '/proyectos/reclutadoras-rn.png',
-    imagenNombre: 'reclutadoras-rn.png',
+    imagenUrl: '/proyectos/reclutadoras-rn.webp',
+    imagenNombre: 'reclutadoras-rn.webp',
     ciudadesPermitidas: ["Bogotá","Medellín","Bucaramanga"],
     camposEspecificos: [
           {
@@ -263,8 +263,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
         <li><span style="font-weight: normal;">SL RESEARCH COLOMBIA SAS recibe del RECLUTADOR un dato gestionado de un perfil que ya se encuentra en la base de datos de la empresa, este se considerará como un re-contacto. Teniendo en cuenta lo anterior y que hay una gestión por parte de ustedes, este dato se pagará al 50% del valor del reclutamiento siempre y cuando el participante culmine el proceso. La participación debe ser superior a 3 meses; en caso contrario, no se podrá tener en cuenta en el estudio. En caso de que no haya una gestión por parte de la reclutadora, este dato no se pagará.</span></li>
       </ol>
     `,
-    imagenUrl: '/proyectos/reclutadoras-etapa-cero.png',
-    imagenNombre: 'reclutadoras-etapa-cero.png',
+    imagenUrl: '/proyectos/reclutadoras-etapa-cero.webp',
+    imagenNombre: 'reclutadoras-etapa-cero.webp',
     ciudadesPermitidas: ["Bogotá","Cali","Medellín","Cartagena"],
     camposEspecificos: [
           {

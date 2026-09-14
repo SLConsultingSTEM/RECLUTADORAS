@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import logo from '@assets/logoIzq.png'
 import { useAuth } from '@app/providers/useAuth'
@@ -67,7 +67,9 @@ export function AppLayout() {
   const { user, logout } = useAuth()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isMobileNav, setIsMobileNav] = useState(false)
   const [navMotionReady, setNavMotionReady] = useState(false)
+  const sidebarRef = useRef<HTMLElement>(null)
   const coordinadora = Boolean(user && isCoordinadora(user.role))
   const page = getPageMeta(location.pathname, coordinadora)
 
@@ -75,6 +77,32 @@ export function AppLayout() {
     const id = window.requestAnimationFrame(() => setNavMotionReady(true))
     return () => window.cancelAnimationFrame(id)
   }, [])
+
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 1024px)')
+    const sync = () => setIsMobileNav(query.matches)
+    sync()
+    query.addEventListener('change', sync)
+    return () => query.removeEventListener('change', sync)
+  }, [])
+
+  useEffect(() => {
+    if (!mobileOpen) return
+
+    const id = window.requestAnimationFrame(() => {
+      sidebarRef.current?.querySelector<HTMLElement>('button[aria-label="Cerrar menú"]')?.focus()
+    })
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setMobileOpen(false)
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      window.cancelAnimationFrame(id)
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [mobileOpen])
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
@@ -97,7 +125,12 @@ export function AppLayout() {
 
   return (
     <div className={styles.shell}>
-      <aside className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}>
+      <aside
+        ref={sidebarRef}
+        className={`${styles.sidebar} ${mobileOpen ? styles.sidebarOpen : ''}`}
+        aria-hidden={isMobileNav && !mobileOpen ? true : undefined}
+        inert={isMobileNav && !mobileOpen ? true : undefined}
+      >
         <div className={styles.sidebarTop}>
           <Link
             to="/panel"
@@ -105,7 +138,7 @@ export function AppLayout() {
             aria-label="Optima SL"
             onClick={closeMenus}
           >
-            <img src={logo} alt="" className={styles.brandLogo} />
+            <img src={logo} alt="" width={36} height={36} decoding="async" className={styles.brandLogo} />
             <span className={styles.navTooltip} role="tooltip">
               Optima SL
             </span>
@@ -178,7 +211,11 @@ export function AppLayout() {
         />
       ) : null}
 
-      <div className={styles.content}>
+      <div
+        className={styles.content}
+        aria-hidden={isMobileNav && mobileOpen ? true : undefined}
+        inert={isMobileNav && mobileOpen ? true : undefined}
+      >
         <div className={styles.contentColumn}>
           <header className={styles.topbar}>
             <div className={styles.topbarLeft}>

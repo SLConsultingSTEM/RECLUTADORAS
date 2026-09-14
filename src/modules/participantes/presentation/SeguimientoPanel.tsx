@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
-import { listParticipantesUseCase } from '@modules/participantes/application/participanteUseCases'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
+import {
+  invalidateParticipanteListCache,
+  listParticipantesCached,
+} from '@modules/participantes/infrastructure/participanteListCache'
 import type { EstadoParticipante, Participante } from '@modules/participantes/domain/types'
 import { ParticipanteDetalleModal } from '@modules/participantes/presentation/ParticipanteDetalleModal'
-import { getProyectoUseCase } from '@modules/proyectos/application/proyectoUseCases'
-import { createProyectoRepository } from '@modules/proyectos/infrastructure/proyectoRepositoryFactory'
 import { Alert } from '@shared/ui/Alert'
 import { Badge } from '@shared/ui/Badge'
 import { EmptyState } from '@shared/ui/EmptyState'
@@ -24,8 +25,6 @@ import {
 import styles from './SeguimientoPanel.module.css'
 
 const participanteRepository = createParticipanteRepository()
-const proyectoRepository = createProyectoRepository()
-const REFRESH_MIN_MS = 2600
 
 const REFRESH_MESSAGES = [
   'Trayendo datos frescos…',
@@ -45,6 +44,7 @@ interface SeguimientoPanelProps {
   refreshKey: number
   listTick: number
   estado: string
+  campoLabels?: Record<string, string>
   onLoadingChange?: (loading: boolean) => void
 }
 
@@ -151,6 +151,7 @@ export function SeguimientoPanel({
   refreshKey,
   listTick,
   estado,
+  campoLabels = {},
   onLoadingChange,
 }: SeguimientoPanelProps) {
   const [items, setItems] = useState<Participante[]>([])
@@ -161,7 +162,6 @@ export function SeguimientoPanel({
   const [refreshMessage, setRefreshMessage] = useState<string>(REFRESH_MESSAGES[0])
   const [selected, setSelected] = useState<Participante | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
-  const [campoLabels, setCampoLabels] = useState<Record<string, string>>({})
   const hasLoadedRef = useRef(false)
 
   useEffect(() => {
@@ -176,31 +176,7 @@ export function SeguimientoPanel({
   useEffect(() => {
     let active = true
 
-    async function loadLabels() {
-      try {
-        const proyecto = await getProyectoUseCase(proyectoRepository, proyectoId)
-        if (!active || !proyecto) return
-        const labels: Record<string, string> = {}
-        for (const campo of proyecto.camposEspecificos) {
-          labels[campo.nombreCampo] = campo.etiqueta
-        }
-        setCampoLabels(labels)
-      } catch {
-        if (active) setCampoLabels({})
-      }
-    }
-
-    void loadLabels()
-    return () => {
-      active = false
-    }
-  }, [proyectoId])
-
-  useEffect(() => {
-    let active = true
-
     async function load() {
-      const startedAt = performance.now()
       const softRefresh = hasLoadedRef.current
       if (softRefresh) setRefreshMessage(pickRefreshMessage())
       setLoading(true)
@@ -208,18 +184,12 @@ export function SeguimientoPanel({
       setError('')
 
       try {
-        const data = await listParticipantesUseCase(participanteRepository, {
-          proyectoId,
-          estado: estado || undefined,
-        })
+        const force = softRefresh
+        if (force) invalidateParticipanteListCache(proyectoId)
 
-        if (softRefresh) {
-          const elapsed = performance.now() - startedAt
-          const remaining = REFRESH_MIN_MS - elapsed
-          if (remaining > 0) {
-            await new Promise((resolve) => window.setTimeout(resolve, remaining))
-          }
-        }
+        const data = await listParticipantesCached(participanteRepository, proyectoId, {
+          force,
+        })
 
         if (!active) return
         setItems(data)
@@ -243,7 +213,12 @@ export function SeguimientoPanel({
       active = false
       onLoadingChange?.(false)
     }
-  }, [proyectoId, estado, refreshKey, listTick, onLoadingChange])
+  }, [proyectoId, refreshKey, listTick, onLoadingChange])
+
+  const visibleItems = useMemo(() => {
+    if (!estado) return items
+    return items.filter((item) => item.estado === estado)
+  }, [items, estado])
 
   const showInitialLoader = loading && !hasLoaded
   const isRefreshing = loading && hasLoaded
@@ -266,7 +241,7 @@ export function SeguimientoPanel({
 
       {!showInitialLoader ? (
         <div className={styles.contentSwap} aria-busy={isRefreshing}>
-          {isRefreshing || items.length > 0 ? (
+          {isRefreshing || visibleItems.length > 0 ? (
             <div className={`${styles.contentPane} ${styles.tableWrap}`}>
               <Table headers={tableHeaders}>
                 {isRefreshing ? (
@@ -288,7 +263,7 @@ export function SeguimientoPanel({
                     </td>
                   </tr>
                 ) : (
-                  items.map((item, index) => (
+                  visibleItems.map((item, index) => (
                     <tr
                       key={`${contentKey}-${item.id}`}
                       className={styles.dataRow}

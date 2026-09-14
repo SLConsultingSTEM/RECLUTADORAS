@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useProyectos } from '@modules/proyectos/presentation/useProyectos'
 import {
   SeguimientoEstadoFilter,
@@ -32,13 +32,21 @@ export function PanelReclutadoraPage() {
   const [estadoFiltro, setEstadoFiltro] = useState('')
   const { resumen, loading: resumenLoading, error: resumenError } = useSeguimientoResumen(
     selectedId,
-    refreshKey,
+    refreshKey + listTick,
   )
 
   useEffect(() => {
     setEstadoFiltro('')
     setListTick(0)
   }, [selectedId])
+
+  const campoLabels = useMemo(() => {
+    const labels: Record<string, string> = {}
+    for (const campo of selected?.camposEspecificos ?? []) {
+      labels[campo.nombreCampo] = campo.etiqueta
+    }
+    return labels
+  }, [selected])
 
   const showEmpty = !loading && proyectos.length === 0 && !error
   const showShell = loading || proyectos.length > 0
@@ -188,6 +196,7 @@ export function PanelReclutadoraPage() {
                   refreshKey={refreshKey}
                   listTick={listTick}
                   estado={estadoFiltro}
+                  campoLabels={campoLabels}
                   onLoadingChange={setListLoading}
                 />
               ) : null}

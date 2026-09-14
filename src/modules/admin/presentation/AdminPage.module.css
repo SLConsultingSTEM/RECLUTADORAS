@@ -7,6 +7,7 @@
   display: grid;
   gap: var(--space-5);
   align-items: start;
+  min-width: 0;
 }
 
 @media (min-width: 1100px) {
@@ -58,6 +59,7 @@
   display: grid;
   gap: var(--space-2);
   font-size: var(--text-sm);
+  overflow-wrap: anywhere;
 }
 
 .camposHeader {
@@ -85,6 +87,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface-muted);
+  min-width: 0;
 }
 
 .actions,
@@ -95,6 +98,32 @@
 }
 
 .projectName {
+  display: block;
+  max-width: 100%;
   color: var(--color-ink);
   font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+  .rowActions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .rowActions :global(button) {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .camposHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
 }

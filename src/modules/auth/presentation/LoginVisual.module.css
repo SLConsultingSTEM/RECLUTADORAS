@@ -5,7 +5,8 @@
   display: grid;
   align-content: center;
   justify-items: start;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 0;
   width: 100%;
   padding: clamp(1.75rem, 5vh, 3rem) clamp(0.75rem, 1.8vw, 1.25rem) clamp(1.75rem, 5vh, 3rem) clamp(3.75rem, 7.5vw, 6.5rem);
   overflow: hidden;
@@ -194,61 +195,10 @@
   }
 }
 
+/* Mobile: el login usa layout full-screen propio; el visual solo en desktop */
 @media (max-width: 900px) {
   .visual {
-    grid-column: 1;
-    min-height: auto;
-    justify-items: center;
-    padding: 1.5rem 1.25rem 0.85rem;
-  }
-
-  .content {
-    gap: 0.85rem;
-    width: min(100%, 22rem);
-  }
-
-  .stage {
-    height: 180px;
-  }
-
-  .art {
-    object-position: center;
-  }
-
-  .copyBlock,
-  .copy {
-    justify-items: center;
-    text-align: center;
-  }
-
-  .dots {
-    justify-content: center;
-  }
-
-  .title {
-    font-size: 1.2rem;
-  }
-
-  .description {
-    font-size: 0.86rem;
-  }
-}
-
-@media (max-width: 560px) {
-  .visual {
-    padding: 1.15rem 1rem 0.65rem;
-  }
-
-  .stage {
-    height: 150px;
-  }
-
-  .title {
-    font-size: 1.1rem;
-  }
-
-  .description {
-    font-size: 0.82rem;
+    display: none;
   }
 }
 
@@ -271,11 +221,5 @@
   .artActive {
     opacity: 1;
     transform: none;
-  }
-}
-
-@supports not (min-height: 100dvh) {
-  .visual {
-    min-height: 100vh;
   }
 }

@@ -4,6 +4,7 @@ import {
   stripLeadingHeading,
 } from '@modules/proyectos/application/indicacionesMapper'
 import { sanitizeHtml } from '@shared/security/sanitize'
+import { safeMediaUrl } from '@shared/security/url'
 import { Badge } from '@shared/ui/Badge'
 import { EmptyState } from '@shared/ui/EmptyState'
 import {
@@ -158,7 +159,7 @@ function IndicacionesPanel({ html }: { html: string }) {
                   {mostrarLead ? (
                     <div
                       className={styles.indicacionHtml}
-                      dangerouslySetInnerHTML={{ __html: regla.leadHtml }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(regla.leadHtml) }}
                     />
                   ) : null}
                   <div className={styles.indicacionItem}>
@@ -166,7 +167,9 @@ function IndicacionesPanel({ html }: { html: string }) {
                       <strong className={styles.indicacionNum}>{numero}.</strong>
                       <span
                         className={styles.indicacionText}
-                        dangerouslySetInnerHTML={{ __html: unwrapSingleSpan(regla.html) }}
+                        dangerouslySetInnerHTML={{
+                          __html: sanitizeHtml(unwrapSingleSpan(regla.html)),
+                        }}
                       />
                     </p>
                   </div>
@@ -190,10 +193,13 @@ export function ProyectoInfo({
   compact = false,
   mediaOnly = false,
 }: ProyectoInfoProps) {
+  const mediaUrl = safeMediaUrl(imagenUrl)
+
   if (mediaOnly) {
+    const leadClass = styles.indicacionLead ?? 'indicacionLead'
     const cuerpoHtml = normalizeLabels(
       sanitizeHtml(stripLeadingHeading(descripcionHtml)),
-      styles.indicacionLead ?? 'indicacionLead',
+      leadClass,
     )
 
     return (
@@ -202,7 +208,7 @@ export function ProyectoInfo({
           <IndicacionesPanel html={cuerpoHtml} />
           <PiezaGraficaPanel
             nombre={nombre}
-            imagenUrl={imagenUrl}
+            imagenUrl={mediaUrl}
             imagenNombre={imagenNombre}
           />
         </div>
@@ -224,19 +230,27 @@ export function ProyectoInfo({
         </div>
       </header>
 
-      {imagenUrl ? (
+      {mediaUrl ? (
         <section className={styles.media}>
           <div className={styles.mediaTop}>
             <span className={styles.mediaLabel}>
               <IconImage size={15} />
               Pieza gráfica
             </span>
-            <a className={styles.download} href={imagenUrl} download={imagenNombre}>
+            <a className={styles.download} href={mediaUrl} download={imagenNombre}>
               <IconDownload size={15} />
               Descargar
             </a>
           </div>
-          <img src={imagenUrl} alt={`Pieza gráfica de ${nombre}`} className={styles.image} />
+          <img
+            src={mediaUrl}
+            alt={`Pieza gráfica de ${nombre}`}
+            className={styles.image}
+            width={1200}
+            height={1200}
+            loading="lazy"
+            decoding="async"
+          />
         </section>
       ) : null}
 

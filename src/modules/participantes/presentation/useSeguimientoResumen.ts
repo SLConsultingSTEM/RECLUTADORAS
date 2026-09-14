@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
-import { getSeguimientoResumenUseCase } from '@modules/participantes/application/participanteUseCases'
+import { computeSeguimientoResumen } from '@modules/participantes/application/seguimientoResumen'
 import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
+import {
+  invalidateParticipanteListCache,
+  listParticipantesCached,
+} from '@modules/participantes/infrastructure/participanteListCache'
 import type { SeguimientoResumen } from '@modules/participantes/domain/types'
 
 const participanteRepository = createParticipanteRepository()
@@ -33,8 +37,12 @@ export function useSeguimientoResumen(proyectoId: string, refreshKey = 0) {
       setLoading(true)
       setError('')
       try {
-        const data = await getSeguimientoResumenUseCase(participanteRepository, proyectoId)
-        if (active) setResumen(data)
+        const force = refreshKey > 0
+        if (force) invalidateParticipanteListCache(proyectoId)
+        const items = await listParticipantesCached(participanteRepository, proyectoId, {
+          force,
+        })
+        if (active) setResumen(computeSeguimientoResumen(items))
       } catch (err) {
         if (active) {
           setResumen(EMPTY_RESUMEN)

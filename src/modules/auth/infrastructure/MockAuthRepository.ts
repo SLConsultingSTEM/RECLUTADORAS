@@ -6,6 +6,7 @@ import type {
   LoginCredentials,
 } from '@modules/auth/domain/types'
 
+/** Credenciales solo para desarrollo local. Nunca usar en producción. */
 const MOCK_USERS: Record<
   string,
   { password: string; role: AuthSession['user']['role']; displayName: string }
@@ -22,6 +23,8 @@ const MOCK_USERS: Record<
   },
 }
 
+const GENERIC_LOGIN_ERROR = 'Usuario o contraseña incorrectos'
+
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -33,12 +36,9 @@ export class MockAuthRepository implements AuthRepository {
     const username = credentials.username.trim().toLowerCase()
     const account = MOCK_USERS[username]
 
-    if (!account) {
-      throw new AuthError('username', 'Usuario incorrecto')
-    }
-
-    if (account.password !== credentials.password) {
-      throw new AuthError('password', 'La contraseña no es válida')
+    // Mensaje y campo genéricos: evita enumeración de usuarios en demo.
+    if (!account || account.password !== credentials.password) {
+      throw new AuthError('password', GENERIC_LOGIN_ERROR)
     }
 
     return {
