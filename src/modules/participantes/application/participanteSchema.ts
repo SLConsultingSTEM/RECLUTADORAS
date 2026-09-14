@@ -48,7 +48,7 @@ function emptyBaseField() {
   return z.preprocess((value) => (value == null ? '' : String(value)), z.string())
 }
 
-function buildBaseShape(camposBase: CampoBaseConfig[]) {
+function buildBaseShape(camposBase?: CampoBaseConfig[] | null) {
   const byKey = new Map(normalizeCamposBase(camposBase).map((campo) => [campo.nombreCampo, campo]))
 
   const nombre = byKey.get('nombre')
@@ -120,7 +120,7 @@ export function buildParticipanteSchema(
   }
 
   return z.object({
-    ...buildBaseShape(options.camposBase ?? []),
+    ...buildBaseShape(options.camposBase),
     camposExtra: z.object(extraShape),
   })
 }

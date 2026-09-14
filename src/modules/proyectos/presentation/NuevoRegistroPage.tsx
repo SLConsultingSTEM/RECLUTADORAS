@@ -11,6 +11,7 @@ import {
 import {
   areCamposBaseEqual,
   areFormularioTitulosEqual,
+  normalizeCamposBase,
   normalizeFormularioTitulos,
   toEditableCamposBase,
   toPersistableCamposBase,
@@ -104,7 +105,7 @@ export function NuevoRegistroPage() {
       (!areCamposEqual(camposPersistibles, selected.camposEspecificos) ||
         !areCamposBaseEqual(
           camposBasePersistibles,
-          selected.camposBase ?? [],
+          normalizeCamposBase(selected.camposBase, selected.ciudadesPermitidas),
           selected.ciudadesPermitidas,
         ) ||
         !areFormularioTitulosEqual(

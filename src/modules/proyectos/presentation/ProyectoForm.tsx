@@ -13,6 +13,7 @@ import {
   defaultOpcionesForBaseCampo,
   isSelectLikeBaseCampo,
   isTextLikeBaseCampo,
+  normalizeCamposBase,
   normalizeFormularioTitulos,
   toPersistableCamposBase,
   type CampoBaseEditable,
@@ -214,13 +215,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     () =>
       builder
         ? toPersistableCamposBase(builder.camposBase, proyecto.ciudadesPermitidas)
-        : toPersistableCamposBase(
-            (proyecto.camposBase ?? []).map((campo) => ({
-              ...campo,
-              id: `base-${campo.nombreCampo}`,
-            })),
-            proyecto.ciudadesPermitidas,
-          ),
+        : normalizeCamposBase(proyecto.camposBase, proyecto.ciudadesPermitidas),
     [builder, builder?.camposBase, proyecto.camposBase, proyecto.ciudadesPermitidas],
   )
 
