@@ -385,7 +385,7 @@
     transparent 62%
   );
   transform: translateX(-130%);
-  animation: loginButtonShine 4.2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation: loginButtonShine 2.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
 }
 
 .actions button > * {
@@ -671,7 +671,7 @@
   }
 
   .actions {
-    padding-top: 0.35rem;
+    padding-top: 1.35rem;
   }
 
   .actions button {
@@ -698,10 +698,10 @@
 
 @keyframes loginButtonShine {
   0%,
-  18% {
+  8% {
     transform: translateX(-130%);
   }
-  58%,
+  78%,
   100% {
     transform: translateX(130%);
   }
