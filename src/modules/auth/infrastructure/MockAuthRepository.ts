@@ -14,12 +14,12 @@ const MOCK_USERS: Record<
   reclutadora: {
     password: '1234',
     role: ROLES.RECLUTADORA,
-    displayName: 'Reclutadora Demo',
+    displayName: 'Alana Gomez',
   },
   coordinadora: {
     password: '1234',
     role: ROLES.COORDINADORA,
-    displayName: 'Coordinadora Demo',
+    displayName: 'Juliana Zapata',
   },
 }
 
