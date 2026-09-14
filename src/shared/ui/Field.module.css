@@ -44,6 +44,8 @@
   opacity: 0.7;
   font-size: 0.95em;
   font-weight: 700;
+  /* Oculto en estado placeholder; visible al flotar */
+  display: none;
 }
 
 .controlWrap {
@@ -196,6 +198,7 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--color-primary);
+  overflow: visible;
   /* Halo suave sin esquinas visibles */
   background: radial-gradient(
     closest-side,
@@ -204,6 +207,14 @@
     transparent 100%
   );
   transform: translateY(-50%);
+}
+
+.floatingControl:focus ~ .floatingLabel .required,
+.floatingControl:not(:placeholder-shown) ~ .floatingLabel .required,
+.floatingControl:-webkit-autofill ~ .floatingLabel .required,
+.isFloated ~ .floatingLabel .required,
+.floatingActive .floatingLabel .required {
+  display: inline;
 }
 
 .floatingWrap:focus-within .adornment,

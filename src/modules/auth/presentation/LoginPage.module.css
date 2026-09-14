@@ -38,7 +38,7 @@
   display: grid;
   align-content: center;
   justify-items: end;
-  overflow: hidden;
+  overflow: visible;
   padding: clamp(1.75rem, 5vh, 3rem) clamp(3.75rem, 7.5vw, 6.5rem) clamp(1.75rem, 5vh, 3rem) clamp(0.75rem, 1.8vw, 1.25rem);
   color: rgba(248, 242, 255, 0.94);
   background: transparent;
@@ -129,8 +129,6 @@
   display: grid;
   justify-items: center;
   gap: 0.4rem;
-  padding-bottom: 1.15rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   text-align: center;
 }
 
@@ -214,8 +212,8 @@
   background: radial-gradient(
     closest-side,
     var(--floating-label-bg) 0%,
-    var(--floating-label-bg) 62%,
-    transparent 100%
+    var(--floating-label-bg) 42%,
+    transparent 72%
   );
 }
 
@@ -496,10 +494,6 @@
   }
 
   .panel {
-    --login-top-decoration-height: clamp(4.75rem, 14svh, 7.25rem);
-    --login-bottom-decoration-height: min(calc(100vw * 120 / 400), 12svh);
-    --login-header-color: #6b2e95;
-
     grid-column: 1;
     height: 100%;
     min-height: 0;
@@ -507,9 +501,9 @@
     align-content: center;
     overflow: hidden;
     padding:
-      calc(var(--login-top-decoration-height) + 0.65rem + env(safe-area-inset-top, 0px))
+      calc(1.5rem + env(safe-area-inset-top, 0px))
       1.35rem
-      calc(var(--login-bottom-decoration-height) + 0.55rem + env(safe-area-inset-bottom, 0px));
+      calc(1.5rem + env(safe-area-inset-bottom, 0px));
     background: #ffffff;
     --floating-label-bg: #ffffff;
     color: var(--color-ink);
@@ -534,8 +528,6 @@
 
   .headerText {
     gap: 0.4rem;
-    padding-bottom: 0;
-    border-bottom: 0;
   }
 
   .headerText h1 {
@@ -671,11 +663,10 @@
 
 @media (max-width: 480px) {
   .panel {
-    --login-top-decoration-height: clamp(4.25rem, 12svh, 6.25rem);
     padding:
-      calc(var(--login-top-decoration-height) + 0.55rem + env(safe-area-inset-top, 0px))
+      calc(1.25rem + env(safe-area-inset-top, 0px))
       1.15rem
-      calc(var(--login-bottom-decoration-height) + 0.45rem + env(safe-area-inset-bottom, 0px));
+      calc(1.25rem + env(safe-area-inset-bottom, 0px));
   }
 
   .panelInner {
@@ -689,12 +680,6 @@
 
   .headerText h1 {
     font-size: 1.45rem;
-  }
-}
-
-@media (min-width: 601px) and (max-width: 900px) {
-  .panel {
-    --login-top-decoration-height: clamp(5.25rem, 15svh, 8rem);
   }
 }
 
