@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import type { Proyecto } from '@modules/proyectos/domain/types'
 import { CiudadesMultiSelect } from '@modules/proyectos/presentation/CiudadesMultiSelect'
-import { Alert } from '@shared/ui/Alert'
+import { Toast } from '@shared/ui/Toast'
 import { Button } from '@shared/ui/Button'
 import { Card } from '@shared/ui/Card'
 import { Input } from '@shared/ui/Input'
@@ -143,8 +143,15 @@ export function CrearProyectoCard({ proyectos, onCreate }: CrearProyectoCardProp
           </div>
         </div>
 
-        {message ? <Alert tone="success">{message}</Alert> : null}
-        {error ? <Alert tone="error">{error}</Alert> : null}
+        {message ? (
+          <Toast tone="success" onClose={() => setMessage('')}>
+            {message}
+          </Toast>
+        ) : error ? (
+          <Toast tone="error" onClose={() => setError('')}>
+            {error}
+          </Toast>
+        ) : null}
 
         {fuente ? (
           <div className={styles.duplicateBanner}>

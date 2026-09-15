@@ -31,7 +31,7 @@ import { createParticipanteRepository } from '@modules/participantes/infrastruct
 import { useAuth } from '@app/providers/useAuth'
 import { isCoordinadora } from '@modules/auth/domain/roles'
 import { CampoFormTile } from '@modules/proyectos/presentation/CampoFormTile'
-import { Alert } from '@shared/ui/Alert'
+import { Toast } from '@shared/ui/Toast'
 import { Button } from '@shared/ui/Button'
 import { Input } from '@shared/ui/Input'
 import { Textarea } from '@shared/ui/Textarea'
@@ -101,6 +101,7 @@ export interface ProyectoFormBuilderProps {
   onChangeTitulos: (titulos: FormularioTitulos) => void
   saving?: boolean
   error?: string
+  onClearError?: () => void
 }
 
 interface ProyectoFormProps {
@@ -246,6 +247,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
   const [dragId, setDragId] = useState<string | null>(null)
   const [dropId, setDropId] = useState<string | null>(null)
@@ -295,6 +297,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setErrors({})
     setSuccess('')
     setError('')
+    setNotice('')
   }
 
   useEffect(() => {
@@ -323,6 +326,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     })
     setError((prev) => (prev ? '' : prev))
     setSuccess((prev) => (prev ? '' : prev))
+    setNotice((prev) => (prev ? '' : prev))
   }
 
   function updateExtra(key: string, value: string) {
@@ -330,10 +334,27 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setCamposExtra((prev) => ({ ...prev, [key]: value }))
   }
 
+  function isFormBlank() {
+    const baseBlank = [nombre, genero, tipoDocumento, documento, ciudad, telefono].every(
+      (value) => !value.trim(),
+    )
+    if (!baseBlank) return false
+    return camposEspecificos.every(
+      (campo) => !(camposExtra[campo.nombreCampo] ?? '').trim(),
+    )
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setSuccess('')
     setError('')
+    setNotice('')
+
+    if (isFormBlank()) {
+      setErrors({})
+      setNotice('No has ingresado datos')
+      return
+    }
 
     const parsed = schema.safeParse({
       nombre,
@@ -913,8 +934,6 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
             }}
           />
 
-          {builder?.error ? <Alert tone="error">{builder.error}</Alert> : null}
-
           <div className={styles.grid}>
             {canBuild ? (
               <button
@@ -958,8 +977,23 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
         </section>
       ) : null}
 
-      {success ? <Alert tone="success">{success}</Alert> : null}
-      {error ? <Alert tone="error">{error}</Alert> : null}
+      {success ? (
+        <Toast tone="success" onClose={() => setSuccess('')}>
+          {success}
+        </Toast>
+      ) : error ? (
+        <Toast tone="error" onClose={() => setError('')}>
+          {error}
+        </Toast>
+      ) : notice ? (
+        <Toast tone="info" onClose={() => setNotice('')}>
+          {notice}
+        </Toast>
+      ) : builder?.error ? (
+        <Toast tone="error" onClose={builder.onClearError}>
+          {builder.error}
+        </Toast>
+      ) : null}
 
       {typeof document !== 'undefined' ? createPortal(floatingBar, document.body) : floatingBar}
     </form>
