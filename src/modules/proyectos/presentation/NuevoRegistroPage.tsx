@@ -307,6 +307,7 @@ export function NuevoRegistroPage() {
                           },
                           saving: camposSaving,
                           error: camposError,
+                          onClearError: clearDraftFeedback,
                         }
                       : undefined
                   }

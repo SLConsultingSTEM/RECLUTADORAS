@@ -11,7 +11,7 @@ import {
   type PiezaGraficaValue,
 } from '@modules/proyectos/presentation/PiezaGraficaPanel'
 import type { Proyecto } from '@modules/proyectos/domain/types'
-import { Alert } from '@shared/ui/Alert'
+import { Toast } from '@shared/ui/Toast'
 import { Button } from '@shared/ui/Button'
 import styles from './ProyectoInfo.module.css'
 
@@ -20,9 +20,18 @@ export type ProyectoInfoPatch = Pick<
   'descripcionHtml' | 'imagenUrl' | 'imagenNombre'
 >
 
+type FeedbackTone = 'success' | 'error' | 'info'
+
 interface ProyectoInfoEditorProps {
   proyecto: Proyecto
   onSave: (patch: ProyectoInfoPatch) => Promise<void>
+}
+
+function snapshotIndicaciones(items: IndicacionEditable[]) {
+  return items
+    .map((item) => `${item.lead.trim()}\n${item.texto.trim()}`)
+    .filter((line) => line.replace(/\n/g, '').length > 0)
+    .join('\u0000')
 }
 
 export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps) {
@@ -34,8 +43,7 @@ export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps
     imagenNombre: proyecto.imagenNombre,
   })
   const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const [message, setMessage] = useState('')
+  const [feedback, setFeedback] = useState<{ tone: FeedbackTone; text: string } | null>(null)
 
   useEffect(() => {
     setIndicaciones(descripcionToIndicaciones(proyecto.descripcionHtml))
@@ -43,9 +51,18 @@ export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps
       imagenUrl: proyecto.imagenUrl,
       imagenNombre: proyecto.imagenNombre,
     })
-    setError('')
-    setMessage('')
+    setFeedback(null)
   }, [proyecto.id, proyecto.descripcionHtml, proyecto.imagenUrl, proyecto.imagenNombre])
+
+  function hasChanges() {
+    const baseline = snapshotIndicaciones(descripcionToIndicaciones(proyecto.descripcionHtml))
+    const current = snapshotIndicaciones(indicaciones)
+    return (
+      current !== baseline ||
+      pieza.imagenUrl !== proyecto.imagenUrl ||
+      (pieza.imagenNombre ?? '') !== (proyecto.imagenNombre ?? '')
+    )
+  }
 
   function resetDraft() {
     setIndicaciones(descripcionToIndicaciones(proyecto.descripcionHtml))
@@ -53,23 +70,30 @@ export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps
       imagenUrl: proyecto.imagenUrl,
       imagenNombre: proyecto.imagenNombre,
     })
-    setError('')
-    setMessage('')
+    setFeedback(null)
   }
 
   async function handleSave() {
+    setFeedback(null)
+
+    if (!hasChanges()) {
+      setFeedback({ tone: 'info', text: 'No has hecho cambios' })
+      return
+    }
+
     setSaving(true)
-    setError('')
-    setMessage('')
     try {
       await onSave({
         descripcionHtml: indicacionesToDescripcion(proyecto.nombre, indicaciones),
         imagenUrl: pieza.imagenUrl,
         imagenNombre: pieza.imagenNombre,
       })
-      setMessage('Cambios guardados')
+      setFeedback({ tone: 'success', text: 'Cambios guardados' })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo guardar')
+      setFeedback({
+        tone: 'error',
+        text: err instanceof Error ? err.message : 'No se pudo guardar',
+      })
     } finally {
       setSaving(false)
     }
@@ -99,8 +123,11 @@ export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps
 
   return (
     <div className={styles.editorShell}>
-      {message ? <Alert tone="success">{message}</Alert> : null}
-      {error ? <Alert tone="error">{error}</Alert> : null}
+      {feedback ? (
+        <Toast tone={feedback.tone} onClose={() => setFeedback(null)}>
+          {feedback.text}
+        </Toast>
+      ) : null}
 
       <article className={`${styles.article} ${styles.reclutarInfo}`}>
         <div className={styles.infoStack}>
