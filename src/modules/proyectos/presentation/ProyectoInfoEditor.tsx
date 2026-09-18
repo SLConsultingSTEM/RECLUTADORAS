@@ -25,6 +25,8 @@ type FeedbackTone = 'success' | 'error' | 'info'
 interface ProyectoInfoEditorProps {
   proyecto: Proyecto
   onSave: (patch: ProyectoInfoPatch) => Promise<void>
+  /** Sube la pieza a la API (Cloudinary) y devuelve su URL definitiva. */
+  onUploadPieza?: (file: File) => Promise<PiezaGraficaValue>
 }
 
 function snapshotIndicaciones(items: IndicacionEditable[]) {
@@ -34,7 +36,11 @@ function snapshotIndicaciones(items: IndicacionEditable[]) {
     .join('\u0000')
 }
 
-export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps) {
+export function ProyectoInfoEditor({
+  proyecto,
+  onSave,
+  onUploadPieza,
+}: ProyectoInfoEditorProps) {
   const [indicaciones, setIndicaciones] = useState<IndicacionEditable[]>(() =>
     descripcionToIndicaciones(proyecto.descripcionHtml),
   )
@@ -139,6 +145,7 @@ export function ProyectoInfoEditor({ proyecto, onSave }: ProyectoInfoEditorProps
             compact
             disabled={saving}
             onChange={setPieza}
+            onUpload={onUploadPieza}
           />
           <IndicacionesEditor
             key={proyecto.id}

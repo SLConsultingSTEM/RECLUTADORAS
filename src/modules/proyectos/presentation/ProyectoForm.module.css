@@ -1214,3 +1214,27 @@
     padding-right: 0;
   }
 }
+
+/* Selector de destino del dato (a qué columna/path va lo que se captura). */
+.campoDestinoSelect {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-border, #d8d3e4);
+  border-radius: 0.6rem;
+  background: var(--color-surface, #fff);
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.campoDestinoSelect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* El badge de guardado conserva su espacio cuando no está visible: si se
+   desmonta, la altura del documento cambia y arrastra el scroll. */
+.dirtyBadgeIdle {
+  visibility: hidden;
+}

@@ -88,6 +88,7 @@ export function ParticipanteDetalleModal({
     ([, value]) => String(value ?? '').trim().length > 0,
   )
   const observaciones = participante.observaciones?.trim() ?? ''
+  const conclusiones = participante.conclusiones ?? []
 
   const documento = participante.tipoDocumento
     ? `${participante.tipoDocumento} ${participante.documento}`
@@ -199,6 +200,53 @@ export function ParticipanteDetalleModal({
             )}
           </section>
         </div>
+
+        <section className={`${styles.panel} ${styles.panelObservaciones}`}>
+          <div className={styles.panelHead}>
+            <span className={styles.panelIcon} aria-hidden>
+              <IconMessageSquare size={16} />
+            </span>
+            <div>
+              <h4 className={styles.panelTitle}>Conclusiones</h4>
+              <p className={styles.panelHint}>
+                {conclusiones.length > 0
+                  ? 'De la más reciente a la más antigua'
+                  : 'Gestión del estudio'}
+              </p>
+            </div>
+          </div>
+
+          {conclusiones.length > 0 ? (
+            <ol className={styles.conclusionesList}>
+              {conclusiones.map((conclusion, index) => (
+                <li
+                  key={`${conclusion.fecha}-${conclusion.tipologia}-${index}`}
+                  className={styles.conclusionItem}
+                >
+                  <div className={styles.conclusionHead}>
+                    <span className={styles.conclusionTipologia}>
+                      {conclusion.tipologia || 'Sin tipología'}
+                    </span>
+                    {conclusion.fecha ? (
+                      <span className={styles.conclusionFecha}>{conclusion.fecha}</span>
+                    ) : null}
+                  </div>
+                  {conclusion.motivo ? (
+                    <p className={styles.conclusionMotivo}>{conclusion.motivo}</p>
+                  ) : null}
+                  {conclusion.observacion ? (
+                    <p className={styles.conclusionObservacion}>{conclusion.observacion}</p>
+                  ) : null}
+                  {conclusion.autor ? (
+                    <p className={styles.conclusionAutor}>Registró: {conclusion.autor}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className={styles.emptyExtras}>Sin conclusiones registradas.</p>
+          )}
+        </section>
 
         <section className={`${styles.panel} ${styles.panelObservaciones}`}>
           <div className={styles.panelHead}>

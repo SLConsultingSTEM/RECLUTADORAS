@@ -423,3 +423,55 @@
     animation: none;
   }
 }
+
+/* Historial de conclusiones del estudio. */
+.conclusionesList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.conclusionItem {
+  border-left: 3px solid var(--color-primary, #7c3aed);
+  background: var(--color-surface-muted, rgba(124, 58, 237, 0.06));
+  border-radius: 0 0.6rem 0.6rem 0;
+  padding: 0.6rem 0.75rem;
+}
+
+.conclusionHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.conclusionTipologia {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.conclusionFecha {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.conclusionMotivo {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.conclusionObservacion {
+  margin: 0.35rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.conclusionAutor {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  opacity: 0.65;
+}

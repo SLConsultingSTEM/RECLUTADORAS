@@ -30,11 +30,18 @@ interface PiezaGraficaPanelProps {
   compact?: boolean
   disabled?: boolean
   onChange?: (value: PiezaGraficaValue) => void
+  /**
+   * Sube el archivo y devuelve la URL definitiva. Sin esto la imagen se
+   * quedaría como data URL dentro del proyecto, que es justo lo que se evita:
+   * la pieza vive en Cloudinary y aquí solo se guarda su URL.
+   */
+  onUpload?: (file: File) => Promise<PiezaGraficaValue>
 }
 
-const ACCEPT = 'image/png,image/jpeg,image/webp,image/gif'
-const ALLOWED_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif'])
-const MAX_IMAGE_BYTES = 2 * 1024 * 1024
+// Debe coincidir con lo que acepta la API (handlers/pieza_portal.go).
+const ACCEPT = 'image/png,image/jpeg,image/webp'
+const ALLOWED_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp'])
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -143,9 +150,11 @@ export function PiezaGraficaPanel({
   compact = false,
   disabled = false,
   onChange,
+  onUpload,
 }: PiezaGraficaPanelProps) {
   const [abierta, setAbierta] = useState(false)
   const [uploadError, setUploadError] = useState('')
+  const [subiendo, setSubiendo] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const { confirm, dialog: confirmDialog } = useConfirmDialog()
   const mediaUrl = safeMediaUrl(imagenUrl)
@@ -160,10 +169,28 @@ export function PiezaGraficaPanel({
     }
 
     if (file.size > MAX_IMAGE_BYTES) {
-      setUploadError('La imagen supera el límite de 2 MB.')
+      setUploadError('La imagen supera el límite de 5 MB.')
       return
     }
 
+    if (onUpload) {
+      setSubiendo(true)
+      try {
+        const subida = await onUpload(file)
+        if (!safeMediaUrl(subida.imagenUrl)) {
+          setUploadError('La imagen subida no es válida.')
+          return
+        }
+        onChange(subida)
+      } catch (err) {
+        setUploadError(err instanceof Error ? err.message : 'No se pudo subir la imagen')
+      } finally {
+        setSubiendo(false)
+      }
+      return
+    }
+
+    // Sin subida disponible (mocks): vista previa local.
     try {
       const dataUrl = await readFileAsDataUrl(file)
       if (!safeMediaUrl(dataUrl)) {
@@ -197,7 +224,7 @@ export function PiezaGraficaPanel({
       type="file"
       accept={ACCEPT}
       hidden
-      disabled={disabled}
+      disabled={disabled || subiendo}
       onChange={(e) => {
         void handleFile(e.target.files?.[0])
         e.target.value = ''
@@ -244,7 +271,9 @@ export function PiezaGraficaPanel({
             Pieza gráfica
           </span>
           <p className={styles.mediaStripMeta}>
-            {uploadError
+            {subiendo
+              ? 'Subiendo imagen…'
+              : uploadError
               ? uploadError
               : mediaUrl
                 ? imagenNombre || 'Imagen cargada'
@@ -270,7 +299,7 @@ export function PiezaGraficaPanel({
                 size="sm"
                 variant="soft"
                 icon={<IconPlus size={16} />}
-                disabled={disabled}
+                disabled={disabled || subiendo}
                 onClick={() => inputRef.current?.click()}
               >
                 Reemplazar
@@ -280,7 +309,7 @@ export function PiezaGraficaPanel({
                 size="sm"
                 variant="danger"
                 icon={<IconTrash size={16} />}
-                disabled={disabled}
+                disabled={disabled || subiendo}
                 onClick={() => void requestClearImage()}
               >
                 Quitar
@@ -292,7 +321,7 @@ export function PiezaGraficaPanel({
               size="sm"
               variant="soft"
               icon={<IconPlus size={16} />}
-              disabled={disabled}
+              disabled={disabled || subiendo}
               onClick={() => inputRef.current?.click()}
             >
               Agregar imagen
@@ -331,7 +360,7 @@ export function PiezaGraficaPanel({
                 type="button"
                 variant="soft"
                 icon={<IconPlus size={18} />}
-                disabled={disabled}
+                disabled={disabled || subiendo}
                 onClick={() => inputRef.current?.click()}
               >
                 Agregar imagen
@@ -371,7 +400,7 @@ export function PiezaGraficaPanel({
                 type="button"
                 variant="soft"
                 icon={<IconPlus size={18} />}
-                disabled={disabled}
+                disabled={disabled || subiendo}
                 onClick={() => inputRef.current?.click()}
               >
                 Reemplazar
@@ -380,7 +409,7 @@ export function PiezaGraficaPanel({
                 type="button"
                 variant="danger"
                 icon={<IconTrash size={18} />}
-                disabled={disabled}
+                disabled={disabled || subiendo}
                 onClick={() => void requestClearImage()}
               >
                 Quitar

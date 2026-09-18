@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import {
   listProyectosUseCase,
-  removeProyectoUseCase,
   saveProyectoUseCase,
 } from '@modules/proyectos/application/proyectoUseCases'
 import { createProyectoRepository } from '@modules/proyectos/infrastructure/proyectoRepositoryFactory'
@@ -120,6 +119,11 @@ export function AdminPage() {
     setMessage('')
     setError('')
 
+    if (!form.id) {
+      setError('Selecciona un proyecto de la lista para editarlo. Los estudios se crean en Optima.')
+      return
+    }
+
     if (!form.nombre.trim()) {
       setError('El nombre del proyecto es obligatorio')
       return
@@ -133,7 +137,6 @@ export function AdminPage() {
 
     const payload: Proyecto = {
       ...form,
-      id: form.id || `form-${crypto.randomUUID().slice(0, 8)}`,
       ciudadesPermitidas: ciudadesText
         .split(',')
         .map((item) => item.trim())
@@ -152,25 +155,6 @@ export function AdminPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    const proyecto = proyectos.find((item) => item.id === id)
-    const ok = await confirm({
-      title: '¿Eliminar este proyecto?',
-      message: 'Vas a eliminar',
-      subject: proyecto?.nombre ?? 'este proyecto',
-      confirmLabel: 'Sí, eliminar',
-    })
-    if (!ok) return
-    try {
-      await removeProyectoUseCase(proyectoRepository, id)
-      await refresh()
-      if (form.id === id) resetForm()
-      setMessage('Proyecto eliminado')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo eliminar')
-    }
-  }
-
   return (
     <div className={styles.page}>
       {message ? <Alert tone="success">{message}</Alert> : null}
@@ -181,7 +165,7 @@ export function AdminPage() {
         <Card>
           <CardHeader
             eyebrow="Editor"
-            title={form.id ? 'Editar proyecto' : 'Nuevo proyecto'}
+            title={form.id ? 'Editar proyecto' : 'Selecciona un proyecto'}
             icon={<IconFolder size={18} />}
           />
 
@@ -302,7 +286,7 @@ export function AdminPage() {
             <div className={styles.actions}>
               <Button type="submit">Guardar</Button>
               <Button type="button" variant="secondary" onClick={resetForm}>
-                Limpiar
+                Cancelar
               </Button>
             </div>
           </form>
@@ -335,15 +319,6 @@ export function AdminPage() {
                     onClick={() => editProyecto(proyecto)}
                   >
                     Editar
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="danger"
-                    size="sm"
-                    icon={<IconTrash size={14} />}
-                    onClick={() => void handleDelete(proyecto.id)}
-                  >
-                    Eliminar
                   </Button>
                 </td>
               </tr>

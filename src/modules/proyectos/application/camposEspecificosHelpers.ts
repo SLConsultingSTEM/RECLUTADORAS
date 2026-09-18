@@ -47,6 +47,7 @@ export function createEmptyCampo(existing: CampoEditable[] = []): CampoEditable 
     etiqueta: '',
     tipo: 'text',
     requerido: true,
+    destino: '',
   }
 }
 
@@ -94,6 +95,7 @@ export function toPersistableCampos(campos: CampoEditable[]): CampoEspecifico[] 
       etiqueta,
       tipo: campo.tipo,
       requerido: Boolean(campo.requerido),
+      destino: campo.destino ?? '',
     }
 
     if (campo.tipo === 'select') {

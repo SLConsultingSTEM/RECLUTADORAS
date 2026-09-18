@@ -36,7 +36,12 @@ export class HttpClient {
       ...options.headers,
     }
 
-    if (options.body !== undefined) {
+    // FormData (subida de archivos) viaja tal cual: el navegador pone el
+    // Content-Type con el boundary, y fijarlo a mano rompe el multipart.
+    const isFormData =
+      typeof FormData !== 'undefined' && options.body instanceof FormData
+
+    if (options.body !== undefined && !isFormData) {
       headers['Content-Type'] = 'application/json'
     }
 
@@ -49,7 +54,12 @@ export class HttpClient {
       const response = await fetch(`${this.baseUrl}${path}`, {
         method,
         headers,
-        body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+        body:
+          options.body === undefined
+            ? undefined
+            : isFormData
+              ? (options.body as FormData)
+              : JSON.stringify(options.body),
         signal: controller.signal,
         credentials: 'omit',
         cache: options.cache ?? (method === 'GET' ? 'default' : 'no-store'),

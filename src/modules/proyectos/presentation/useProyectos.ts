@@ -62,57 +62,48 @@ export function useProyectos(preferredId?: string) {
         | 'titulosFormulario'
       >
     >,
+    options: { refrescarEstado?: boolean } = {},
   ) {
     if (!selected) throw new Error('No hay proyecto seleccionado')
     const saved = await saveProyectoUseCase(proyectoRepository, {
       ...selected,
       ...patch,
     })
-    setProyectos((prev) => prev.map((item) => (item.id === saved.id ? saved : item)))
+
+    // El autosave guarda mientras se edita. Reemplazar el proyecto en ese
+    // momento reinicializa el formulario completo y el navegador pierde la
+    // posición del scroll, así que solo se refresca cuando lo pide quien llama.
+    if (options.refrescarEstado ?? true) {
+      setProyectos((prev) => prev.map((item) => (item.id === saved.id ? saved : item)))
+    }
+
     return saved
   }
 
-  async function createProyecto(input: {
-    nombre: string
-    ciudadesPermitidas: string[]
-    duplicarDesdeId?: string
-  }) {
-    const source = input.duplicarDesdeId
-      ? proyectos.find((item) => item.id === input.duplicarDesdeId) ?? null
-      : null
-
-    if (input.duplicarDesdeId && !source) {
-      throw new Error('No se encontró el proyecto a duplicar')
+  /**
+   * Sube la pieza gráfica del proyecto seleccionado. La imagen se guarda en
+   * Cloudinary a través de la API; aquí solo circula la URL.
+   */
+  async function uploadPieza(file: File) {
+    if (!selected) throw new Error('No hay proyecto seleccionado')
+    if (!proyectoRepository.uploadPieza) {
+      throw new Error('La subida de imágenes no está disponible')
     }
 
-    const proyecto: Proyecto = {
-      id: `form-${crypto.randomUUID().slice(0, 8)}`,
-      nombre: input.nombre.trim(),
-      descripcionHtml: source?.descripcionHtml ?? '',
-      imagenUrl: source?.imagenUrl ?? '',
-      imagenNombre: source?.imagenNombre ?? '',
-      ciudadesPermitidas:
-        input.ciudadesPermitidas.length > 0
-          ? input.ciudadesPermitidas
-          : source?.ciudadesPermitidas?.length
-            ? [...source.ciudadesPermitidas]
-            : ['Bogotá'],
-      camposBase: source?.camposBase
-        ? structuredClone(source.camposBase)
-        : undefined,
-      titulosFormulario: source?.titulosFormulario
-        ? structuredClone(source.titulosFormulario)
-        : undefined,
-      camposEspecificos: source
-        ? structuredClone(source.camposEspecificos)
-        : [],
-      activo: true,
-    }
-    const saved = await saveProyectoUseCase(proyectoRepository, proyecto)
-    setProyectos((prev) => [...prev, saved])
-    setSelectedId(saved.id)
-    setError('')
-    return saved
+    const subida = await proyectoRepository.uploadPieza(selected.id, file)
+
+    // La API ya guardó la URL. Hay que reflejarla en memoria de inmediato: si
+    // el proyecto se queda con la imagen anterior, el siguiente guardado la
+    // reenvía y borra la recién subida.
+    setProyectos((prev) =>
+      prev.map((item) =>
+        item.id === selected.id
+          ? { ...item, imagenUrl: subida.imagenUrl, imagenNombre: subida.imagenNombre }
+          : item,
+      ),
+    )
+
+    return subida
   }
 
   return {
@@ -123,6 +114,6 @@ export function useProyectos(preferredId?: string) {
     loading,
     error,
     updateSelected,
-    createProyecto,
+    uploadPieza,
   }
 }

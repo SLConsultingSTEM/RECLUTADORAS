@@ -19,7 +19,6 @@ import {
 } from '@modules/proyectos/application/formularioConfigHelpers'
 import type { FormularioTitulos } from '@modules/proyectos/domain/types'
 import { useProyectos } from '@modules/proyectos/presentation/useProyectos'
-import { CrearProyectoCard } from '@modules/proyectos/presentation/CrearProyectoCard'
 import { ProyectoInfo } from '@modules/proyectos/presentation/ProyectoInfo'
 import { ProyectoInfoEditor } from '@modules/proyectos/presentation/ProyectoInfoEditor'
 import { ProyectoForm } from '@modules/proyectos/presentation/ProyectoForm'
@@ -60,7 +59,7 @@ export function NuevoRegistroPage() {
     loading,
     error,
     updateSelected,
-    createProyecto,
+    uploadPieza,
   } = useProyectos(preferredProyectoId)
 
   const [camposDraft, setCamposDraft] = useState<CampoEditable[]>([])
@@ -136,23 +135,6 @@ export function NuevoRegistroPage() {
     }
   }
 
-  useEffect(() => {
-    if (!canEditInfo || !selected || !camposDirty || camposSaving) return
-    const timer = window.setTimeout(() => {
-      void handleSaveCampos()
-    }, 1100)
-    return () => window.clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- autosave al cambiar el draft
-  }, [
-    canEditInfo,
-    selected?.id,
-    camposDirty,
-    camposPersistibles,
-    camposBasePersistibles,
-    titulosPersistibles,
-    camposSaving,
-  ])
-
   function syncParams(patch: { vista?: ReclutarView; proyecto?: string }) {
     setSearchParams(
       (prev) => {
@@ -205,23 +187,13 @@ export function NuevoRegistroPage() {
     <div className={styles.page}>
       {error ? <Alert tone="error" title="No se pudo cargar">{error}</Alert> : null}
 
-      {canEditInfo ? (
-        <CrearProyectoCard
-          proyectos={proyectos}
-          onCreate={async (input) => {
-            const created = await createProyecto(input)
-            syncParams({ proyecto: created.id, vista: 'info' })
-          }}
-        />
-      ) : null}
-
       {showEmpty ? (
         <EmptyState
           icon={<IconInbox size={22} />}
           title="Sin proyectos activos"
           description={
             canEditInfo
-              ? 'Crea el primer proyecto para empezar a gestionar pieza e indicaciones.'
+              ? 'No hay estudios abiertos. Los estudios se crean y se abren en Optima.'
               : 'No hay estudios disponibles para registrar participantes.'
           }
           action={
@@ -307,6 +279,8 @@ export function NuevoRegistroPage() {
                             clearDraftFeedback()
                           },
                           saving: camposSaving,
+                          dirty: camposDirty,
+                          onSave: () => void handleSaveCampos(),
                           error: camposError,
                           onClearError: clearDraftFeedback,
                         }
@@ -323,6 +297,7 @@ export function NuevoRegistroPage() {
                       descripcionHtml: sanitizeHtml(patch.descripcionHtml),
                     })
                   }}
+                  onUploadPieza={uploadPieza}
                 />
               ) : (
                 <ProyectoInfo

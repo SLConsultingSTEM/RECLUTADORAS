@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useAuth } from '@app/providers/useAuth'
+import { isCoordinadora } from '@modules/auth/domain/roles'
+import { listReclutadorasUseCase } from '@modules/participantes/application/participanteUseCases'
 import { useProyectos } from '@modules/proyectos/presentation/useProyectos'
 import {
   SeguimientoEstadoFilter,
@@ -26,6 +29,12 @@ import styles from './HomePage.module.css'
 
 export function PanelReclutadoraPage() {
   const { proyectos, selected, selectedId, setSelectedId, loading, error } = useProyectos()
+  const { user } = useAuth()
+  // La reclutadora solo ve lo suyo (lo impone la API); el filtro es para la
+  // coordinadora, que ve el trabajo de todas.
+  const puedeFiltrarPorReclutadora = Boolean(user && isCoordinadora(user.role))
+  const [reclutadoras, setReclutadoras] = useState<string[]>([])
+  const [reclutadoraFiltro, setReclutadoraFiltro] = useState('')
   const [refreshKey, setRefreshKey] = useState(0)
   const [listTick, setListTick] = useState(0)
   const [listLoading, setListLoading] = useState(false)
@@ -33,7 +42,25 @@ export function PanelReclutadoraPage() {
   const { resumen, loading: resumenLoading, error: resumenError } = useSeguimientoResumen(
     selectedId,
     refreshKey + listTick,
+    reclutadoraFiltro,
   )
+
+  useEffect(() => {
+    if (!puedeFiltrarPorReclutadora) return
+    let active = true
+    void (async () => {
+      try {
+        const data = await listReclutadorasUseCase()
+        if (active) setReclutadoras(data)
+      } catch {
+        // Sin la lista, el filtro simplemente no se ofrece.
+        if (active) setReclutadoras([])
+      }
+    })()
+    return () => {
+      active = false
+    }
+  }, [puedeFiltrarPorReclutadora])
 
   useEffect(() => {
     setEstadoFiltro('')
@@ -94,6 +121,29 @@ export function PanelReclutadoraPage() {
                       }))}
                     />
                   </div>
+
+                  {puedeFiltrarPorReclutadora && reclutadoras.length > 0 ? (
+                    <>
+                      <span className={styles.selectorLabel}>Reclutadora:</span>
+                      <div className={styles.selectorControl}>
+                        <Select
+                          variant="pills"
+                          label="Filtro por reclutadora"
+                          name="reclutadora"
+                          value={reclutadoraFiltro}
+                          icon={<IconUsers size={16} />}
+                          onChange={(e) => {
+                            setReclutadoraFiltro(e.target.value)
+                            setRefreshKey((value) => value + 1)
+                          }}
+                          options={[
+                            { value: '', label: 'Todas' },
+                            ...reclutadoras.map((nombre) => ({ value: nombre, label: nombre })),
+                          ]}
+                        />
+                      </div>
+                    </>
+                  ) : null}
                 </>
               ) : (
                 <SkeletonBlock height={48} />
@@ -193,6 +243,7 @@ export function PanelReclutadoraPage() {
               {selected ? (
                 <SeguimientoPanel
                   proyectoId={selected.id}
+                  reclutadora={reclutadoraFiltro}
                   refreshKey={refreshKey}
                   listTick={listTick}
                   estado={estadoFiltro}

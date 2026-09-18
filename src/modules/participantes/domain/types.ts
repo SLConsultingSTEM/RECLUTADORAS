@@ -38,6 +38,19 @@ export interface Participante {
   observaciones: string
   creadoPor: string
   creadoEn: string
+  /** Reclutadora dueña del origen (RECLUTADORA > …). La publica la API. */
+  reclutadora?: string
+  /** Historial de conclusiones, de la más reciente a la más antigua. */
+  conclusiones?: ConclusionParticipante[]
+}
+
+/** Conclusión registrada sobre la inscripción (quién, cuándo y por qué). */
+export interface ConclusionParticipante {
+  fecha: string
+  tipologia: string
+  motivo: string
+  observacion: string
+  autor: string
 }
 
 export interface RegistrarParticipanteInput {
@@ -62,7 +75,14 @@ export interface SeguimientoResumen {
   pacienteFallecido: number
 }
 
+export interface ParticipanteFiltros {
+  proyectoId?: string
+  estado?: string
+  /** Solo la coordinadora puede filtrar por otra reclutadora. */
+  reclutadora?: string
+}
+
 export interface ParticipanteRepository {
-  list(filters?: { proyectoId?: string; estado?: string }): Promise<Participante[]>
+  list(filters?: ParticipanteFiltros): Promise<Participante[]>
   register(input: RegistrarParticipanteInput): Promise<Participante>
 }

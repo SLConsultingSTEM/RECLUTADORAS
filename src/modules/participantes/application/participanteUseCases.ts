@@ -1,3 +1,4 @@
+import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
 import type {
   ParticipanteRepository,
   RegistrarParticipanteInput,
@@ -29,4 +30,16 @@ export async function getSeguimientoResumenUseCase(
     : await repository.list()
 
   return computeSeguimientoResumen(items)
+}
+
+/**
+ * Opciones del filtro de la coordinadora. Solo la implementación HTTP las
+ * conoce; con mocks la lista queda vacía y el filtro no se muestra.
+ */
+export async function listReclutadorasUseCase(): Promise<string[]> {
+  const repository = createParticipanteRepository()
+  const listar = (repository as { listReclutadoras?: () => Promise<string[]> })
+    .listReclutadoras
+  if (!listar) return []
+  return listar.call(repository)
 }

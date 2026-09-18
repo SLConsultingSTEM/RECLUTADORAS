@@ -100,6 +100,10 @@ export interface ProyectoFormBuilderProps {
   onChangeCamposBase: (campos: CampoBaseEditable[]) => void
   onChangeTitulos: (titulos: FormularioTitulos) => void
   saving?: boolean
+  /** Hay cambios en el diseño del formulario sin guardar. */
+  dirty?: boolean
+  /** Guarda el diseño (campos, etiquetas y títulos) del formulario. */
+  onSave?: () => void
   error?: string
   onClearError?: () => void
 }
@@ -423,10 +427,28 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     )
   }
 
-  function addBuilderCampo() {
+  function addBuilderCampo(destino = '') {
     if (!builder) return
-    builder.onChangeCampos([...builder.campos, createEmptyCampo(builder.campos)])
+    const campo = createEmptyCampo(builder.campos)
+    builder.onChangeCampos([...builder.campos, { ...campo, destino }])
   }
+
+  // Los campos se reparten por su destino: lo que va a person se muestra junto
+  // a los datos base del participante; el cuestionario y el bebé, en el filtro.
+  const destinosDemograficos = (proyecto.destinosDisponibles ?? []).filter(
+    (destino) => destino.fuente === 'person',
+  )
+  const destinosDeFiltro = (proyecto.destinosDisponibles ?? []).filter(
+    (destino) => destino.fuente !== 'person',
+  )
+  const primerDestinoDemograficoLibre =
+    destinosDemograficos.find(
+      (destino) => !(builder?.campos ?? []).some((campo) => campo.destino === destino.valor),
+    )?.valor ?? ''
+  const esCampoDemografico = (campo: CampoEditable) =>
+    Boolean(campo.destino?.startsWith('participante.'))
+  const camposDemograficos = (builder?.campos ?? []).filter(esCampoDemografico)
+  const camposDeFiltro = (builder?.campos ?? []).filter((campo) => !esCampoDemografico(campo))
 
   function duplicateBuilderCampo(id: string) {
     if (!builder) return
@@ -525,30 +547,50 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setDragGroup(null)
   }
 
-  const filtroCount = canBuild ? (builder?.campos.length ?? 0) : proyecto.camposEspecificos.length
+  const filtroCount = canBuild ? camposDeFiltro.length : proyecto.camposEspecificos.length
   const showFiltroSection = canBuild || filtroCount > 0
-  const busyBuilder = Boolean(builder?.saving)
+  // El guardado del diseño corre en segundo plano. Deshabilitar los controles
+  // mientras corre hacía titilar los botones y alternar el cursor entre pointer
+  // y "bloqueado" en cada pulsación, así que solo lo indica el badge.
 
   const floatingBar = (
     <div className={styles.floatingBar} role="toolbar" aria-label="Acciones del registro">
-      <Button
-        type="button"
-        variant="secondary"
-        className={styles.floatingBtn}
-        disabled={loading || busyBuilder}
-        onClick={resetForm}
-      >
-        Descartar
-      </Button>
-      <Button
-        type="button"
-        className={styles.floatingBtn}
-        loading={loading}
-        disabled={busyBuilder}
-        onClick={() => formRef.current?.requestSubmit()}
-      >
-        Guardar
-      </Button>
+      {!builder ? (
+        <Button
+          type="button"
+          variant="secondary"
+          className={styles.floatingBtn}
+          disabled={loading}
+          onClick={resetForm}
+        >
+          Descartar
+        </Button>
+      ) : null}
+      {builder?.onSave ? (
+        <Button
+          type="button"
+          variant="soft"
+          className={styles.floatingBtn}
+          loading={builder.saving}
+          disabled={!builder.dirty}
+          onClick={builder.onSave}
+        >
+          Guardar diseño
+        </Button>
+      ) : null}
+      {/* Mientras la coordinadora diseña el formulario, esta pantalla no
+          registra participantes: el botón solo aparece para quien va a
+          capturar datos. */}
+      {!builder ? (
+        <Button
+          type="button"
+          className={styles.floatingBtn}
+          loading={loading}
+          onClick={() => formRef.current?.requestSubmit()}
+        >
+          Guardar
+        </Button>
+      ) : null}
     </div>
   )
 
@@ -792,10 +834,18 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
           icon={<IconUser size={15} />}
           titulos={titulos.base}
           editable={canBuild}
-          disabled={busyBuilder}
           badge={
             <>
-              {builder?.saving ? <span className={styles.dirtyBadge}>Guardando…</span> : null}
+              {/* Siempre montado: montarlo y desmontarlo cambiaba la altura de la
+                  página en cada autosave, y el scroll saltaba con ella. */}
+              <span
+                className={`${styles.dirtyBadge} ${
+                  builder?.saving || builder?.dirty ? '' : styles.dirtyBadgeIdle
+                }`}
+                aria-hidden={!(builder?.saving || builder?.dirty)}
+              >
+                {builder?.saving ? 'Guardando…' : 'Cambios sin guardar'}
+              </span>
               <span className={styles.badge}>{camposBase.length} campos</span>
             </>
           }
@@ -809,16 +859,23 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
         />
 
         <div className={styles.grid}>
+          {/* Los seis campos base son fijos (cada uno con su columna en person);
+              debajo van los demográficos extra que agregue la coordinadora. */}
           {canBuild ? (
             <button
               type="button"
               className={styles.addCampoTile}
-              disabled={busyBuilder}
-              onClick={addBuilderCampo}
+              disabled={!primerDestinoDemograficoLibre}
+              title={
+                primerDestinoDemograficoLibre
+                  ? undefined
+                  : 'Ya se están pidiendo todos los datos del participante'
+              }
+              onClick={() => addBuilderCampo(primerDestinoDemograficoLibre)}
             >
               <IconPlus size={20} />
               <span>Agregar campo</span>
-              <small>Se coloca al final</small>
+              <small>Datos del participante</small>
             </button>
           ) : null}
 
@@ -887,6 +944,32 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
             : camposBase.map((campo) => (
                 <div key={campo.nombreCampo}>{renderBaseControl(campo)}</div>
               ))}
+
+          {/* Demográficos extra: viven en la misma lista que los específicos,
+              pero se muestran aquí porque su destino es la tabla person. */}
+          {canBuild && builder
+            ? camposDemograficos.map((campo) => (
+                <CampoFormTile
+                  key={campo.id}
+                  campo={campo}
+                  destinos={destinosDemograficos}
+                  isDragging={dragId === campo.id}
+                  isDropTarget={
+                    dragGroup === 'extra' && dropId === campo.id && dragId !== campo.id
+                  }
+                  onDragStart={(event) => handleTileDragStart('extra', campo.id, event)}
+                  onDragOver={(event) => handleTileDragOver('extra', campo.id, event)}
+                  onDragLeave={() => setDropId((prev) => (prev === campo.id ? null : prev))}
+                  onDrop={(event) => handleTileDrop('extra', campo.id, event)}
+                  onDragEnd={clearDragState}
+                  onChange={(patch) => updateBuilderCampo(campo.id, patch)}
+                  onDuplicate={() => duplicateBuilderCampo(campo.id)}
+                  onRemove={() => removeBuilderCampo(campo.id)}
+                >
+                  {renderExtraControl(campo)}
+                </CampoFormTile>
+              ))
+            : null}
         </div>
       </section>
 
@@ -905,7 +988,6 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                   }
             }
             editable={canBuild}
-            disabled={busyBuilder}
             badge={
               <span className={styles.badge}>
                 {filtroCount} {filtroCount === 1 ? 'campo' : 'campos'}
@@ -918,8 +1000,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                   variant="soft"
                   className={styles.addCampoBtn}
                   icon={<IconPlus size={16} />}
-                  disabled={busyBuilder}
-                  onClick={addBuilderCampo}
+                  onClick={() => addBuilderCampo()}
                 >
                   Agregar
                 </Button>
@@ -939,8 +1020,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
               <button
                 type="button"
                 className={styles.addCampoTile}
-                disabled={busyBuilder}
-                onClick={addBuilderCampo}
+                onClick={() => addBuilderCampo()}
               >
                 <IconPlus size={20} />
                 <span>Agregar campo</span>
@@ -949,7 +1029,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
             ) : null}
 
             {canBuild && builder
-              ? builder.campos.map((campo) => (
+              ? camposDeFiltro.map((campo) => (
                   <CampoFormTile
                     key={campo.id}
                     campo={campo}
@@ -966,6 +1046,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                     onChange={(patch) => updateBuilderCampo(campo.id, patch)}
                     onDuplicate={() => duplicateBuilderCampo(campo.id)}
                     onRemove={() => removeBuilderCampo(campo.id)}
+                    destinos={destinosDeFiltro}
                   >
                     {renderExtraControl(campo)}
                   </CampoFormTile>

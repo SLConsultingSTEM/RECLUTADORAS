@@ -3,7 +3,7 @@ import {
   CAMPO_TIPO_OPTIONS,
   type CampoEditable,
 } from '@modules/proyectos/application/camposEspecificosHelpers'
-import type { CampoTipo } from '@modules/proyectos/domain/types'
+import type { CampoTipo, DestinoCampo } from '@modules/proyectos/domain/types'
 import { OpcionesMultiSelect } from '@modules/proyectos/presentation/OpcionesMultiSelect'
 import { Button } from '@shared/ui/Button'
 import { useConfirmDialog } from '@shared/ui/ConfirmDialog'
@@ -28,6 +28,8 @@ export type CampoTileModel = {
   baseSelect?: boolean
   /** Semilla si el campo aún no tiene opciones persistidas. */
   defaultOpciones?: string[]
+  /** Dónde se guarda el dato en la base. */
+  destino?: string
 }
 
 interface CampoFormTileProps {
@@ -46,6 +48,8 @@ interface CampoFormTileProps {
   onChange: (patch: Partial<CampoEditable>) => void
   onDuplicate?: () => void
   onRemove?: () => void
+  /** Destinos que admite el estudio; sin esto no se ofrece el selector. */
+  destinos?: DestinoCampo[]
 }
 
 function captureCampoSnapshot(campo: CampoTileModel) {
@@ -83,10 +87,13 @@ export function CampoFormTile({
   onChange,
   onDuplicate,
   onRemove,
+  destinos,
 }: CampoFormTileProps) {
   const startsEditing = !campo.etiqueta.trim()
   const [editing, setEditing] = useState(startsEditing)
   const blockDragRef = useRef(false)
+  const etiquetaInputRef = useRef<HTMLInputElement>(null)
+  const tileRef = useRef<HTMLDivElement>(null)
   const snapshotRef = useRef<CampoSnapshot | null>(
     startsEditing ? captureCampoSnapshot(campo) : null,
   )
@@ -138,6 +145,42 @@ export function CampoFormTile({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- evitar bucles con onChange
   }, [editing, canEditOpciones, campo.opciones, campo.defaultOpciones])
 
+  // autoFocus desplazaba la página hasta el campo recién agregado. Ahora se
+  // enfoca sin mover el scroll y, si el campo quedó fuera de la vista, se
+  // acerca una sola vez: en StrictMode el efecto corre dos veces y, sin el
+  // guard ni el frame de espera, el tile se desplazaba antes de tener su
+  // posición final y la página saltaba arriba y abajo.
+  const yaDesplazadoRef = useRef(false)
+
+  useEffect(() => {
+    if (!editing) {
+      yaDesplazadoRef.current = false
+      return
+    }
+
+    etiquetaInputRef.current?.focus({ preventScroll: true })
+
+    if (yaDesplazadoRef.current) return
+    yaDesplazadoRef.current = true
+
+    const frame = window.requestAnimationFrame(() => {
+      const tile = tileRef.current
+      if (!tile) return
+
+      const { top, bottom } = tile.getBoundingClientRect()
+      if (top >= 0 && bottom <= window.innerHeight) return
+
+      tile.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+        block: 'nearest',
+      })
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [editing])
+
   function saveEditing() {
     snapshotRef.current = null
     setEditing(false)
@@ -188,6 +231,7 @@ export function CampoFormTile({
 
   return (
     <div
+      ref={tileRef}
       className={`${styles.campoTile} ${canDrag ? styles.campoTileDraggable : ''} ${
         editing ? styles.campoTileEditing : ''
       } ${isDragging ? styles.campoTileDragging : ''} ${
@@ -276,7 +320,7 @@ export function CampoFormTile({
                   value={campo.etiqueta}
                   disabled={disabled}
                   placeholder="Ej. Nombre completo"
-                  autoFocus
+                  ref={etiquetaInputRef}
                   aria-label="Etiqueta del campo"
                   onChange={(e) => onChange({ etiqueta: e.target.value })}
                   onKeyDown={(e) => {
@@ -320,6 +364,25 @@ export function CampoFormTile({
                 ) : null}
               </div>
             </div>
+            {destinos && destinos.length > 0 ? (
+              <div className={styles.campoTipoRow}>
+                <span className={styles.campoMetaLabel}>Se guarda en</span>
+                <select
+                  className={styles.campoDestinoSelect}
+                  value={campo.destino ?? ''}
+                  disabled={disabled}
+                  aria-label="Dónde se guarda el dato"
+                  onChange={(event) => onChange({ destino: event.target.value })}
+                >
+                  <option value="">Sin destino (no se guarda)</option>
+                  {destinos.map((destino) => (
+                    <option key={destino.valor} value={destino.valor}>
+                      {destino.etiqueta}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
             {canChangeTipo ? (
               <div className={styles.campoTipoRow}>
                 <span className={styles.campoMetaLabel}>Tipo de input</span>

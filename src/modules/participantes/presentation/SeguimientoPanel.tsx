@@ -41,6 +41,8 @@ function pickRefreshMessage() {
 
 interface SeguimientoPanelProps {
   proyectoId: string
+  /** Filtro de la coordinadora; vacío = todas. */
+  reclutadora?: string
   refreshKey: number
   listTick: number
   estado: string
@@ -150,6 +152,7 @@ export function SeguimientoRefreshButton({
 
 export function SeguimientoPanel({
   proyectoId,
+  reclutadora = '',
   refreshKey,
   listTick,
   estado,
@@ -190,9 +193,10 @@ export function SeguimientoPanel({
 
       try {
         const force = softRefresh
-        if (force) invalidateParticipanteListCache(proyectoId)
+        if (force) invalidateParticipanteListCache(proyectoId, reclutadora)
 
         const data = await listParticipantesCached(participanteRepository, proyectoId, {
+          reclutadora,
           force,
         })
 
@@ -229,7 +233,7 @@ export function SeguimientoPanel({
       active = false
       onLoadingChange?.(false)
     }
-  }, [proyectoId, refreshKey, listTick, onLoadingChange])
+  }, [proyectoId, reclutadora, refreshKey, listTick, onLoadingChange])
 
   const visibleItems = useMemo(() => {
     if (!estado) return items

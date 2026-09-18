@@ -18,7 +18,7 @@ const EMPTY_RESUMEN: SeguimientoResumen = {
   pacienteFallecido: 0,
 }
 
-export function useSeguimientoResumen(proyectoId: string, refreshKey = 0) {
+export function useSeguimientoResumen(proyectoId: string, refreshKey = 0, reclutadora = '') {
   const [resumen, setResumen] = useState<SeguimientoResumen>(EMPTY_RESUMEN)
   const [loading, setLoading] = useState(Boolean(proyectoId))
   const [error, setError] = useState('')
@@ -38,9 +38,10 @@ export function useSeguimientoResumen(proyectoId: string, refreshKey = 0) {
       setError('')
       try {
         const force = refreshKey > 0
-        if (force) invalidateParticipanteListCache(proyectoId)
+        if (force) invalidateParticipanteListCache(proyectoId, reclutadora)
         const items = await listParticipantesCached(participanteRepository, proyectoId, {
           force,
+          reclutadora,
         })
         if (active) setResumen(computeSeguimientoResumen(items))
       } catch (err) {
@@ -57,7 +58,7 @@ export function useSeguimientoResumen(proyectoId: string, refreshKey = 0) {
     return () => {
       active = false
     }
-  }, [proyectoId, refreshKey])
+  }, [proyectoId, refreshKey, reclutadora])
 
   return { resumen, loading, error }
 }

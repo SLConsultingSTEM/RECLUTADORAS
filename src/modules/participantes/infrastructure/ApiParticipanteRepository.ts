@@ -1,5 +1,6 @@
 import type {
   Participante,
+  ParticipanteFiltros,
   ParticipanteRepository,
   RegistrarParticipanteInput,
 } from '@modules/participantes/domain/types'
@@ -11,10 +12,16 @@ function token() {
 }
 
 export class ApiParticipanteRepository implements ParticipanteRepository {
-  async list(filters?: { proyectoId?: string; estado?: string }): Promise<Participante[]> {
+  /** Opciones del filtro de la coordinadora. */
+  async listReclutadoras(): Promise<string[]> {
+    return httpClient.request<string[]>('/api/v1/reclutadoras', { authToken: token() })
+  }
+
+  async list(filters?: ParticipanteFiltros): Promise<Participante[]> {
     const params = new URLSearchParams()
     if (filters?.proyectoId) params.set('proyectoId', filters.proyectoId)
     if (filters?.estado) params.set('estado', filters.estado)
+    if (filters?.reclutadora) params.set('reclutadora', filters.reclutadora)
     const query = params.toString()
 
     return httpClient.request<Participante[]>(
