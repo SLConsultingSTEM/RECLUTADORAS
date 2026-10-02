@@ -490,6 +490,9 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
 
   // Los campos se reparten por su destino: lo que va a person se muestra junto
   // a los datos base del participante; el cuestionario y el bebé, en el filtro.
+  // La API siempre publica la lista (vacía si el estudio no tiene qué pedir);
+  // solo los mocks y una API vieja no la traen.
+  const publicaDestinos = proyecto.destinosDisponibles !== undefined
   const destinosDemograficos = (proyecto.destinosDisponibles ?? []).filter(
     (destino) => destino.fuente === 'person',
   )
@@ -1075,12 +1078,16 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
           />
 
           <div className={styles.grid}>
-            {/* Sin destinos publicados (mocks, API vieja) se cae al campo libre. */}
-            {canBuild && destinosDeFiltro.length > 0 ? (
+            {/* Sin lista de destinos (mocks, API vieja) se cae al campo libre. */}
+            {canBuild && publicaDestinos ? (
               <AgregarCampoTile
                 opciones={opcionesFiltro}
-                subtitulo="Cuestionario del estudio o datos del bebé"
-                sinOpciones="Ya se piden todos los datos del estudio"
+                subtitulo="Datos del estudio"
+                sinOpciones={
+                  destinosDeFiltro.length === 0
+                    ? 'Este estudio no tiene datos propios para pedir'
+                    : 'Ya se piden todos los datos del estudio'
+                }
                 onElegir={agregarOpcion}
               />
             ) : canBuild ? (
@@ -1113,7 +1120,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                     onChange={(patch) => cambiarCampoConDestino(campo, patch)}
                     // Con destinos, la copia no tendría dónde guardarse.
                     onDuplicate={
-                      destinosDeFiltro.length > 0 ? undefined : () => duplicateBuilderCampo(campo.id)
+                      publicaDestinos ? undefined : () => duplicateBuilderCampo(campo.id)
                     }
                     onRemove={() => removeBuilderCampo(campo.id)}
                     destinos={destinosLibresPara(campo, destinosDeFiltro)}
