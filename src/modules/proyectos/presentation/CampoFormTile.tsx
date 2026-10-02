@@ -50,6 +50,10 @@ interface CampoFormTileProps {
   onRemove?: () => void
   /** Destinos que admite el estudio; sin esto no se ofrece el selector. */
   destinos?: DestinoCampo[]
+  /** Ofrece "Sin destino" en el selector. Un demográfico siempre tiene destino. */
+  permitirSinDestino?: boolean
+  /** Siempre obligatorio: la API no registra sin este dato. */
+  requeridoFijo?: boolean
 }
 
 function captureCampoSnapshot(campo: CampoTileModel) {
@@ -58,6 +62,7 @@ function captureCampoSnapshot(campo: CampoTileModel) {
     tipo: campo.tipo,
     opciones: campo.opciones ? [...campo.opciones] : undefined,
     requerido: campo.requerido,
+    destino: campo.destino,
   }
 }
 
@@ -88,6 +93,8 @@ export function CampoFormTile({
   onDuplicate,
   onRemove,
   destinos,
+  permitirSinDestino = true,
+  requeridoFijo = false,
 }: CampoFormTileProps) {
   const startsEditing = !campo.etiqueta.trim()
   const [editing, setEditing] = useState(startsEditing)
@@ -194,6 +201,7 @@ export function CampoFormTile({
         tipo: snapshot.tipo,
         opciones: snapshot.opciones,
         requerido: snapshot.requerido,
+        ...(destinos ? { destino: snapshot.destino } : {}),
       })
     }
     snapshotRef.current = null
@@ -269,29 +277,29 @@ export function CampoFormTile({
           >
             <IconPencil size={14} />
           </button>
-          {showToolbar ? (
-            <>
-              <button
-                type="button"
-                className={styles.campoLabelEditBtn}
-                disabled={disabled}
-                aria-label="Duplicar a la derecha"
-                title="Duplicar"
-                onClick={onDuplicate}
-              >
-                <IconCopy size={14} />
-              </button>
-              <button
-                type="button"
-                className={`${styles.campoLabelEditBtn} ${styles.campoLabelDangerBtn}`}
-                disabled={disabled}
-                aria-label="Eliminar campo"
-                title="Eliminar"
-                onClick={() => void requestRemove()}
-              >
-                <IconTrash size={14} />
-              </button>
-            </>
+          {onDuplicate ? (
+            <button
+              type="button"
+              className={styles.campoLabelEditBtn}
+              disabled={disabled}
+              aria-label="Duplicar a la derecha"
+              title="Duplicar"
+              onClick={onDuplicate}
+            >
+              <IconCopy size={14} />
+            </button>
+          ) : null}
+          {onRemove ? (
+            <button
+              type="button"
+              className={`${styles.campoLabelEditBtn} ${styles.campoLabelDangerBtn}`}
+              disabled={disabled}
+              aria-label="Eliminar campo"
+              title="Eliminar"
+              onClick={() => void requestRemove()}
+            >
+              <IconTrash size={14} />
+            </button>
           ) : null}
         </div>
       ) : null}
@@ -340,26 +348,30 @@ export function CampoFormTile({
                     role="toolbar"
                     aria-label="Acciones del campo"
                   >
-                    <button
-                      type="button"
-                      className={styles.campoLabelEditBtn}
-                      disabled={disabled}
-                      aria-label="Duplicar a la derecha"
-                      title="Duplicar"
-                      onClick={onDuplicate}
-                    >
-                      <IconCopy size={15} />
-                    </button>
-                    <button
-                      type="button"
-                      className={`${styles.campoLabelEditBtn} ${styles.campoLabelDangerBtn}`}
-                      disabled={disabled}
-                      aria-label="Eliminar campo"
-                      title="Eliminar"
-                      onClick={() => void requestRemove()}
-                    >
-                      <IconTrash size={15} />
-                    </button>
+                    {onDuplicate ? (
+                      <button
+                        type="button"
+                        className={styles.campoLabelEditBtn}
+                        disabled={disabled}
+                        aria-label="Duplicar a la derecha"
+                        title="Duplicar"
+                        onClick={onDuplicate}
+                      >
+                        <IconCopy size={15} />
+                      </button>
+                    ) : null}
+                    {onRemove ? (
+                      <button
+                        type="button"
+                        className={`${styles.campoLabelEditBtn} ${styles.campoLabelDangerBtn}`}
+                        disabled={disabled}
+                        aria-label="Eliminar campo"
+                        title="Eliminar"
+                        onClick={() => void requestRemove()}
+                      >
+                        <IconTrash size={15} />
+                      </button>
+                    ) : null}
                   </div>
                 ) : null}
               </div>
@@ -374,7 +386,9 @@ export function CampoFormTile({
                   aria-label="Dónde se guarda el dato"
                   onChange={(event) => onChange({ destino: event.target.value })}
                 >
-                  <option value="">Sin destino (no se guarda)</option>
+                  {permitirSinDestino ? (
+                    <option value="">Sin destino (no se guarda)</option>
+                  ) : null}
                   {destinos.map((destino) => (
                     <option key={destino.valor} value={destino.valor}>
                       {destino.etiqueta}
@@ -438,14 +452,18 @@ export function CampoFormTile({
           <div className={styles.campoRequiredRow}>
             <div>
               <span className={styles.campoRequiredTitle}>Obligatorio</span>
-              <p className={styles.campoRequiredHint}>Debe completarse al registrar</p>
+              <p className={styles.campoRequiredHint}>
+                {requeridoFijo
+                  ? 'Siempre obligatorio: sin este dato no se puede registrar'
+                  : 'Debe completarse al registrar'}
+              </p>
             </div>
             <button
               type="button"
               role="switch"
               aria-checked={Boolean(campo.requerido)}
               className={`${styles.campoSwitch} ${campo.requerido ? styles.campoSwitchOn : ''}`}
-              disabled={disabled}
+              disabled={disabled || requeridoFijo}
               onClick={() => onChange({ requerido: !campo.requerido })}
             >
               <span className={styles.campoSwitchThumb} />

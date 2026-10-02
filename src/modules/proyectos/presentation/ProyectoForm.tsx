@@ -10,7 +10,11 @@ import {
   type CampoEditable,
 } from '@modules/proyectos/application/camposEspecificosHelpers'
 import {
+  CAMPO_BASE_KEYS,
+  campoBaseEditable,
   defaultOpcionesForBaseCampo,
+  etiquetaCampoBase,
+  isCampoBaseFijo,
   isSelectLikeBaseCampo,
   isTextLikeBaseCampo,
   normalizeCamposBase,
@@ -21,6 +25,8 @@ import {
 import type {
   CampoBaseInputTipo,
   CampoBaseKey,
+  CampoTipo,
+  DestinoCampo,
   FormularioTitulos,
   Proyecto,
 } from '@modules/proyectos/domain/types'
@@ -31,6 +37,10 @@ import { createParticipanteRepository } from '@modules/participantes/infrastruct
 import { useAuth } from '@app/providers/useAuth'
 import { isCoordinadora } from '@modules/auth/domain/roles'
 import { CampoFormTile } from '@modules/proyectos/presentation/CampoFormTile'
+import {
+  AgregarCampoTile,
+  type OpcionAgregarCampo,
+} from '@modules/proyectos/presentation/AgregarCampoTile'
 import { Toast } from '@shared/ui/Toast'
 import { Button } from '@shared/ui/Button'
 import { Input } from '@shared/ui/Input'
@@ -51,6 +61,20 @@ import {
 import styles from './ProyectoForm.module.css'
 
 const participanteRepository = createParticipanteRepository()
+
+/** "Cuestionario · Marca" → grupo "Cuestionario", nombre "Marca". */
+function separarEtiquetaDestino(etiqueta: string) {
+  const corte = etiqueta.indexOf(' · ')
+  if (corte < 0) return { grupo: '', nombre: etiqueta }
+  return { grupo: etiqueta.slice(0, corte), nombre: etiqueta.slice(corte + 3) }
+}
+
+/** Mismo tipo con el que la API publica cada columna. */
+function tipoParaDestino(destino: string): CampoTipo {
+  if (destino.endsWith('.birth_date')) return 'date'
+  if (destino === 'participante.email') return 'email'
+  return 'text'
+}
 
 function resolveFieldName(errorKey: string) {
   return errorKey.startsWith('camposExtra.') ? errorKey.slice('camposExtra.'.length) : errorKey
@@ -420,6 +444,29 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     )
   }
 
+  // Al cambiar el destino, la etiqueta y el tipo lo siguen mientras sigan
+  // siendo los que traía el destino anterior; si se personalizaron, se respetan.
+  function cambiarCampoConDestino(campo: CampoEditable, patch: Partial<CampoEditable>) {
+    if (patch.destino === undefined || patch.destino === campo.destino) {
+      updateBuilderCampo(campo.id, patch)
+      return
+    }
+    const destinos = proyecto.destinosDisponibles ?? []
+    const nombreDe = (valor?: string) => {
+      const destino = destinos.find((item) => item.valor === valor)
+      return destino ? separarEtiquetaDestino(destino.etiqueta).nombre : ''
+    }
+    const next = { ...patch }
+    const nombreNuevo = nombreDe(patch.destino)
+    if (nombreNuevo && (!campo.etiqueta.trim() || campo.etiqueta === nombreDe(campo.destino))) {
+      next.etiqueta = nombreNuevo
+    }
+    if (campo.tipo === tipoParaDestino(campo.destino ?? '')) {
+      next.tipo = tipoParaDestino(patch.destino)
+    }
+    updateBuilderCampo(campo.id, next)
+  }
+
   function updateBuilderCampoBase(id: string, patch: Partial<CampoBaseEditable>) {
     if (!builder) return
     builder.onChangeCamposBase(
@@ -427,10 +474,9 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     )
   }
 
-  function addBuilderCampo(destino = '') {
+  function addBuilderCampo() {
     if (!builder) return
-    const campo = createEmptyCampo(builder.campos)
-    builder.onChangeCampos([...builder.campos, { ...campo, destino }])
+    builder.onChangeCampos([...builder.campos, createEmptyCampo(builder.campos)])
   }
 
   // Los campos se reparten por su destino: lo que va a person se muestra junto
@@ -441,14 +487,60 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   const destinosDeFiltro = (proyecto.destinosDisponibles ?? []).filter(
     (destino) => destino.fuente !== 'person',
   )
-  const primerDestinoDemograficoLibre =
-    destinosDemograficos.find(
-      (destino) => !(builder?.campos ?? []).some((campo) => campo.destino === destino.valor),
-    )?.valor ?? ''
   const esCampoDemografico = (campo: CampoEditable) =>
     Boolean(campo.destino?.startsWith('participante.'))
   const camposDemograficos = (builder?.campos ?? []).filter(esCampoDemografico)
   const camposDeFiltro = (builder?.campos ?? []).filter((campo) => !esCampoDemografico(campo))
+
+  // Cada destino guarda un solo dato: la API descarta el segundo campo que
+  // apunte al mismo lugar, así que no se ofrece lo que ya está en uso.
+  const destinosUsados = new Set(
+    (builder?.campos ?? []).map((campo) => campo.destino).filter(Boolean),
+  )
+  const destinosLibresPara = (campo: CampoEditable, destinos: DestinoCampo[]) =>
+    destinos.filter((destino) => destino.valor === campo.destino || !destinosUsados.has(destino.valor))
+
+  const opcionesParticipante: OpcionAgregarCampo[] = [
+    ...CAMPO_BASE_KEYS.filter(
+      (key) => !(builder?.camposBase ?? []).some((campo) => campo.nombreCampo === key),
+    ).map((key) => ({ id: `base:${key}`, etiqueta: etiquetaCampoBase(key), grupo: 'Datos base' })),
+    ...destinosDemograficos
+      .filter((destino) => !destinosUsados.has(destino.valor))
+      .map((destino) => ({
+        id: destino.valor,
+        etiqueta: separarEtiquetaDestino(destino.etiqueta).nombre,
+        grupo: 'Otros datos del participante',
+      })),
+  ]
+
+  const opcionesFiltro: OpcionAgregarCampo[] = destinosDeFiltro
+    .filter((destino) => !destinosUsados.has(destino.valor))
+    .map((destino) => {
+      const { grupo, nombre } = separarEtiquetaDestino(destino.etiqueta)
+      return { id: destino.valor, etiqueta: nombre, grupo: grupo || 'Estudio' }
+    })
+
+  function agregarOpcion(opcion: OpcionAgregarCampo) {
+    if (!builder) return
+    if (opcion.id.startsWith('base:')) {
+      restaurarCampoBase(opcion.id.slice('base:'.length) as CampoBaseKey)
+      return
+    }
+    const campo = createEmptyCampo(builder.campos)
+    builder.onChangeCampos([
+      ...builder.campos,
+      { ...campo, destino: opcion.id, etiqueta: opcion.etiqueta, tipo: tipoParaDestino(opcion.id) },
+    ])
+  }
+
+  function restaurarCampoBase(key: CampoBaseKey) {
+    if (!builder) return
+    const orden = CAMPO_BASE_KEYS.indexOf(key)
+    const next = [...builder.camposBase]
+    const posicion = next.findIndex((campo) => CAMPO_BASE_KEYS.indexOf(campo.nombreCampo) > orden)
+    next.splice(posicion < 0 ? next.length : posicion, 0, campoBaseEditable(key, proyecto.ciudadesPermitidas))
+    builder.onChangeCamposBase(next)
+  }
 
   function duplicateBuilderCampo(id: string) {
     if (!builder) return
@@ -470,30 +562,6 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   function removeBuilderCampoBase(id: string) {
     if (!builder) return
     builder.onChangeCamposBase(builder.camposBase.filter((campo) => campo.id !== id))
-  }
-
-  function duplicateBuilderCampoBase(id: string) {
-    if (!builder) return
-    const source = builder.camposBase.find((campo) => campo.id === id)
-    if (!source) return
-
-    const copy = createEmptyCampo(builder.campos)
-    const baseLabel = source.etiqueta.trim() || source.nombreCampo
-    copy.etiqueta = `${baseLabel} (copia)`
-    copy.requerido = Boolean(source.requerido)
-
-    if (isSelectLikeBaseCampo(source.nombreCampo)) {
-      copy.tipo = 'select'
-      copy.opciones = source.opciones?.length
-        ? [...source.opciones]
-        : source.nombreCampo === 'ciudad'
-          ? [...proyecto.ciudadesPermitidas]
-          : []
-    } else {
-      copy.tipo = source.tipo ?? 'text'
-    }
-
-    builder.onChangeCampos([...builder.campos, copy])
   }
 
   function reorderById<T extends { id: string }>(items: T[], fromId: string, toId: string): T[] {
@@ -859,24 +927,15 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
         />
 
         <div className={styles.grid}>
-          {/* Los seis campos base son fijos (cada uno con su columna en person);
-              debajo van los demográficos extra que agregue la coordinadora. */}
+          {/* Los seis campos base tienen su columna en person (nombre y documento
+              no se pueden quitar); debajo van los demográficos extra. */}
           {canBuild ? (
-            <button
-              type="button"
-              className={styles.addCampoTile}
-              disabled={!primerDestinoDemograficoLibre}
-              title={
-                primerDestinoDemograficoLibre
-                  ? undefined
-                  : 'Ya se están pidiendo todos los datos del participante'
-              }
-              onClick={() => addBuilderCampo(primerDestinoDemograficoLibre)}
-            >
-              <IconPlus size={20} />
-              <span>Agregar campo</span>
-              <small>Datos del participante</small>
-            </button>
+            <AgregarCampoTile
+              opciones={opcionesParticipante}
+              subtitulo="Datos del participante"
+              sinOpciones="Ya se piden todos los datos del participante"
+              onElegir={agregarOpcion}
+            />
           ) : null}
 
           {canBuild && builder
@@ -925,8 +984,12 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                     }
                     updateBuilderCampoBase(campo.id, next)
                   }}
-                  onDuplicate={() => duplicateBuilderCampoBase(campo.id)}
-                  onRemove={() => removeBuilderCampoBase(campo.id)}
+                  requeridoFijo={isCampoBaseFijo(campo.nombreCampo)}
+                  onRemove={
+                    isCampoBaseFijo(campo.nombreCampo)
+                      ? undefined
+                      : () => removeBuilderCampoBase(campo.id)
+                  }
                 >
                   {renderBaseControl({
                     ...campo,
@@ -952,7 +1015,8 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                 <CampoFormTile
                   key={campo.id}
                   campo={campo}
-                  destinos={destinosDemograficos}
+                  destinos={destinosLibresPara(campo, destinosDemograficos)}
+                  permitirSinDestino={false}
                   isDragging={dragId === campo.id}
                   isDropTarget={
                     dragGroup === 'extra' && dropId === campo.id && dragId !== campo.id
@@ -962,8 +1026,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                   onDragLeave={() => setDropId((prev) => (prev === campo.id ? null : prev))}
                   onDrop={(event) => handleTileDrop('extra', campo.id, event)}
                   onDragEnd={clearDragState}
-                  onChange={(patch) => updateBuilderCampo(campo.id, patch)}
-                  onDuplicate={() => duplicateBuilderCampo(campo.id)}
+                  onChange={(patch) => cambiarCampoConDestino(campo, patch)}
                   onRemove={() => removeBuilderCampo(campo.id)}
                 >
                   {renderExtraControl(campo)}
@@ -993,19 +1056,6 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                 {filtroCount} {filtroCount === 1 ? 'campo' : 'campos'}
               </span>
             }
-            actions={
-              canBuild ? (
-                <Button
-                  type="button"
-                  variant="soft"
-                  className={styles.addCampoBtn}
-                  icon={<IconPlus size={16} />}
-                  onClick={() => addBuilderCampo()}
-                >
-                  Agregar
-                </Button>
-              ) : null
-            }
             onChange={(patch) => {
               if (!builder) return
               builder.onChangeTitulos({
@@ -1016,7 +1066,15 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
           />
 
           <div className={styles.grid}>
-            {canBuild ? (
+            {/* Sin destinos publicados (mocks, API vieja) se cae al campo libre. */}
+            {canBuild && destinosDeFiltro.length > 0 ? (
+              <AgregarCampoTile
+                opciones={opcionesFiltro}
+                subtitulo="Cuestionario del estudio o datos del bebé"
+                sinOpciones="Ya se piden todos los datos del estudio"
+                onElegir={agregarOpcion}
+              />
+            ) : canBuild ? (
               <button
                 type="button"
                 className={styles.addCampoTile}
@@ -1043,10 +1101,13 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                     onDragLeave={() => setDropId((prev) => (prev === campo.id ? null : prev))}
                     onDrop={(event) => handleTileDrop('extra', campo.id, event)}
                     onDragEnd={clearDragState}
-                    onChange={(patch) => updateBuilderCampo(campo.id, patch)}
-                    onDuplicate={() => duplicateBuilderCampo(campo.id)}
+                    onChange={(patch) => cambiarCampoConDestino(campo, patch)}
+                    // Con destinos, la copia no tendría dónde guardarse.
+                    onDuplicate={
+                      destinosDeFiltro.length > 0 ? undefined : () => duplicateBuilderCampo(campo.id)
+                    }
                     onRemove={() => removeBuilderCampo(campo.id)}
-                    destinos={destinosDeFiltro}
+                    destinos={destinosLibresPara(campo, destinosDeFiltro)}
                   >
                     {renderExtraControl(campo)}
                   </CampoFormTile>

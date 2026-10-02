@@ -39,7 +39,8 @@ export const MOCK_PROYECTOS: Proyecto[] = [
                 "nombreCampo": "nombre_bebe",
                 "etiqueta": "Nombre del bebé",
                 "tipo": "text",
-                "requerido": true
+                "requerido": true,
+                "destino": "dependiente.dependent_name"
           },
           {
                 "nombreCampo": "genero_bebe",
@@ -49,14 +50,40 @@ export const MOCK_PROYECTOS: Proyecto[] = [
                       "Masculino",
                       "Femenino"
                 ],
-                "requerido": true
+                "requerido": true,
+                "destino": "dependiente.gender"
           },
           {
                 "nombreCampo": "usuaria_crema_antipañalitis",
                 "etiqueta": "Usuaria crema antipañalitis",
                 "tipo": "text",
-                "requerido": true
+                "requerido": true,
+                "destino": "Datos.dermaProtect.UsaCrema"
+          },
+          {
+                "nombreCampo": "participante.email",
+                "etiqueta": "Correo electrónico",
+                "tipo": "email",
+                "requerido": false,
+                "destino": "participante.email"
           }
+    ],
+    // Igual que GET /api/v1/proyectos: cuestionario, participante y bebé.
+    destinosDisponibles: [
+      { valor: 'Datos.dermaProtect.UsaCrema', etiqueta: 'Cuestionario · Usuaria crema antipañalitis', fuente: 'questionnaire' },
+      { valor: 'Datos.dermaProtect.Marca', etiqueta: 'Cuestionario · Marca que usa', fuente: 'questionnaire' },
+      { valor: 'participante.birth_date', etiqueta: 'Participante · Fecha de nacimiento', fuente: 'person' },
+      { valor: 'participante.email', etiqueta: 'Participante · Correo electrónico', fuente: 'person' },
+      { valor: 'participante.address', etiqueta: 'Participante · Dirección', fuente: 'person' },
+      { valor: 'participante.neighborhood', etiqueta: 'Participante · Barrio', fuente: 'person' },
+      { valor: 'participante.socioeconomic_status', etiqueta: 'Participante · Estrato', fuente: 'person' },
+      { valor: 'participante.housing_type', etiqueta: 'Participante · Tipo de vivienda', fuente: 'person' },
+      { valor: 'participante.nationality', etiqueta: 'Participante · Nacionalidad', fuente: 'person' },
+      { valor: 'dependiente.dependent_name', etiqueta: 'Bebé · Nombre', fuente: 'dependent' },
+      { valor: 'dependiente.gender', etiqueta: 'Bebé · Sexo', fuente: 'dependent' },
+      { valor: 'dependiente.birth_date', etiqueta: 'Bebé · Fecha de nacimiento', fuente: 'dependent' },
+      { valor: 'dependiente.document_type', etiqueta: 'Bebé · Tipo de documento', fuente: 'dependent' },
+      { valor: 'dependiente.identification_number', etiqueta: 'Bebé · Documento', fuente: 'dependent' },
     ],
     activo: true,
   },

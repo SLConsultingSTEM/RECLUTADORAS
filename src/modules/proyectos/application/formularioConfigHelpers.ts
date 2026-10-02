@@ -33,6 +33,17 @@ const DEFAULT_BASE_REQUIRED: Record<CampoBaseKey, boolean> = {
   telefono: true,
 }
 
+/** La API no registra un participante sin estos: no se pueden quitar ni volver opcionales. */
+const CAMPOS_BASE_FIJOS: CampoBaseKey[] = ['nombre', 'documento']
+
+export function isCampoBaseFijo(nombreCampo: CampoBaseKey) {
+  return CAMPOS_BASE_FIJOS.includes(nombreCampo)
+}
+
+export function etiquetaCampoBase(nombreCampo: CampoBaseKey) {
+  return DEFAULT_BASE_LABELS[nombreCampo]
+}
+
 const TEXT_LIKE_BASE_KEYS: CampoBaseKey[] = ['nombre', 'documento', 'telefono']
 const SELECT_LIKE_BASE_KEYS: CampoBaseKey[] = ['genero', 'tipoDocumento', 'ciudad']
 
@@ -102,8 +113,11 @@ function createId(key: string) {
   return `base-${key}`
 }
 
-export function defaultCamposBase(ciudadesPermitidas: string[] = []): CampoBaseConfig[] {
-  return CAMPO_BASE_KEYS.map((nombreCampo) => ({
+function defaultCampoBase(
+  nombreCampo: CampoBaseKey,
+  ciudadesPermitidas: string[] = [],
+): CampoBaseConfig {
+  return {
     nombreCampo,
     etiqueta: DEFAULT_BASE_LABELS[nombreCampo],
     requerido: DEFAULT_BASE_REQUIRED[nombreCampo],
@@ -113,7 +127,19 @@ export function defaultCamposBase(ciudadesPermitidas: string[] = []): CampoBaseC
     ...(isSelectLikeBaseCampo(nombreCampo)
       ? { opciones: defaultOpcionesForBaseCampo(nombreCampo, ciudadesPermitidas) }
       : {}),
-  }))
+  }
+}
+
+export function defaultCamposBase(ciudadesPermitidas: string[] = []): CampoBaseConfig[] {
+  return CAMPO_BASE_KEYS.map((nombreCampo) => defaultCampoBase(nombreCampo, ciudadesPermitidas))
+}
+
+/** Un campo base que se había quitado, con sus valores por defecto. */
+export function campoBaseEditable(
+  nombreCampo: CampoBaseKey,
+  ciudadesPermitidas: string[] = [],
+): CampoBaseEditable {
+  return { ...defaultCampoBase(nombreCampo, ciudadesPermitidas), id: createId(nombreCampo) }
 }
 
 export function normalizeCamposBase(
@@ -121,7 +147,6 @@ export function normalizeCamposBase(
   ciudadesPermitidas: string[] = [],
 ): CampoBaseConfig[] {
   if (campos == null) return defaultCamposBase(ciudadesPermitidas)
-  if (campos.length === 0) return []
 
   const seen = new Set<CampoBaseKey>()
   const ordered: CampoBaseConfig[] = []
@@ -132,7 +157,9 @@ export function normalizeCamposBase(
     const next: CampoBaseConfig = {
       nombreCampo: campo.nombreCampo,
       etiqueta: campo.etiqueta.trim() || DEFAULT_BASE_LABELS[campo.nombreCampo],
-      requerido: campo.requerido ?? DEFAULT_BASE_REQUIRED[campo.nombreCampo],
+      requerido: isCampoBaseFijo(campo.nombreCampo)
+        ? true
+        : (campo.requerido ?? DEFAULT_BASE_REQUIRED[campo.nombreCampo]),
     }
     if (isTextLikeBaseCampo(campo.nombreCampo)) {
       const fallback = DEFAULT_BASE_TIPO[campo.nombreCampo as 'nombre' | 'documento' | 'telefono']
@@ -147,7 +174,12 @@ export function normalizeCamposBase(
     ordered.push(next)
   }
 
-  return ordered
+  // Un diseño guardado antes de que fueran fijos puede no traerlos.
+  const fijosFaltantes = CAMPOS_BASE_FIJOS.filter((key) => !seen.has(key))
+  return [
+    ...fijosFaltantes.map((key) => defaultCampoBase(key, ciudadesPermitidas)),
+    ...ordered,
+  ]
 }
 
 export function normalizeFormularioTitulos(

@@ -1158,6 +1158,63 @@
   cursor: not-allowed;
 }
 
+.addCampoPicker {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  min-height: 7.5rem;
+  padding: 0.75rem;
+  border: 1.5px solid color-mix(in srgb, var(--color-primary) 42%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+
+.addCampoPickerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--color-primary);
+  font-weight: 750;
+}
+
+.addCampoPickerList {
+  display: grid;
+  gap: 0.6rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  /* Sin esto el overflow recorta el borde redondeado de las opciones. */
+  padding: 2px 6px 2px 2px;
+}
+
+.addCampoPickerGroup {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.addCampoPickerGroup small {
+  font-size: var(--text-sm);
+  font-weight: 650;
+  color: var(--color-muted-deep);
+}
+
+.addCampoOption {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.addCampoOption:hover,
+.addCampoOption:focus-visible {
+  border-color: color-mix(in srgb, var(--color-primary) 58%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary-soft) 45%, #fff);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .campoEditPanel,
   .addCampoTile,

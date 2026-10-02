@@ -179,6 +179,7 @@ export function areCamposEqual(a: CampoEspecifico[], b: CampoEspecifico[]): bool
       campo.nombreCampo === other.nombreCampo &&
       campo.etiqueta === other.etiqueta &&
       campo.tipo === other.tipo &&
+      (campo.destino ?? '') === (other.destino ?? '') &&
       Boolean(campo.requerido) === Boolean(other.requerido) &&
       JSON.stringify(campo.opciones ?? []) === JSON.stringify(other.opciones ?? [])
     )

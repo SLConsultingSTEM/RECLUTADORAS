@@ -2,7 +2,7 @@ import type { Proyecto, ProyectoRepository } from '@modules/proyectos/domain/typ
 import { MOCK_PROYECTOS } from '@modules/proyectos/infrastructure/mockData'
 import { mockLatency } from '@shared/api/mockLatency'
 
-const STORAGE_KEY = 'reclutadoras.mock.proyectos.v4'
+const STORAGE_KEY = 'reclutadoras.mock.proyectos.v5'
 const LEGACY_RASTER_EXT = /\.(png|jpe?g|gif)$/i
 
 /** Maps persisted mock paths after PNG/JPEG assets were replaced by WebP. */
