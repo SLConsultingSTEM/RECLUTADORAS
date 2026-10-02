@@ -422,11 +422,20 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setLoading(true)
 
     try {
-      await registerParticipanteUseCase(participanteRepository, {
-        proyectoId: proyecto.id,
-        ...parsed.data,
-        creadoPor: user?.username ?? 'desconocido',
-      })
+      const camposCorreo = new Set(
+        [...camposBase, ...camposEspecificos]
+          .filter((campo) => campo.tipo === 'email')
+          .map((campo) => campo.nombreCampo),
+      )
+      await registerParticipanteUseCase(
+        participanteRepository,
+        {
+          proyectoId: proyecto.id,
+          ...parsed.data,
+          creadoPor: user?.username ?? 'desconocido',
+        },
+        camposCorreo,
+      )
       resetForm()
       setSuccess('Participante registrado correctamente')
       onRegistered()

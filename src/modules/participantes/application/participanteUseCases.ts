@@ -14,11 +14,45 @@ export function listParticipantesUseCase(
   return repository.list(filters)
 }
 
+const mayusculas = (valor: string) => valor.trim().toLocaleUpperCase('es-CO')
+
+/**
+ * Los datos del participante viajan en mayúsculas. Los correos (campos de tipo
+ * email, por su nombreCampo) se dejan como se escribieron.
+ */
+export function datosEnMayusculas(
+  input: RegistrarParticipanteInput,
+  camposCorreo: ReadonlySet<string> = new Set(),
+): RegistrarParticipanteInput {
+  const base = (campo: 'nombre' | 'tipoDocumento' | 'documento' | 'genero' | 'ciudad' | 'telefono') =>
+    camposCorreo.has(campo) ? input[campo].trim() : mayusculas(input[campo])
+
+  return {
+    ...input,
+    nombre: base('nombre'),
+    tipoDocumento: base('tipoDocumento'),
+    documento: base('documento'),
+    genero: base('genero'),
+    ciudad: base('ciudad'),
+    telefono: base('telefono'),
+    camposExtra: Object.fromEntries(
+      Object.entries(input.camposExtra).map(([campo, valor]) => [
+        campo,
+        camposCorreo.has(campo) ? valor.trim() : mayusculas(valor),
+      ]),
+    ),
+    ...(input.observaciones !== undefined
+      ? { observaciones: mayusculas(input.observaciones) }
+      : {}),
+  }
+}
+
 export function registerParticipanteUseCase(
   repository: ParticipanteRepository,
   input: RegistrarParticipanteInput,
+  camposCorreo?: ReadonlySet<string>,
 ) {
-  return repository.register(input)
+  return repository.register(datosEnMayusculas(input, camposCorreo))
 }
 
 export async function getSeguimientoResumenUseCase(
