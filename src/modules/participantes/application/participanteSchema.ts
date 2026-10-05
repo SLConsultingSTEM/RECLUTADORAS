@@ -44,6 +44,38 @@ function optionalOrOneOf(opciones: string[], requerido: boolean, etiqueta: strin
   return optionalOrEnum(cleaned as [string, ...string[]], requerido, etiqueta)
 }
 
+/** Lo que cabe en person_phone.phone; Optima usa el mismo límite. */
+export const LARGO_MAXIMO_TELEFONO = 20
+
+/**
+ * Teléfonos en texto, como en Optima: a veces traen el parentesco entre
+ * paréntesis ("3001234567 (mamá)"). Las filas vacías se descartan.
+ */
+function telefonosSchema(campo?: CampoBaseConfig) {
+  const etiqueta = campo?.etiqueta ?? 'Teléfono'
+  return z.preprocess(
+    (value) =>
+      (Array.isArray(value) ? value : [value]).map((item) =>
+        item == null ? '' : String(item).trim().replace(/\s+/g, ' '),
+      ),
+    z
+      .array(
+        z
+          .string()
+          .max(LARGO_MAXIMO_TELEFONO, `Cada «${etiqueta}» admite hasta ${LARGO_MAXIMO_TELEFONO} caracteres`)
+          .refine((valor) => valor === '' || (valor.match(/\d/g)?.length ?? 0) >= 7, {
+            message: `«${etiqueta}» debe tener al menos 7 dígitos`,
+          }),
+      )
+      .superRefine((lista, ctx) => {
+        if (campo?.requerido && !lista.some(Boolean)) {
+          ctx.addIssue({ code: 'custom', message: `Completa el campo «${etiqueta}»` })
+        }
+      })
+      .transform((lista) => lista.filter(Boolean)),
+  )
+}
+
 function emptyBaseField() {
   return z.preprocess((value) => (value == null ? '' : String(value)), z.string())
 }
@@ -86,15 +118,7 @@ function buildBaseShape(camposBase?: CampoBaseConfig[] | null) {
           ciudad.etiqueta,
         )
       : emptyBaseField(),
-    telefono: telefono
-      ? z.preprocess((value) => (value == null ? '' : String(value)), (() => {
-          const valid = z
-            .string()
-            .trim()
-            .regex(/^\d{7,15}$/, `El campo «${telefono.etiqueta}» debe tener entre 7 y 15 dígitos`)
-          return telefono.requerido ? valid : z.union([z.literal(''), valid])
-        })())
-      : emptyBaseField(),
+    telefonos: telefonosSchema(telefono),
   }
 }
 

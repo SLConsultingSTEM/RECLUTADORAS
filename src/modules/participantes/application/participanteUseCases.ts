@@ -24,7 +24,7 @@ export function datosEnMayusculas(
   input: RegistrarParticipanteInput,
   camposCorreo: ReadonlySet<string> = new Set(),
 ): RegistrarParticipanteInput {
-  const base = (campo: 'nombre' | 'tipoDocumento' | 'documento' | 'genero' | 'ciudad' | 'telefono') =>
+  const base = (campo: 'nombre' | 'tipoDocumento' | 'documento' | 'genero' | 'ciudad') =>
     camposCorreo.has(campo) ? input[campo].trim() : mayusculas(input[campo])
 
   return {
@@ -34,7 +34,7 @@ export function datosEnMayusculas(
     documento: base('documento'),
     genero: base('genero'),
     ciudad: base('ciudad'),
-    telefono: base('telefono'),
+    telefonos: input.telefonos.map(mayusculas),
     camposExtra: Object.fromEntries(
       Object.entries(input.camposExtra).map(([campo, valor]) => [
         campo,

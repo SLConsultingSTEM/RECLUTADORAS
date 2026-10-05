@@ -31,7 +31,10 @@ import type {
   Proyecto,
 } from '@modules/proyectos/domain/types'
 import { TIPOS_DOCUMENTO } from '@modules/participantes/domain/types'
-import { buildParticipanteSchema } from '@modules/participantes/application/participanteSchema'
+import {
+  buildParticipanteSchema,
+  LARGO_MAXIMO_TELEFONO,
+} from '@modules/participantes/application/participanteSchema'
 import { registerParticipanteUseCase } from '@modules/participantes/application/participanteUseCases'
 import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
 import { useAuth } from '@app/providers/useAuth'
@@ -56,6 +59,7 @@ import {
   IconPencil,
   IconPhone,
   IconPlus,
+  IconTrash,
   IconUser,
 } from '@shared/ui/icons'
 import styles from './ProyectoForm.module.css'
@@ -77,8 +81,11 @@ function tipoParaDestino(destino: string): CampoTipo {
 }
 
 function resolveFieldName(errorKey: string) {
+  if (errorKey === 'telefonos') return 'telefonos.0'
   return errorKey.startsWith('camposExtra.') ? errorKey.slice('camposExtra.'.length) : errorKey
 }
+
+const MAXIMO_TELEFONOS = 5
 
 function focusFirstInvalidField(
   form: HTMLFormElement,
@@ -270,7 +277,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   const [tipoDocumento, setTipoDocumento] = useState('')
   const [documento, setDocumento] = useState('')
   const [ciudad, setCiudad] = useState('')
-  const [telefono, setTelefono] = useState('')
+  const [telefonos, setTelefonos] = useState<string[]>([''])
   const [camposExtra, setCamposExtra] = useState<Record<string, string>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [success, setSuccess] = useState('')
@@ -281,16 +288,28 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   const [dropId, setDropId] = useState<string | null>(null)
   const [dragGroup, setDragGroup] = useState<'base' | 'extra' | null>(null)
 
-  const baseValues: Record<CampoBaseKey, string> = {
+  const baseValues: Record<Exclude<CampoBaseKey, 'telefono'>, string> = {
     nombre,
     genero,
     tipoDocumento,
     documento,
     ciudad,
-    telefono,
   }
 
-  function setBaseValue(key: CampoBaseKey, value: string) {
+  function updateTelefono(index: number, value: string) {
+    clearFieldError(`telefonos.${index}`)
+    clearFieldError('telefonos')
+    setTelefonos((prev) => prev.map((item, i) => (i === index ? value : item)))
+  }
+
+  function quitarTelefono(index: number) {
+    setErrors((prev) =>
+      Object.fromEntries(Object.entries(prev).filter(([key]) => !key.startsWith('telefonos'))),
+    )
+    setTelefonos((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  function setBaseValue(key: Exclude<CampoBaseKey, 'telefono'>, value: string) {
     clearFieldError(key)
     switch (key) {
       case 'nombre':
@@ -308,9 +327,6 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
       case 'ciudad':
         setCiudad(value)
         break
-      case 'telefono':
-        setTelefono(value)
-        break
     }
   }
 
@@ -320,7 +336,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setTipoDocumento('')
     setDocumento('')
     setCiudad('')
-    setTelefono('')
+    setTelefonos([''])
     setCamposExtra({})
     setErrors({})
     setSuccess('')
@@ -363,7 +379,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   }
 
   function isFormBlank() {
-    const baseBlank = [nombre, genero, tipoDocumento, documento, ciudad, telefono].every(
+    const baseBlank = [nombre, genero, tipoDocumento, documento, ciudad, ...telefonos].every(
       (value) => !value.trim(),
     )
     if (!baseBlank) return false
@@ -390,7 +406,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
       tipoDocumento,
       documento,
       ciudad,
-      telefono,
+      telefonos,
       camposExtra: Object.fromEntries(
         camposEspecificos.map((campo) => [
           campo.nombreCampo,
@@ -410,7 +426,11 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
       if (form) {
         window.requestAnimationFrame(() => {
           focusFirstInvalidField(form, next, [
-            ...camposBase.map((campo) => campo.nombreCampo),
+            ...camposBase.flatMap((campo) =>
+              campo.nombreCampo === 'telefono'
+                ? ['telefonos', ...telefonos.map((_, i) => `telefonos.${i}`)]
+                : [campo.nombreCampo],
+            ),
             ...camposEspecificos.map((campo) => `camposExtra.${campo.nombreCampo}`),
           ])
         })
@@ -499,10 +519,13 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   const destinosDeFiltro = (proyecto.destinosDisponibles ?? []).filter(
     (destino) => destino.fuente !== 'person',
   )
-  const esCampoDemografico = (campo: CampoEditable) =>
+  const esCampoDemografico = (campo: { destino?: string }) =>
     Boolean(campo.destino?.startsWith('participante.'))
   const camposDemograficos = (builder?.campos ?? []).filter(esCampoDemografico)
   const camposDeFiltro = (builder?.campos ?? []).filter((campo) => !esCampoDemografico(campo))
+  // Lo mismo para quien registra: cada campo va en la sección de su destino.
+  const demograficosAlRegistrar = proyecto.camposEspecificos.filter(esCampoDemografico)
+  const filtroAlRegistrar = proyecto.camposEspecificos.filter((campo) => !esCampoDemografico(campo))
 
   // Cada destino guarda un solo dato: la API descarta el segundo campo que
   // apunte al mismo lugar, así que no se ofrece lo que ya está en uso.
@@ -627,7 +650,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setDragGroup(null)
   }
 
-  const filtroCount = canBuild ? camposDeFiltro.length : proyecto.camposEspecificos.length
+  const filtroCount = canBuild ? camposDeFiltro.length : filtroAlRegistrar.length
   const showFiltroSection = canBuild || filtroCount > 0
   // El guardado del diseño corre en segundo plano. Deshabilitar los controles
   // mientras corre hacía titilar los botones y alternar el cursor entre pointer
@@ -758,7 +781,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   }
 
   function renderBaseTextControl(options: {
-    nombreCampo: 'nombre' | 'documento' | 'telefono'
+    nombreCampo: 'nombre' | 'documento'
     label: string
     value: string
     error?: string
@@ -792,13 +815,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
         error={error}
         icon={iconForInputTipo(resolvedTipo, nombreCampo)}
         placeholder={placeholderForCampoTipo(resolvedTipo, label)}
-        inputMode={
-          resolvedTipo === 'tel' || resolvedTipo === 'number'
-            ? 'numeric'
-            : nombreCampo === 'telefono' && resolvedTipo === 'text'
-              ? 'numeric'
-              : undefined
-        }
+        inputMode={resolvedTipo === 'tel' || resolvedTipo === 'number' ? 'numeric' : undefined}
         required={required}
       />
     )
@@ -896,15 +913,52 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
           />
         )
       case 'telefono':
-        return renderBaseTextControl({
-          nombreCampo: 'telefono',
-          label,
-          value: baseValues.telefono,
-          error: errors.telefono,
-          required,
-          tipo: campo.tipo,
-        })
+        return renderTelefonos(label, required)
     }
+  }
+
+  // Texto libre: a veces se anota el parentesco ("3001234567 (mamá)").
+  function renderTelefonos(label: string, required: boolean) {
+    return (
+      <div className={styles.telefonos}>
+        {telefonos.map((valor, index) => (
+          <div key={index} className={styles.telefonoFila}>
+            <Input
+              label={index === 0 ? label : `${label} ${index + 1}`}
+              name={`telefonos.${index}`}
+              value={valor}
+              onChange={(e) => updateTelefono(index, e.target.value)}
+              error={errors[`telefonos.${index}`] ?? (index === 0 ? errors.telefonos : undefined)}
+              icon={<IconPhone size={16} />}
+              placeholder="Ej. 3001234567 (mamá)"
+              maxLength={LARGO_MAXIMO_TELEFONO}
+              required={required && index === 0}
+            />
+            {telefonos.length > 1 ? (
+              <button
+                type="button"
+                className={`${styles.campoLabelEditBtn} ${styles.campoLabelDangerBtn} ${styles.telefonoQuitar}`}
+                aria-label={`Quitar ${label.toLowerCase()} ${index + 1}`}
+                title="Quitar"
+                onClick={() => quitarTelefono(index)}
+              >
+                <IconTrash size={14} />
+              </button>
+            ) : null}
+          </div>
+        ))}
+        {telefonos.length < MAXIMO_TELEFONOS ? (
+          <button
+            type="button"
+            className={styles.telefonoAgregar}
+            onClick={() => setTelefonos((prev) => [...prev, ''])}
+          >
+            <IconPlus size={14} />
+            Agregar otro número
+          </button>
+        ) : null}
+      </div>
+    )
   }
 
   return (
@@ -1044,7 +1098,9 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                   {renderExtraControl(campo)}
                 </CampoFormTile>
               ))
-            : null}
+            : demograficosAlRegistrar.map((campo) => (
+                <div key={campo.nombreCampo}>{renderExtraControl(campo)}</div>
+              ))}
         </div>
       </section>
 
@@ -1128,7 +1184,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                     {renderExtraControl(campo)}
                   </CampoFormTile>
                 ))
-              : proyecto.camposEspecificos.map((campo) => (
+              : filtroAlRegistrar.map((campo) => (
                   <div key={campo.nombreCampo}>{renderExtraControl(campo)}</div>
                 ))}
           </div>

@@ -1158,6 +1158,47 @@
   cursor: not-allowed;
 }
 
+.telefonos {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.telefonoFila {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
+.telefonoFila > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Alineado con el input, no con su label. */
+.telefonoQuitar {
+  margin-bottom: 0.55rem;
+  flex-shrink: 0;
+}
+
+.telefonoAgregar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  justify-self: start;
+  padding: 0.25rem 0.1rem;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.telefonoAgregar:hover {
+  text-decoration: underline;
+}
+
 .addCampoPicker {
   display: grid;
   align-content: start;

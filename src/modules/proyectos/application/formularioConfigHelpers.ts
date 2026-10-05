@@ -44,13 +44,13 @@ export function etiquetaCampoBase(nombreCampo: CampoBaseKey) {
   return DEFAULT_BASE_LABELS[nombreCampo]
 }
 
-const TEXT_LIKE_BASE_KEYS: CampoBaseKey[] = ['nombre', 'documento', 'telefono']
+// El teléfono no: es una lista de textos, siempre libres.
+const TEXT_LIKE_BASE_KEYS: CampoBaseKey[] = ['nombre', 'documento']
 const SELECT_LIKE_BASE_KEYS: CampoBaseKey[] = ['genero', 'tipoDocumento', 'ciudad']
 
-const DEFAULT_BASE_TIPO: Record<'nombre' | 'documento' | 'telefono', CampoBaseInputTipo> = {
+const DEFAULT_BASE_TIPO: Record<'nombre' | 'documento', CampoBaseInputTipo> = {
   nombre: 'text',
   documento: 'text',
-  telefono: 'text',
 }
 
 const DEFAULT_BASE_OPCIONES: Record<'genero' | 'tipoDocumento', string[]> = {
@@ -122,7 +122,7 @@ function defaultCampoBase(
     etiqueta: DEFAULT_BASE_LABELS[nombreCampo],
     requerido: DEFAULT_BASE_REQUIRED[nombreCampo],
     ...(isTextLikeBaseCampo(nombreCampo)
-      ? { tipo: DEFAULT_BASE_TIPO[nombreCampo as 'nombre' | 'documento' | 'telefono'] }
+      ? { tipo: DEFAULT_BASE_TIPO[nombreCampo as 'nombre' | 'documento'] }
       : {}),
     ...(isSelectLikeBaseCampo(nombreCampo)
       ? { opciones: defaultOpcionesForBaseCampo(nombreCampo, ciudadesPermitidas) }
@@ -162,7 +162,7 @@ export function normalizeCamposBase(
         : (campo.requerido ?? DEFAULT_BASE_REQUIRED[campo.nombreCampo]),
     }
     if (isTextLikeBaseCampo(campo.nombreCampo)) {
-      const fallback = DEFAULT_BASE_TIPO[campo.nombreCampo as 'nombre' | 'documento' | 'telefono']
+      const fallback = DEFAULT_BASE_TIPO[campo.nombreCampo as 'nombre' | 'documento']
       next.tipo = isCampoBaseInputTipo(campo.tipo) ? campo.tipo : fallback
     }
     if (isSelectLikeBaseCampo(campo.nombreCampo)) {

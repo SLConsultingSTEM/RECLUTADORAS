@@ -33,7 +33,8 @@ export class ApiParticipanteRepository implements ParticipanteRepository {
   async register(input: RegistrarParticipanteInput): Promise<Participante> {
     return httpClient.request<Participante>('/api/v1/participantes', {
       method: 'POST',
-      body: input,
+      // Una API anterior solo lee "telefono": así no pierde el primer número.
+      body: { ...input, telefono: input.telefonos[0] ?? '' },
       authToken: token(),
     })
   }

@@ -452,7 +452,7 @@ export class MockParticipanteRepository implements ParticipanteRepository {
       documento: input.documento,
       genero: input.genero,
       ciudad: input.ciudad,
-      telefono: input.telefono,
+      telefono: input.telefonos.join(', '),
       estado: 'EN_FILTRO',
       camposExtra: input.camposExtra,
       observaciones: input.observaciones?.trim() ?? '',

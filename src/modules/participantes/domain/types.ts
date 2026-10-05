@@ -60,7 +60,8 @@ export interface RegistrarParticipanteInput {
   documento: string
   genero: string
   ciudad: string
-  telefono: string
+  /** En texto; pueden traer el parentesco: "3001234567 (MAMÁ)". */
+  telefonos: string[]
   camposExtra: Record<string, string>
   observaciones?: string
   creadoPor: string
