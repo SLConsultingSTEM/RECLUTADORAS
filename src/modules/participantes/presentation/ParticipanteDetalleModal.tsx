@@ -54,7 +54,20 @@ function formatCampoLabel(key: string) {
   return key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
+const SOLO_FECHA = /^(\d{4})-(\d{2})-(\d{2})$/
+
 function formatFecha(value: string) {
+  // La API manda un DATE pelado ("2026-10-07"). new Date() lo leería como
+  // medianoche UTC y en Bogotá (UTC-5) lo correría al día anterior, con una
+  // hora inventada encima; por eso se arma la fecha en hora local.
+  const soloFecha = SOLO_FECHA.exec(value)
+  if (soloFecha) {
+    const [, anio, mes, dia] = soloFecha
+    const date = new Date(Number(anio), Number(mes) - 1, Number(dia))
+    if (Number.isNaN(date.getTime())) return value
+    return new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium' }).format(date)
+  }
+
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
   return new Intl.DateTimeFormat('es-CO', {
@@ -228,7 +241,7 @@ export function ParticipanteDetalleModal({
                       {conclusion.tipologia || 'Sin tipología'}
                     </span>
                     {conclusion.fecha ? (
-                      <span className={styles.conclusionFecha}>{conclusion.fecha}</span>
+                      <span className={styles.conclusionFecha}>{formatFecha(conclusion.fecha)}</span>
                     ) : null}
                   </div>
                   {conclusion.motivo ? (
