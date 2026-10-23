@@ -42,6 +42,13 @@ export interface Participante {
   reclutadora?: string
   /** Historial de conclusiones, de la más reciente a la más antigua. */
   conclusiones?: ConclusionParticipante[]
+  /**
+   * Falso cuando la persona quedó guardada pero no se inscribió al proyecto
+   * (hoy, por Lista Clinton). Solo lo manda la respuesta del registro.
+   */
+  inscrito?: boolean
+  /** Explicación para la reclutadora cuando `inscrito` es falso. */
+  motivo?: string
 }
 
 /** Conclusión registrada sobre la inscripción (quién, cuándo y por qué). */

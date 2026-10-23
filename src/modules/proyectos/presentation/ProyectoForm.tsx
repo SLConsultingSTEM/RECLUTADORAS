@@ -281,6 +281,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   const [camposExtra, setCamposExtra] = useState<Record<string, string>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [success, setSuccess] = useState('')
+  const [aviso, setAviso] = useState('')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
@@ -340,6 +341,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setCamposExtra({})
     setErrors({})
     setSuccess('')
+    setAviso('')
     setError('')
     setNotice('')
   }
@@ -370,6 +372,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     })
     setError((prev) => (prev ? '' : prev))
     setSuccess((prev) => (prev ? '' : prev))
+    setAviso((prev) => (prev ? '' : prev))
     setNotice((prev) => (prev ? '' : prev))
   }
 
@@ -391,6 +394,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setSuccess('')
+    setAviso('')
     setError('')
     setNotice('')
 
@@ -447,7 +451,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
           .filter((campo) => campo.tipo === 'email')
           .map((campo) => campo.nombreCampo),
       )
-      await registerParticipanteUseCase(
+      const registrado = await registerParticipanteUseCase(
         participanteRepository,
         {
           proyectoId: proyecto.id,
@@ -457,7 +461,13 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
         camposCorreo,
       )
       resetForm()
-      setSuccess('Participante registrado correctamente')
+      // La persona puede quedar guardada sin inscripción (Lista Clinton): no es
+      // un error y no hay que volver a intentarlo, pero tampoco es un éxito.
+      if (registrado.inscrito === false) {
+        setAviso(registrado.motivo || 'La persona quedó registrada, pero no se inscribió al proyecto.')
+      } else {
+        setSuccess('Participante registrado correctamente')
+      }
       onRegistered()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo registrar')
@@ -1194,6 +1204,10 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
       {success ? (
         <Toast tone="success" onClose={() => setSuccess('')}>
           {success}
+        </Toast>
+      ) : aviso ? (
+        <Toast tone="info" duration={0} onClose={() => setAviso('')}>
+          {aviso}
         </Toast>
       ) : error ? (
         <Toast tone="error" onClose={() => setError('')}>
