@@ -122,6 +122,19 @@ function buildBaseShape(camposBase?: CampoBaseConfig[] | null) {
   }
 }
 
+/**
+ * Autorización de tratamiento de datos personales (Ley 1581 de 2012). No se
+ * puede registrar a nadie sin que la haya dado, así que el único valor válido
+ * es `true`.
+ */
+function autorizacionDatosSchema() {
+  const mensaje = 'Confirma la autorización de tratamiento de datos (Ley 1581 de 2012)'
+  return z.preprocess(
+    (value) => value === true,
+    z.literal(true, { error: mensaje }),
+  )
+}
+
 export interface BuildParticipanteSchemaOptions {
   /** Si es false, los campos del filtro del estudio quedan opcionales (p. ej. rol reclutadora). */
   requireCamposEspecificos?: boolean
@@ -146,6 +159,7 @@ export function buildParticipanteSchema(
   return z.object({
     ...buildBaseShape(options.camposBase),
     camposExtra: z.object(extraShape),
+    autorizacionDatos: autorizacionDatosSchema(),
   })
 }
 

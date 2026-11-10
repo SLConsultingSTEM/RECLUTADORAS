@@ -32,6 +32,11 @@ import type {
 } from '@modules/proyectos/domain/types'
 import { TIPOS_DOCUMENTO } from '@modules/participantes/domain/types'
 import {
+  AUTORIZACION_DATOS_DETALLE,
+  AUTORIZACION_DATOS_RESUMEN,
+  VERSION_AUTORIZACION_DATOS,
+} from '@modules/participantes/domain/autorizacionDatos'
+import {
   buildParticipanteSchema,
   LARGO_MAXIMO_TELEFONO,
 } from '@modules/participantes/application/participanteSchema'
@@ -59,6 +64,7 @@ import {
   IconPencil,
   IconPhone,
   IconPlus,
+  IconShield,
   IconTrash,
   IconUser,
 } from '@shared/ui/icons'
@@ -279,6 +285,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
   const [ciudad, setCiudad] = useState('')
   const [telefonos, setTelefonos] = useState<string[]>([''])
   const [camposExtra, setCamposExtra] = useState<Record<string, string>>({})
+  const [autorizacionDatos, setAutorizacionDatos] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [success, setSuccess] = useState('')
   const [aviso, setAviso] = useState('')
@@ -339,6 +346,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
     setCiudad('')
     setTelefonos([''])
     setCamposExtra({})
+    setAutorizacionDatos(false)
     setErrors({})
     setSuccess('')
     setAviso('')
@@ -417,6 +425,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
           camposExtra[campo.nombreCampo] ?? '',
         ]),
       ),
+      autorizacionDatos,
     })
 
     if (!parsed.success) {
@@ -436,6 +445,7 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                 : [campo.nombreCampo],
             ),
             ...camposEspecificos.map((campo) => `camposExtra.${campo.nombreCampo}`),
+            'autorizacionDatos',
           ])
         })
       }
@@ -451,11 +461,14 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
           .filter((campo) => campo.tipo === 'email')
           .map((campo) => campo.nombreCampo),
       )
+      // La versión viaja con la autorización: sin ella la API no sabría a qué
+      // texto dijo que sí la persona.
       const registrado = await registerParticipanteUseCase(
         participanteRepository,
         {
           proyectoId: proyecto.id,
           ...parsed.data,
+          autorizacionVersion: VERSION_AUTORIZACION_DATOS,
           creadoPor: user?.username ?? 'desconocido',
         },
         camposCorreo,
@@ -1198,6 +1211,60 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
                   <div key={campo.nombreCampo}>{renderExtraControl(campo)}</div>
                 ))}
           </div>
+        </section>
+      ) : null}
+
+      {!builder ? (
+        <section
+          className={`${styles.section} ${styles.consent}`}
+          aria-labelledby="autorizacion-datos-titulo"
+        >
+          <div className={styles.sectionHead}>
+            <div className={styles.sectionTitleWrap}>
+              <span className={styles.sectionIcon} aria-hidden>
+                <IconShield size={18} />
+              </span>
+              <h3 className={styles.sectionTitle} id="autorizacion-datos-titulo">
+                Autorización de tratamiento de datos
+              </h3>
+            </div>
+          </div>
+
+          <label className={styles.consentCheck} htmlFor="autorizacionDatos">
+            <input
+              id="autorizacionDatos"
+              name="autorizacionDatos"
+              type="checkbox"
+              className={styles.consentInput}
+              checked={autorizacionDatos}
+              aria-invalid={errors.autorizacionDatos ? true : undefined}
+              aria-describedby={
+                errors.autorizacionDatos
+                  ? 'autorizacion-datos-error autorizacion-datos-detalle'
+                  : 'autorizacion-datos-detalle'
+              }
+              onChange={(event) => {
+                setAutorizacionDatos(event.target.checked)
+                setErrors((prev) => {
+                  if (!prev.autorizacionDatos) return prev
+                  const { autorizacionDatos: _quitado, ...resto } = prev
+                  return resto
+                })
+              }}
+            />
+            <span className={styles.consentTexto}>
+              <strong>
+                {AUTORIZACION_DATOS_RESUMEN} <span aria-hidden>*</span>
+              </strong>
+              <small id="autorizacion-datos-detalle">{AUTORIZACION_DATOS_DETALLE}</small>
+            </span>
+          </label>
+
+          {errors.autorizacionDatos ? (
+            <p className={styles.consentError} id="autorizacion-datos-error" role="alert">
+              {errors.autorizacionDatos}
+            </p>
+          ) : null}
         </section>
       ) : null}
 

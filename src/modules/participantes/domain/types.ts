@@ -72,6 +72,14 @@ export interface RegistrarParticipanteInput {
   camposExtra: Record<string, string>
   observaciones?: string
   creadoPor: string
+  /**
+   * La reclutadora confirmó que la persona autorizó el tratamiento de sus
+   * datos (Ley 1581 de 2012). La API lo guarda en la persona, no en la
+   * inscripción, y solo la primera vez.
+   */
+  autorizacionDatos?: boolean
+  /** Versión del texto que se le leyó, para saber a qué autorizó. */
+  autorizacionVersion?: string
 }
 
 export interface SeguimientoResumen {

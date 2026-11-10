@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { datosEnMayusculas } from '@modules/participantes/application/participanteUseCases'
+import { VERSION_AUTORIZACION_DATOS } from '@modules/participantes/domain/autorizacionDatos'
 
 describe('datosEnMayusculas', () => {
   const input = {
@@ -22,5 +23,17 @@ describe('datosEnMayusculas', () => {
     expect(out.camposExtra).toEqual({ marca: 'NIVEA', 'participante.email': 'Ana@Correo.com' })
     expect(out.proyectoId).toBe('abc-1')
     expect(out.creadoPor).toBe('coordinadora')
+  })
+
+  // La versión identifica el texto que se le leyó a la persona: en mayúsculas
+  // no coincidiría con la que guarda la API y la autorización no probaría nada.
+  it('no toca la autorización de datos ni su versión', () => {
+    const out = datosEnMayusculas({
+      ...input,
+      autorizacionDatos: true,
+      autorizacionVersion: VERSION_AUTORIZACION_DATOS,
+    })
+    expect(out.autorizacionDatos).toBe(true)
+    expect(out.autorizacionVersion).toBe(VERSION_AUTORIZACION_DATOS)
   })
 })

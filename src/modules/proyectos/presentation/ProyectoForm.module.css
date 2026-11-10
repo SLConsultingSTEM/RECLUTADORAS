@@ -1336,3 +1336,57 @@
 .dirtyBadgeIdle {
   visibility: hidden;
 }
+
+/* Autorización de tratamiento de datos (Ley 1581): obligatoria para registrar,
+   por eso se separa del resto con el color de acento. */
+.consent {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 5%, #fff);
+}
+
+.consentCheck {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.consentInput {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0.15rem 0 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  flex: none;
+}
+
+.consentTexto {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.consentTexto strong {
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: var(--color-ink);
+  line-height: 1.4;
+}
+
+.consentTexto strong span {
+  color: var(--color-danger, #c0392b);
+}
+
+.consentTexto small {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--color-ink-soft, #5b6472);
+}
+
+.consentError {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-danger, #c0392b);
+}
