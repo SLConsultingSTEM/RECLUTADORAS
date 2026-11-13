@@ -41,6 +41,7 @@ import {
   LARGO_MAXIMO_TELEFONO,
 } from '@modules/participantes/application/participanteSchema'
 import { registerParticipanteUseCase } from '@modules/participantes/application/participanteUseCases'
+import { ApiError } from '@shared/api/types'
 import { createParticipanteRepository } from '@modules/participantes/infrastructure/participanteRepositoryFactory'
 import { useAuth } from '@app/providers/useAuth'
 import { isCoordinadora } from '@modules/auth/domain/roles'
@@ -73,6 +74,17 @@ import styles from './ProyectoForm.module.css'
 const participanteRepository = createParticipanteRepository()
 
 /** "Cuestionario · Marca" → grupo "Cuestionario", nombre "Marca". */
+/**
+ * La API responde QUOTA_FULL cuando el cuadre de muestra ya llegó al ideal para
+ * ese perfil (su ciudad, su marca, su rango de edad…). No hay nada que corregir
+ * en el formulario, así que se trata como aviso y no como error.
+ */
+function esCuadreCompleto(err: unknown): err is ApiError {
+  if (!(err instanceof ApiError)) return false
+  const cuerpo = err.body as { code?: string } | null
+  return cuerpo?.code === 'QUOTA_FULL'
+}
+
 function separarEtiquetaDestino(etiqueta: string) {
   const corte = etiqueta.indexOf(' · ')
   if (corte < 0) return { grupo: '', nombre: etiqueta }
@@ -483,7 +495,14 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
       }
       onRegistered()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo registrar')
+      // El cuadre completo no es un fallo de la reclutadora ni algo que se
+      // arregle reintentando: el estudio ya no necesita a nadie con ese perfil.
+      // Va como aviso, no en rojo, igual que la Lista Clinton.
+      if (esCuadreCompleto(err)) {
+        setAviso(err.message)
+      } else {
+        setError(err instanceof Error ? err.message : 'No se pudo registrar')
+      }
     } finally {
       setLoading(false)
     }
