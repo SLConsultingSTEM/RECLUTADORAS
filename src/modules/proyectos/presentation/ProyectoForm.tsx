@@ -486,10 +486,14 @@ export function ProyectoForm({ proyecto, onRegistered, builder }: ProyectoFormPr
         camposCorreo,
       )
       resetForm()
-      // La persona puede quedar guardada sin inscripción (Lista Clinton): no es
-      // un error y no hay que volver a intentarlo, pero tampoco es un éxito.
+      // `motivo` llega cuando hay algo que la reclutadora debe saber del registro:
+      // que no se inscribió (Lista Clinton) o que entró como sobremuestra porque
+      // su celda del cuadre ya llegó al ideal. En ambos casos va como aviso, que
+      // se queda hasta cerrarlo, y no como el "listo" de siempre que se va solo.
       if (registrado.inscrito === false) {
         setAviso(registrado.motivo || 'La persona quedó registrada, pero no se inscribió al proyecto.')
+      } else if (registrado.motivo) {
+        setAviso(`Participante registrado. ${registrado.motivo}`)
       } else {
         setSuccess('Participante registrado correctamente')
       }
